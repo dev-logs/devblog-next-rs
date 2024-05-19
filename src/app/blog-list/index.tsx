@@ -2,7 +2,7 @@
 import React, { useEffect, useRef } from 'react'
 import * as THREE from 'three'
 import { Canvas, useThree, extend as threeFiberExtend, useFrame } from '@react-three/fiber'
-import { Environment, useGLTF, useTexture } from '@react-three/drei'
+import { Bounds, Box, Environment, Outlines, Resize, ScreenSizer, Text3D, useGLTF, useTexture } from '@react-three/drei'
 import noop from 'lodash/noop'
 import SHADERS from '../glsl'
 import CustomShaderMaterial from 'three-custom-shader-material/vanilla'
@@ -261,12 +261,12 @@ export const CanvasBackground = () => {
 
   const onUpdateModelIndex = useCallback(() => {
     if (modelIndex >= models.length - 1) {
+      updateModelIndex(0)
       updateEnableBackground(true)
     } else {
       updateModelIndex(modelIndex + 1)
     }
   }, [updateModelIndex, modelIndex, models])
-
 
   const material = useMemo(() => new CustomShaderMaterial({
     baseMaterial: THREE.MeshStandardMaterial,
@@ -282,7 +282,7 @@ export const CanvasBackground = () => {
     }
   }), [])
 
-  useGlitchFrame(0.3, (tick) => {
+  useGlitchFrame(0.4, (tick) => {
     material.uniforms.uTime.value = tick.clock.getElapsedTime()
   })
 
@@ -292,13 +292,48 @@ export const CanvasBackground = () => {
         files={'/3d-models/the-scene-1/environment-tokio.hdr'}
         backgroundIntensity={1.1}
         environmentIntensity={100}
-        background={enableBackgroud}
+        // background={}
         backgroundRotation={[0, Math.PI * 0.5, 0]}
         environmentRotation={[0, Math.PI * 1.5, 0]}
       />
+      <mesh position-z={-6}>
+        <meshBasicMaterial color={'gray'}/>
+        <planeGeometry args={[viewport.width * 6 * 2, viewport.height * 6 * 2]}/>
+      </mesh>
       <mesh material={material} position-z={-6.0}>
         <icosahedronGeometry args={[3, 20]}/>
       </mesh>
+      <Bounds fit clip observe margin={1.0} maxDuration={1}>
+      <Text3D
+        material={material}
+        font="/fonts/helvetiker_regular.typeface.json"
+        size={ 1 }
+        height={ 0.2 }
+        curveSegments={ 12 }
+        bevelEnabled
+        bevelThickness={ 0.02 }
+        bevelSize={ 0.02 }
+        bevelOffset={ 0 }
+        bevelSegments={ 5 }
+        position={[-3, 2.4, 1]}>
+        DEVLOGS
+        <Outlines thickness={0.05} color="black" />
+      </Text3D>
+      <Text3D
+        material={material}
+        font="/fonts/helvetiker_regular.typeface.json"
+        size={ 1 }
+        height={ 0.2 }
+        curveSegments={ 12 }
+        bevelEnabled
+        bevelThickness={ 0.02 }
+        bevelSize={ 0.02 }
+        bevelOffset={ 0 }
+        bevelSegments={ 5 }
+        position={[-3, -3.4, 1]}>
+        Studio
+      </Text3D>
+      </Bounds>
       <EffectComposer multisampling={0} enableNormalPass={false}>
         <Bloom
           luminanceThreshold={0.9}
@@ -307,7 +342,7 @@ export const CanvasBackground = () => {
           opacity={3}
         />
         {<>!enableBackgroud && <Noise opacity={0.125}/></>}
-        <Vignette eskil={false} offset={0.5} darkness={0.7} />
+        <Vignette eskil={false} offset={0.2} darkness={0.7} />
       </EffectComposer>
       {<>!enableBackgroud && <TransformGeometry
         geometries={models}
