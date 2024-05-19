@@ -1,3 +1,16 @@
 {
-  "extends": "next/core-web-vitals"
+  "extends": ["next/core-web-vitals"],
+  "rules": {
+    "no-trailing-spaces": "error",
+    "max-len": ["error", { "code": 120 }],
+    "quotes": ["error", "single"],
+    "indent": ["error", 2],
+    "comma-dangle": ["error", "never"],
+    "eol-last": ["error", "always"],
+    "no-unused-vars": "warn",
+    "no-console": "warn",
+    "eqeqeq": ["error", "always"],
+    "curly": ["error", "all"],
+    "semi": ["error", "never"]
+  }
 }
