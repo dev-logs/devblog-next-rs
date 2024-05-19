@@ -2,3 +2,4 @@
 yarn**.log
 out
 node_modules
+.next
