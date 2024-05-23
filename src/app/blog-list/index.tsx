@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useRef } from "react";
+import React, { useContext, useEffect, useRef } from "react";
 import * as THREE from "three";
 import {
   Canvas,
@@ -9,13 +9,18 @@ import {
   useFrame,
 } from "@react-three/fiber";
 import {
+    BBAnchor,
   Bounds,
   Box,
   Environment,
+  Float,
+  OrthographicCamera,
   Outlines,
   Resize,
   ScreenSizer,
+  Stage,
   Text3D,
+  useBounds,
   useGLTF,
   useTexture,
 } from "@react-three/drei";
@@ -36,6 +41,8 @@ import useGlitchFrame from "../hooks/use-glitch-frame";
 import useGlitch from "../hooks/use-glitch";
 import { LowVertex } from "../models";
 import { LowVertexModel } from "../models/low-vertex";
+import { ThreeD, ThreeDContext, useThreeDContext } from "../contexts";
+import { useTh } from "leva/dist/declarations/src/styles";
 
 threeFiberExtend(CustomShaderMaterial);
 
@@ -45,20 +52,19 @@ export const BlogList = (props: BlogListProps) => {
   return (
     <div className="relative flex flex-row h-full w-full">
       <div className="w-full h-full">
-        <Canvas>
-          <Foreground />
-          <Background />
+        <Canvas orthographic={true}>
+          {/* <OrthographicCamera/> */}
+          <FirstScene/>
         </Canvas>
       </div>
       <div
         className="absolute top-0 left-0
-                   w-full h-full bg-transparent flex flex-row justify-start items-start p-20 hidden collapse"
-      >
+                   w-full h-full bg-transparent flex flex-row justify-start items-start p-20 hidden collapse">
         <div className="flex flex-col w-[20vw] h-full rounded-lg">
           <div className="bg-gray-950 bg-opacity-50 pl-10 pt-10 rounded-tl-lg">
             <p className="text-3xl font-bold">Devlog</p>
             <p className="text-sm">studio</p>
-            <p className="text-5xl font-bold mt-20">BLOgs</p>
+            <p className="text-5xl font-bold mt-20">BLogs</p>
             <div className="flex flex-row gap-5 mt-28">
               <p>Engineer</p>
               <p>Life</p>
@@ -71,6 +77,20 @@ export const BlogList = (props: BlogListProps) => {
     </div>
   );
 };
+
+export const FirstScene = () => {
+  const {viewport} = useThree()
+  const context = useMemo(() => new ThreeD({
+    scale: 10,
+    viewport
+  }), [])
+
+  return <>
+    <ThreeDContext.Provider value={context}>
+      <Foreground />
+    </ThreeDContext.Provider>
+  </>
+}
 
 export class TransformGeometryProps {
   geometries: Array<THREE.BufferGeometry> = [];
@@ -255,7 +275,7 @@ export const TransformGeometry = (props: TransformGeometryProps) => {
     <>
       <primitive
         object={mesh}
-        position-z={-2.8}
+        position-z={0}
         scale={scales[selectedIndex] || 1}
       />
     </>
@@ -264,6 +284,8 @@ export const TransformGeometry = (props: TransformGeometryProps) => {
 
 export const Background = () => {
   const milkRef = useRef<any>(null)
+  const context = useThreeDContext();
+
   const materialProvider = useCallback((node: any) => {
     return new CustomShaderMaterial({
       baseMaterial: new THREE.MeshBasicMaterial({map: node.material.map}),
@@ -292,8 +314,8 @@ export const Background = () => {
         <LowVertexModel
           name="paper-milk-pack"
           materialProvider={materialProvider}
-          position={[3, 0, 1]}
-          scale={5}
+          position={[context.width / 2 - 1.2, 0, 1]}
+          scale={4}
           ref={milkRef}
         />
       </LowVertex.LowVertexModelProvider>
@@ -301,8 +323,37 @@ export const Background = () => {
   );
 };
 
+export const ViewportComponent = (props: any) => {
+  const {
+    margin = 0
+  } = props || {}
+
+  const _ViewPortHook = () => {
+    const context = useThreeDContext()
+    const bounds = useBounds()
+
+    useEffect(() => {
+      bounds.refresh().fit().clip()
+    }, [context.width, context.height])
+
+    return <>
+      <mesh position-z={-10}>
+        <planeGeometry args={[context.width, context.height]}/>
+        <meshBasicMaterial opacity={0.0} transparent={true}/>
+      </mesh>
+    </>
+  }
+
+  return <>
+    <Bounds margin={1 + margin} fit={true} clip={true}>
+      <_ViewPortHook/>
+      {props.children}
+    </Bounds>
+  </>
+}
+
 export const Foreground = () => {
-  const { viewport } = useThree();
+  const context = useThreeDContext()
 
   const model: any = useGLTF("/3d-models/the-scene-1/geometries.glb");
   const beerMug: any = useGLTF("/3d-models/beermug/geometries.glb");
@@ -311,8 +362,8 @@ export const Foreground = () => {
     const geometries = new THREE.IcosahedronGeometry(1, 60);
     const torus = new THREE.TorusGeometry(0.5, 0.5, 20, 20);
     const plane = new THREE.PlaneGeometry(
-      viewport.width * 2.5,
-      viewport.height * 2.5,
+      context.width * 2.5,
+      context.height * 2.5,
       10,
       10,
     );
@@ -348,7 +399,7 @@ export const Foreground = () => {
         vertexShader: SHADERS.SimpleWobbleColorVertexShader,
         uniforms: {
           uTime: { value: 0 },
-          uStrength: { value: 0.15 },
+          uStrength: { value: 0.05 },
           uColor: { value: new THREE.Color("#F7F7F7") },
         },
       }),
@@ -367,76 +418,59 @@ export const Foreground = () => {
         environmentIntensity={100}
         // background={}
         backgroundRotation={[0, Math.PI * 0.5, 0]}
-        environmentRotation={[0, Math.PI * 1.5, 0]}
-      />
-      <mesh position-z={-6}>
-        <meshBasicMaterial color={"#212121"} />
-        <planeGeometry
-          args={[viewport.width * 6 * 2, viewport.height * 6 * 2]}
-        />
-      </mesh>
-      <mesh material={material} position-z={-6.0}>
-        <icosahedronGeometry args={[3, 20]} />
-      </mesh>
-      <Bounds fit clip observe margin={1.0} maxDuration={1}>
-        <Text3D
-          material={material}
-          font="/fonts/helvetiker_regular.typeface.json"
-          size={1}
-          height={0.2}
-          curveSegments={12}
-          bevelEnabled
-          bevelThickness={0.02}
-          bevelSize={0.02}
-          bevelOffset={0}
-          bevelSegments={5}
-          position={[-3, 2.7, 1]}
-        >
-          DEVLOGS
-        </Text3D>
-        <Text3D
-          material={material}
-          font="/fonts/helvetiker_regular.typeface.json"
-          size={1}
-          height={0.2}
-          curveSegments={12}
-          bevelEnabled
-          bevelThickness={0.02}
-          bevelSize={0.02}
-          bevelOffset={0}
-          bevelSegments={5}
-          position={[-3, -3.7, 1]}
-        >
-          Studio
-        </Text3D>
-      </Bounds>
-      <EffectComposer multisampling={0} enableNormalPass={false}>
-        {/* <Bloom
-            luminanceThreshold={0.9}
-            luminanceSmoothing={0.9}
-            height={300}
-            opacity={3}
-          /> */}
-        {
-          <>
-            !enableBackgroud && <Noise opacity={0.025} />
-          </>
-        }
-        <Vignette eskil={false} offset={0.2} darkness={0.7} />
-      </EffectComposer>
-      {
-        <>
-          !enableBackgroud &&{" "}
+        environmentRotation={[0, Math.PI * 1.5, 0]}/>
+        <mesh position-z={-10}>
+          <planeGeometry args={[context.width * 10, context.height * 10]}/>
+          <meshBasicMaterial color={'#212121'}/>
+        </mesh>
+        <ViewportComponent margin={0.1}>
+          <Background/>
+          <mesh material={material} position-z={-2}>
+            <icosahedronGeometry args={[1.6, 20]} />
+          </mesh>
+          <Text3D
+            material={material}
+            font="/fonts/helvetiker_regular.typeface.json"
+            size={1}
+            height={0.6}
+            curveSegments={12}
+            bevelEnabled
+            bevelThickness={0.02}
+            bevelSize={0.02}
+            bevelOffset={0}
+            bevelSegments={5}
+            position={[-2, 3.1, 0]}
+          >
+            DEVLOGS
+          </Text3D>
+          <Text3D
+            material={material}
+            font="/fonts/helvetiker_regular.typeface.json"
+            size={1}
+            height={0.6}
+            curveSegments={12}
+            bevelEnabled
+            bevelThickness={0.02}
+            bevelSize={0.02}
+            bevelOffset={0}
+            bevelSegments={5}
+            position={[-2, -3.1, 0]}
+          >
+            Studio
+          </Text3D>
+          <EffectComposer multisampling={0} enableNormalPass={false}>
+            <Noise opacity={0.025} />
+            <Vignette eskil={false} offset={0.2} darkness={0.7} />
+          </EffectComposer>
           <TransformGeometry
             geometries={models}
             selectedIndex={modelIndex}
-            duration={2}
+            duration={0.7}
             delay={0.5}
+            scales={models.map((): number => 0.75)}
             onComplete={onUpdateModelIndex}
-            scales={[]}
           />
-        </>
-      }
+        </ViewportComponent>
     </>
   );
 };
