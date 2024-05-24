@@ -5,6 +5,7 @@ import {useThree} from '@react-three/fiber'
 export class ThreeD {
   mousePosition: MousePosition
   scale: number
+  aspect: number = 1
   width: number = 0
   height: number = 0
 
@@ -22,6 +23,7 @@ export class ThreeD {
   updateViewport(viewport: any) {
     this.height = this.scale
     this.width = viewport.aspect * this.scale
+    this.aspect = viewport.aspect
   }
 }
 

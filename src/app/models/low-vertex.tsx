@@ -17,6 +17,8 @@ interface GLTFNodes {
 
 const context = createContext<GLTFNodes | null>(null)
 
+export const LowVertexContext = context
+
 interface InstancesProps extends GroupProps {
   children: ReactNode
 }

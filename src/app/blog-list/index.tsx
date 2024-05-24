@@ -12,6 +12,7 @@ import {
     BBAnchor,
   Bounds,
   Box,
+  Center,
   Environment,
   Float,
   OrthographicCamera,
@@ -42,7 +43,6 @@ import useGlitch from "../hooks/use-glitch";
 import { LowVertex } from "../models";
 import { LowVertexModel } from "../models/low-vertex";
 import { ThreeD, ThreeDContext, useThreeDContext } from "../contexts";
-import { useTh } from "leva/dist/declarations/src/styles";
 
 threeFiberExtend(CustomShaderMaterial);
 
@@ -59,7 +59,7 @@ export const BlogList = (props: BlogListProps) => {
       </div>
       <div
         className="absolute top-0 left-0
-                   w-full h-full bg-transparent flex flex-row justify-start items-start p-20 hidden collapse">
+          w-full h-full bg-transparent flex flex-row justify-start items-start p-20">
         <div className="flex flex-col w-[20vw] h-full rounded-lg">
           <div className="bg-gray-950 bg-opacity-50 pl-10 pt-10 rounded-tl-lg">
             <p className="text-3xl font-bold">Devlog</p>
@@ -110,12 +110,12 @@ export const TransformGeometry = (props: TransformGeometryProps) => {
 
   const { mesh, material, updateAttributes, saveAnimation } = useMemo(() => {
     const material = new CustomShaderMaterial({
-      baseMaterial: THREE.MeshStandardMaterial,
+      baseMaterial: THREE.MeshPhysicalMaterial,
       vertexShader: SHADERS.PointerVertexShader,
       fragmentShader: SHADERS.PointerFragmentShader,
       metalness: 0.0,
       roughness: 0.0,
-      color: "#ffffff",
+      color: "#BED754",
       wireframe: false,
       silent: true,
       vertexColors: true,
@@ -242,7 +242,7 @@ export const TransformGeometry = (props: TransformGeometryProps) => {
   }, []);
 
   const glitch = useGlitch(
-    0.1,
+    0.3,
     (value) => {
       material.uniforms.uTime.value = value;
     },
@@ -282,6 +282,77 @@ export const TransformGeometry = (props: TransformGeometryProps) => {
   );
 };
 
+export const NoiseTextBackground = (props: any) => {
+  const {
+    count = 0,
+    text = 'Devlogs Studio',
+    cap = false
+  } = props || {}
+
+  const material: any = useMemo(() => {
+    return new CustomShaderMaterial({
+      baseMaterial: THREE.MeshBasicMaterial,
+      silent: true,
+      side: THREE.DoubleSide,
+      color: '#31363F',
+      opacity: 0.4,
+      transparent: true,
+      fragmentShader: SHADERS.SimpleWobbleFragmentShader,
+      vertexShader: SHADERS.SimpleWobbleVertexShader,
+      uniforms: {
+        uTime: { value: 0 },
+        uStrength: { value: 0.015 },
+        uColor: { value: new THREE.Color("#31363F") },
+      },
+    })
+  }, [])
+
+  const threeDContext = useThreeDContext()!
+
+  const distributedTexts = useMemo(() => {
+    const result = []
+    console.log(threeDContext.height)
+    for (let i = 0; i < count; i++) {
+      const index = Math.floor(Math.random() * (text.length - 1))
+      // -1 .. 1
+      let x = (Math.random() - 0.5) * threeDContext.width * 2
+      let y = (Math.random() - 0.5) * threeDContext.height * 2
+      // x += (Math.abs(x)/x) * 1
+      const z = -10
+
+      result.push({
+        text: text[index],
+        position: [x, y, z]
+      })
+    }
+
+    return result
+  }, [text, cap, threeDContext, threeDContext.width, threeDContext.height])
+
+  useGlitchFrame(0.3, (tick) => {
+    material.uniforms.uTime.value = tick.clock.getElapsedTime()
+  })
+
+  return <>
+    {distributedTexts.map((info: any) => <>
+      <Text3D
+        material={material}
+        font="/fonts/helvetiker_regular.typeface.json"
+        size={1 * Math.random()}
+        height={0.6}
+        curveSegments={12}
+        bevelEnabled
+        bevelThickness={0.02}
+        bevelSize={0.02}
+        bevelOffset={0}
+        bevelSegments={5}
+        position={info.position}>
+        {info.text}
+      </Text3D>
+    </>)}
+  </>
+}
+
 export const Background = () => {
   const milkRef = useRef<any>(null)
   const context = useThreeDContext();
@@ -310,7 +381,7 @@ export const Background = () => {
 
   return (
     <>
-      <LowVertex.LowVertexModelProvider>
+      {/* <LowVertex.LowVertexModelProvider>
         <LowVertexModel
           name="paper-milk-pack"
           materialProvider={materialProvider}
@@ -318,7 +389,7 @@ export const Background = () => {
           scale={4}
           ref={milkRef}
         />
-      </LowVertex.LowVertexModelProvider>
+      </LowVertex.LowVertexModelProvider> */}
     </>
   );
 };
@@ -399,12 +470,16 @@ export const Foreground = () => {
         vertexShader: SHADERS.SimpleWobbleColorVertexShader,
         uniforms: {
           uTime: { value: 0 },
-          uStrength: { value: 0.05 },
-          uColor: { value: new THREE.Color("#F7F7F7") },
+          uStrength: { value: 0.15 },
+          uColor: { value: new THREE.Color("#FFF6E9") },
         },
       }),
     [],
   );
+
+  const textMaterial = useMemo(() => new CustomShaderMaterial({
+    baseMaterial: THREE.MeshBasicMaterial
+  }), [])
 
   useGlitchFrame(0.4, (tick) => {
     material.uniforms.uTime.value = tick.clock.getElapsedTime();
@@ -414,62 +489,40 @@ export const Foreground = () => {
     <>
       <Environment
         files={"/3d-models/the-scene-1/environment-tokio.hdr"}
-        backgroundIntensity={1.1}
-        environmentIntensity={100}
-        // background={}
+        backgroundIntensity={10}
+        background={true}
+        environmentIntensity={10}
         backgroundRotation={[0, Math.PI * 0.5, 0]}
         environmentRotation={[0, Math.PI * 1.5, 0]}/>
+        {/* <gridHelper args={[20 * 5, 20 * 5, '#7AB2B2', '#7AB2B2']} rotation-x={Math.PI * 0.5}/> */}
         <mesh position-z={-10}>
           <planeGeometry args={[context.width * 10, context.height * 10]}/>
-          <meshBasicMaterial color={'#212121'}/>
+          <meshBasicMaterial color={'#0E46A3'}/>
         </mesh>
+        <NoiseTextBackground count={50}/>
         <ViewportComponent margin={0.1}>
           <Background/>
-          <mesh material={material} position-z={-2}>
-            <icosahedronGeometry args={[1.6, 20]} />
+          <mesh position={[-2, 3.1, -1]}>
+            <planeGeometry args={[3, 0.8]}/>
+            <meshBasicMaterial args={[{color: 'green'}]}/>
           </mesh>
-          <Text3D
-            material={material}
-            font="/fonts/helvetiker_regular.typeface.json"
-            size={1}
-            height={0.6}
-            curveSegments={12}
-            bevelEnabled
-            bevelThickness={0.02}
-            bevelSize={0.02}
-            bevelOffset={0}
-            bevelSegments={5}
-            position={[-2, 3.1, 0]}
-          >
-            DEVLOGS
-          </Text3D>
-          <Text3D
-            material={material}
-            font="/fonts/helvetiker_regular.typeface.json"
-            size={1}
-            height={0.6}
-            curveSegments={12}
-            bevelEnabled
-            bevelThickness={0.02}
-            bevelSize={0.02}
-            bevelOffset={0}
-            bevelSegments={5}
-            position={[-2, -3.1, 0]}
-          >
-            Studio
-          </Text3D>
           <EffectComposer multisampling={0} enableNormalPass={false}>
             <Noise opacity={0.025} />
-            <Vignette eskil={false} offset={0.2} darkness={0.7} />
+            {/* <Vignette eskil={false} offset={0.5} darkness={0.8} /> */}
           </EffectComposer>
-          <TransformGeometry
-            geometries={models}
-            selectedIndex={modelIndex}
-            duration={0.7}
-            delay={0.5}
-            scales={models.map((): number => 0.75)}
-            onComplete={onUpdateModelIndex}
-          />
+          <Center disableY>
+            <mesh material={material} position-z={-2}>
+              <icosahedronGeometry args={[1.6, 20]} />
+            </mesh>
+            <TransformGeometry
+              geometries={models}
+              selectedIndex={modelIndex}
+              duration={0.7}
+              delay={0.5}
+              scales={models.map((): number => 0.75)}
+              onComplete={onUpdateModelIndex}
+            />
+          </Center>
         </ViewportComponent>
     </>
   );

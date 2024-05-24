@@ -6,6 +6,7 @@ varying vec2 vUv;
 
 void main()
 {
-    csm_Metalness = 1.0 - uEnableMap;
-    csm_Roughness = 1.0 - csm_Metalness - uEnableMap;
+    // csm_Metalness = 1.0 - uEnableMap;
+    // csm_Roughness = 1.0 - csm_Metalness - uEnableMap;
+    csm_FragColor = vec4(vUv, 1.0, 1.0);
 }

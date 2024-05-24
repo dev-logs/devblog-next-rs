@@ -21,8 +21,8 @@ void main() {
     float progress2 = smoothstep(stage1Duration, stage2Duration, uTime);
     float progress = smoothstep(stage2Duration * noise, 1.0, uTime);
 
-    csm_Position = mix(csm_Position, sign(csm_Normal), progress1);
-    csm_Position = mix(csm_Position, sign(aNormal2), progress2);
+    csm_Position = mix(csm_Position, sign(csm_Normal) * 0.1, progress1);
+    csm_Position = mix(csm_Position, sign(aNormal2) * 0.1, progress2);
     csm_Position = mix(csm_Position, aPosition2, progress);
 
     csm_Normal= mix(csm_Normal, sign(csm_Normal), progress1);

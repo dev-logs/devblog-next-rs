@@ -2,10 +2,10 @@ import { useRef } from 'react'
 import { RenderCallback, useFrame } from '@react-three/fiber'
 
 const useGlitchFrame = (glitchTimeout: number, onGlitch: RenderCallback) => {
-  const currentGlitchRef = useRef(0)
+  const currentGlitchRef = useRef({val: 0})
 
   useFrame((tick, delta, frame) => {
-    let currentGlitch = currentGlitchRef.current
+    let currentGlitch = currentGlitchRef.current.val
 
     if (glitchTimeout < currentGlitch) {
       currentGlitch = 0
@@ -18,7 +18,7 @@ const useGlitchFrame = (glitchTimeout: number, onGlitch: RenderCallback) => {
       onGlitch(tick, delta, frame)
     }
 
-    currentGlitchRef.current = currentGlitch
+    currentGlitchRef.current.val = currentGlitch
   })
 }
 
