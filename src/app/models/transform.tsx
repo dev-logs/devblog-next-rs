@@ -11,6 +11,7 @@ export class TransformGeometryProps {
   geometries: Array<THREE.BufferGeometry> = [];
   selectedIndex: number = 0;
   delay: number = 0;
+  normalScale: number = 1;
   glitchTimeout: number = 0;
   duration: number = 0;
   scales: Array<number> = [];
@@ -18,7 +19,7 @@ export class TransformGeometryProps {
 }
 
 export const TransformGeometry = (props: TransformGeometryProps & any) => {
-  let { geometries, selectedIndex, delay, duration, scales, glitchTimeout, onComplete } =
+  let { geometries, selectedIndex, delay, duration, scales, normalScale, glitchTimeout, onComplete } =
     props;
 
   const map = useTexture("/3d-models/the-scene-1/environment-tokio.jpg");
@@ -38,6 +39,7 @@ export const TransformGeometry = (props: TransformGeometryProps & any) => {
       map,
       uniforms: {
         uTime: { value: 0.0 },
+        uNormalScale: { value: normalScale }
       },
     });
 
