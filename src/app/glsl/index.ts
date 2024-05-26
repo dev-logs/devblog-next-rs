@@ -6,6 +6,10 @@ import WobbleFragmentShader from './wobble/fragment.glsl'
 import WobbleVertexShader from './wobble/vertex.glsl'
 import PointerVertexShader from './pointer/vertex.glsl'
 import PointerFragmentShader from './pointer/fragment.glsl'
+import RibbonTextVertexShader from './ribbon-text/vertex.glsl'
+import RibbonTextFragmentShader from './ribbon-text/fragment.glsl'
+import RibbonBackgroundVertexShader from './ribbon-background/vertex.glsl'
+import RibbonBackgroundFragmentShader from './ribbon-background/fragment.glsl'
 
 const Shaders = {
   SimpleWobbleVertexShader,
@@ -15,7 +19,11 @@ const Shaders = {
   WobbleFragmentShader,
   WobbleVertexShader,
   PointerFragmentShader,
-  PointerVertexShader
+  PointerVertexShader,
+  RibbonTextVertexShader,
+  RibbonTextFragmentShader,
+  RibbonBackgroundVertexShader,
+  RibbonBackgroundFragmentShader
 }
 
 export default Shaders
