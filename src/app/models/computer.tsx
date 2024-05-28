@@ -4,7 +4,6 @@ import * as THREE from 'three'
 import { LowVertexContext } from "./low-vertex"
 import { TransformGeometry } from "./transform"
 import noop from 'lodash/noop'
-import { HeaderHtml } from "../home"
 
 export interface ComputerWithFaceProps {}
 
@@ -44,17 +43,17 @@ export const ComputerWithFaceTransform = (props: ComputerWithFaceTransformProps 
       preset="city"
       environmentIntensity={2}
     />
-      <TransformGeometry
-        geometries={[fromModel.geometry, toModel.geometry]}
-        scales={[8, 8]}
-        duration={2}
-        delay={1.2}
-        normalScale={0.2}
-        glitchTimeout={0.1}
-        selectedIndex={1}
-        onComplete={noop}
-        {...props}>
-      </TransformGeometry>
+    <TransformGeometry
+      geometries={[fromModel.geometry, toModel.geometry]}
+      scales={[8, 8]}
+      duration={2}
+      delay={1.2}
+      normalScale={0.2}
+      glitchTimeout={0.1}
+      selectedIndex={1}
+      onComplete={noop}
+      {...props}>
+    </TransformGeometry>
   </>
 }
 

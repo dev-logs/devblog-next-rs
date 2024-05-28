@@ -1,57 +1,24 @@
 "use client";
 
-import React, { useContext, useEffect, useRef } from "react";
+import { useRef } from "react";
 import * as THREE from "three";
 import {
-  Canvas,
-  useThree,
-  extend as threeFiberExtend,
-  useFrame,
+    Canvas,
+    useThree, useFrame
 } from "@react-three/fiber";
 import {
-  BBAnchor,
-  Bounds,
-  Box,
-  Center,
-  Environment,
-  Float,
-  Html,
-  Mask,
-  OrbitControls,
-  OrthographicCamera,
-  Outlines,
-  PresentationControls,
-  Resize,
-  ScreenSizer,
-  Stage,
-  Text3D,
-  useBounds,
-  useGLTF,
-  useTexture,
+    Center,
+    Environment, Html, OrbitControls, useTexture
 } from "@react-three/drei";
-import noop from "lodash/noop";
 import SHADERS from "../glsl";
-import {
-  Vignette,
-  EffectComposer,
-  Bloom,
-  Noise,
-} from "@react-three/postprocessing";
-import gsap from "gsap";
 import { useMemo } from "react";
-import { useState } from "react";
-import { useCallback } from "react";
 import useGlitchFrame from "../hooks/use-glitch-frame";
-import useGlitch from "../hooks/use-glitch";
-import { LowVertex } from "../models";
 import { LowVertexModel, LowVertexModelProvider } from "../models/low-vertex";
 import { ThreeD, ThreeDContext, useThreeDContext } from "../contexts";
 import {
-  ComputerWithFace,
-  ComputerWithFaceTransform,
+    ComputerWithFaceTransform
 } from "../models/computer";
 import CustomShaderMaterial from "three-custom-shader-material/vanilla";
-import { Group } from "three/examples/jsm/libs/tween.module.js";
 
 export class HomeProps {}
 
@@ -60,11 +27,6 @@ export const Home = (props: HomeProps) => {
     <>
       <div className="flex flex-col">
         <div className="flex flex-col w-screen h-screen absolute top-0 left-0 z-0">
-          <Canvas>
-            <LowVertexModelProvider>
-              <Header />
-            </LowVertexModelProvider>
-          </Canvas>
         </div>
         <div className="absolute top-0 left-0 z-10">
           <Header3dText />
@@ -108,12 +70,13 @@ export const Header = (props: any) => {
 
 export const Header3dText = (props: any) => {
   const Implementation = () => {
-    const textMaterial = useMemo(
+    const [textMaterial, sphereGeometry] = useMemo(
       () => {
+        const geometry = new THREE.IcosahedronGeometry(1, 32);
         const ribbonTextMap = useTexture('/images/ribbon2.png')
         ribbonTextMap.colorSpace = THREE.SRGBColorSpace
 
-        return new CustomShaderMaterial({
+        const material = new CustomShaderMaterial({
           baseMaterial: THREE.MeshBasicMaterial,
           vertexShader: SHADERS.RibbonTextVertexShader,
           fragmentShader: SHADERS.RibbonTextFragmentShader,
@@ -126,9 +89,11 @@ export const Header3dText = (props: any) => {
             uTime: { value: 0.0 },
             uStrength: { value: 0.15 },
             uSpeed: { value: 0.5 },
-            uMap: {value: ribbonTextMap}
+            uTexture: {value: ribbonTextMap}
           },
         })
+
+        return [material, geometry]
       },
       [],
     );
@@ -159,8 +124,8 @@ export const Header3dText = (props: any) => {
       textMaterial.uniforms.uTime.value = elapsedTime;
       backgroundMaterial.uniforms.uTime.value = elapsedTime;
       if (sphereRef.current) {
-        sphereRef.current.rotation.y = elapsedTime * 0.5
-        sphereRef.current.rotation.x = 0.5
+        // sphereRef.current.rotation.y = elapsedTime * 0.2
+        // sphereRef.current.rotation.x = 0.5
       }
     });
 
@@ -169,14 +134,9 @@ export const Header3dText = (props: any) => {
     return (
       <>
         <OrbitControls/>
-        <Environment preset="city" environmentIntensity={1}/>
         <color args={["#0E46A3"]} attach={"background"} />
-        {/* <mesh material={backgroundMaterial}>
-          <planeGeometry args={[context.width, 7]} />
-        </mesh> */}
         <Center disableY>
-          <mesh material={textMaterial} position={[3, 3, -5]} ref={sphereRef}>
-            <icosahedronGeometry args={[1, 10]}/>
+          <mesh material={textMaterial} position={[3, 3, -5]} ref={sphereRef} scale={3} geometry={sphereGeometry}>
           </mesh>
         </Center>
       </>

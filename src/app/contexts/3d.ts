@@ -1,5 +1,5 @@
 import {createContext, useContext, useEffect, useInsertionEffect} from 'react'
-import MousePosition from '../models/MousePosition'
+import MousePosition from './MousePosition'
 import {useThree} from '@react-three/fiber'
 
 export class ThreeD {
