@@ -72,7 +72,7 @@ export const Header3dText = (props: any) => {
   const Implementation = () => {
     const [textMaterial, sphereGeometry] = useMemo(
       () => {
-        const geometry = new THREE.IcosahedronGeometry(1, 32);
+        const geometry = new THREE.IcosahedronGeometry(1, 8);
         const ribbonTextMap = useTexture('/images/ribbon2.png')
         ribbonTextMap.colorSpace = THREE.SRGBColorSpace
 
@@ -136,7 +136,7 @@ export const Header3dText = (props: any) => {
         <OrbitControls/>
         <color args={["#0E46A3"]} attach={"background"} />
         <Center disableY>
-          <mesh material={textMaterial} position={[3, 3, -5]} ref={sphereRef} scale={3} geometry={sphereGeometry}>
+          <mesh material={textMaterial} position={[3, 3, -5]} ref={sphereRef} scale={0.1} geometry={sphereGeometry}>
           </mesh>
         </Center>
       </>

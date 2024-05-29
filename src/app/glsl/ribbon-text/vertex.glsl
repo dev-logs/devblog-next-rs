@@ -2,6 +2,7 @@ uniform float uTime;
 uniform float uSpeed;
 
 varying vec2 vUv;
+varying vec3 vElevation;
 
 #include "../includes/simplexNoise3d.glsl";
 
@@ -11,4 +12,5 @@ void main() {
 
     csm_Position.y += cos(csm_Position.x * 2.0 - uTime) * 0.6 * uSpeed;
     csm_Position.z += sin(csm_Position.y * 0.5 - uTime) * 0.2 * uSpeed;
+    vElevation = vec3(csm_Position.z * 0.1);
 }
