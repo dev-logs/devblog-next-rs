@@ -9,12 +9,8 @@ export const RibbonText = (props: any) => {
     const curvePoints = []
     for (let i = 0; i < numOfCurve; i++) {
       let theta = i / numOfCurve * Math.PI * 2
-      curvePoints.push(
-        new THREE.Vector3().setFromSphericalCoords(
-          1,
-          Math.PI / 2 + (Math.random() - 0.5),
-          theta)
-      )
+      curvePoints.push(new THREE.Vector3().setFromSphericalCoords(
+        1, Math.PI / 2 + (Math.random() - 0.5), theta))
     }
 
     const curve = new THREE.CatmullRomCurve3(curvePoints)

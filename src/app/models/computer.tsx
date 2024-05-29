@@ -1,5 +1,5 @@
-import { Bounds, Environment, Html, OrbitControls, useGLTF, useTexture } from "@react-three/drei"
-import { forwardRef, useContext, useMemo } from "react"
+import { Environment, useGLTF, useTexture } from "@react-three/drei"
+import { forwardRef, useContext } from "react"
 import * as THREE from 'three'
 import { LowVertexContext } from "./low-vertex"
 import { TransformGeometry } from "./transform"

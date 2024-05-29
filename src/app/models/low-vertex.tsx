@@ -1,5 +1,5 @@
-import React, { useMemo, useContext, createContext, ReactNode, forwardRef, useEffect } from 'react'
-import { useGLTF, Merged } from '@react-three/drei'
+import React, { useMemo, useContext, createContext, ReactNode, forwardRef } from 'react'
+import { useGLTF } from '@react-three/drei'
 import { GroupProps } from '@react-three/fiber'
 import * as THREE from 'three'
 

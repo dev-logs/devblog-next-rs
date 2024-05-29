@@ -1,25 +1,16 @@
 "use client";
 
-import React, { useContext, useEffect, useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import * as THREE from "three";
 import {
   Canvas,
   useThree,
-  extend as threeFiberExtend,
-  useFrame,
+  extend as threeFiberExtend
 } from "@react-three/fiber";
 import {
-    BBAnchor,
   Bounds,
-  Box,
   Center,
   Environment,
-  Float,
-  OrthographicCamera,
-  Outlines,
-  Resize,
-  ScreenSizer,
-  Stage,
   Text3D,
   useBounds,
   useGLTF,
@@ -29,9 +20,7 @@ import noop from "lodash/noop";
 import SHADERS from "../glsl";
 import CustomShaderMaterial from "three-custom-shader-material/vanilla";
 import {
-  Vignette,
   EffectComposer,
-  Bloom,
   Noise,
 } from "@react-three/postprocessing";
 import gsap from "gsap";
@@ -40,8 +29,6 @@ import { useState } from "react";
 import { useCallback } from "react";
 import useGlitchFrame from "../hooks/use-glitch-frame";
 import useGlitch from "../hooks/use-glitch";
-import { LowVertex } from "../models";
-import { LowVertexModel } from "../models/low-vertex";
 import { ThreeD, ThreeDContext, useThreeDContext } from "../contexts";
 
 threeFiberExtend(CustomShaderMaterial);
