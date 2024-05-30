@@ -1,5 +1,4 @@
 import Image from 'next/image'
-import { BlogList } from './blog-list'
 import {Home as Homee} from './home'
 
 export default function Home() {

@@ -2,167 +2,101 @@
 
 import { useRef } from "react";
 import * as THREE from "three";
+import { Canvas, useThree, useFrame } from "@react-three/fiber";
 import {
-    Canvas,
-    useThree, useFrame
-} from "@react-three/fiber";
-import {
-    Center,
-    Environment, Html, OrbitControls, useTexture
+  Center,
+  Environment,
+  Html,
+  OrbitControls,
+  useTexture,
 } from "@react-three/drei";
 import SHADERS from "../glsl";
 import { useMemo } from "react";
 import useGlitchFrame from "../hooks/use-glitch-frame";
 import { LowVertexModel, LowVertexModelProvider } from "../models/low-vertex";
-import { ThreeD, ThreeDContext, useThreeDContext } from "../contexts";
-import {
-    ComputerWithFaceTransform
-} from "../models/computer";
+import { ComputerWithFaceTransform } from "../models/computer";
 import CustomShaderMaterial from "three-custom-shader-material/vanilla";
+import { ThreeDCanvas } from "../components/canvas";
+import { NavigationBar } from "../components/navigation-bar";
 
 export class HomeProps {}
 
 export const Home = (props: HomeProps) => {
   return (
     <>
-      <div className="flex flex-col">
-        <div className="flex flex-col w-screen h-screen absolute top-0 left-0 z-0">
+      <div className="flex flex-col bg-blue-900">
+        <NavigationBar/>
+        <div className="flex flex-col w-screen h-screen z-0">
+          <ThreeDCanvas>
+            <Header3d />
+          </ThreeDCanvas>
         </div>
-        <div className="absolute top-0 left-0 z-10">
-          <Header3dText />
-        </div>
+        <div className="absolute top-0 left-0 z-10"></div>
       </div>
     </>
   );
 };
 
-export const NavigationBar = (props: any) => {
-  return (
-    <>
-      <div className="bg-gray-50 bg-opacity-15 flex flex-row w-screen py-5 justify-center items-center gap-5">
-        <span className="font-roboto">HOME</span>
-        <span className="font-roboto">BLOGS</span>
-        <span className="font-roboto">WORKS</span>
-      </div>
-    </>
-  );
-};
+export const Ribbon = (props: any) => {
+  const [textMaterial, sphereGeometry] = useMemo(() => {
+    const geometry = new THREE.IcosahedronGeometry(1, 8);
+    const ribbonTextMap = useTexture("/images/ribbon2.png");
+    ribbonTextMap.colorSpace = THREE.SRGBColorSpace;
 
-export const Header = (props: any) => {
-  const { viewport } = useThree();
-  const context = useMemo(
-    () =>
-      new ThreeD({
-        scale: 20,
-        viewport,
-      }),
-    [],
-  );
-
-  return (
-    <>
-      <ThreeDContext.Provider value={context}>
-        <Header3d />
-      </ThreeDContext.Provider>
-    </>
-  );
-};
-
-export const Header3dText = (props: any) => {
-  const Implementation = () => {
-    const [textMaterial, sphereGeometry] = useMemo(
-      () => {
-        const geometry = new THREE.IcosahedronGeometry(1, 8);
-        const ribbonTextMap = useTexture('/images/ribbon2.png')
-        ribbonTextMap.colorSpace = THREE.SRGBColorSpace
-
-        const material = new CustomShaderMaterial({
-          baseMaterial: THREE.MeshBasicMaterial,
-          vertexShader: SHADERS.RibbonTextVertexShader,
-          fragmentShader: SHADERS.RibbonTextFragmentShader,
-          map: ribbonTextMap,
-          silent: true,
-          transparent: true,
-          side: THREE.DoubleSide,
-          color: 'white',
-          uniforms: {
-            uTime: { value: 0.0 },
-            uStrength: { value: 0.15 },
-            uSpeed: { value: 0.5 },
-            uTexture: {value: ribbonTextMap}
-          },
-        })
-
-        return [material, geometry]
+    const material = new CustomShaderMaterial({
+      baseMaterial: THREE.MeshBasicMaterial,
+      vertexShader: SHADERS.RibbonTextVertexShader,
+      fragmentShader: SHADERS.RibbonTextFragmentShader,
+      map: ribbonTextMap,
+      silent: true,
+      transparent: true,
+      side: THREE.DoubleSide,
+      color: "white",
+      uniforms: {
+        uTime: { value: 0.0 },
+        uStrength: { value: 0.3 },
+        uSpeed: { value: 0.5 },
+        uTexture: { value: ribbonTextMap },
       },
-      [],
-    );
-
-    const backgroundMaterial = useMemo(
-      () =>
-        new CustomShaderMaterial({
-          baseMaterial: THREE.MeshBasicMaterial,
-          vertexShader: SHADERS.RibbonBackgroundVertexShader,
-          fragmentShader: SHADERS.RibbonBackgroundFragmentShader,
-          silent: true,
-          uniforms: {
-            uSpeed: { value: 0.5 },
-            uTime: { value: 0 },
-            uColor1: {value: new THREE.Color('#FFC100')},
-            uColor2: {value: new THREE.Color('#1F1717')},
-          },
-        }),
-      [],
-    );
-
-    const sphereRef: any = useRef(null)
-
-    useGlitchFrame(0.0, (tick: any) => {
-      const clock = tick.clock;
-      const elapsedTime = clock.getElapsedTime();
-
-      textMaterial.uniforms.uTime.value = elapsedTime;
-      backgroundMaterial.uniforms.uTime.value = elapsedTime;
-      if (sphereRef.current) {
-        // sphereRef.current.rotation.y = elapsedTime * 0.2
-        // sphereRef.current.rotation.x = 0.5
-      }
     });
 
-    const context = useThree().viewport;
+    return [material, geometry];
+  }, []);
 
-    return (
-      <>
-        <OrbitControls/>
-        <color args={["#0E46A3"]} attach={"background"} />
-        <Center disableY>
-          <mesh material={textMaterial} position={[3, 3, -5]} ref={sphereRef} scale={0.1} geometry={sphereGeometry}>
-          </mesh>
-        </Center>
-      </>
-    );
-  };
+  const sphereRef: any = useRef(null);
+
+  useGlitchFrame(0.0, (tick: any) => {
+    const clock = tick.clock;
+    const elapsedTime = clock.getElapsedTime();
+
+    textMaterial.uniforms.uTime.value = elapsedTime;
+  });
 
   return (
-    <div className="w-screen h-screen">
-      <Canvas>
-        <Implementation/>
-      </Canvas>
-    </div>
+    <>
+      <color args={["#0E46A3"]} attach={"background"} />
+      <mesh
+        material={textMaterial}
+        position={[3, 3, -5]}
+        ref={sphereRef}
+        scale={1}
+        geometry={sphereGeometry}
+        {...props}
+      ></mesh>
+    </>
   );
 };
 
 export const Header3d = (props: any) => {
-  const context = useThreeDContext();
   const airplaneRef: any = useRef(null);
 
   useFrame((tick) => {
     const clock = tick.clock;
     const elapsedTime = clock.getElapsedTime();
     if (airplaneRef.current) {
-      airplaneRef.current.position.x = Math.sin(elapsedTime) * 3;
-      airplaneRef.current.position.y = Math.cos(elapsedTime) * 3 * 0.5;
-      airplaneRef.current.position.z = Math.cos(elapsedTime) * 3 * 0.5;
+      airplaneRef.current.position.x = Math.sin(elapsedTime) * 3 * 0.7;
+      airplaneRef.current.position.y = Math.cos(elapsedTime) * 3 * 0.4 + 0.9;
+      airplaneRef.current.position.z = Math.cos(elapsedTime) * 3 * 0.4;
 
       airplaneRef.current.rotation.y = elapsedTime;
       airplaneRef.current.rotation.x = Math.sin(elapsedTime);
@@ -208,6 +142,10 @@ export const Header3d = (props: any) => {
           </div>
         </Html>
       </ComputerWithFaceTransform>
+      <Ribbon
+        position={[0, -1.5, 0.2]}
+        scale={2.5}
+      />
     </>
   );
 };

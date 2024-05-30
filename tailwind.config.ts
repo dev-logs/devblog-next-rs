@@ -10,6 +10,7 @@ const config: Config = {
     extend: {
       fontFamily: {
         roboto: ['Roboto', 'sans-serif'],
+        graduate: ['Calistoga', 'Roboto', 'sans-serif']
       },
       fontWeight: {
         thin: '100',
@@ -23,6 +24,9 @@ const config: Config = {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
         "gradient-conic":
           "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
+      },
+      transform: {
+        'skew1': 'skewY(-2deg) scale(0.98)',
       },
     },
   },
