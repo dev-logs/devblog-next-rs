@@ -2,36 +2,38 @@
 
 import { useRef } from "react";
 import * as THREE from "three";
-import { Canvas, useThree, useFrame } from "@react-three/fiber";
+import { useFrame } from "@react-three/fiber";
 import {
-  Center,
-  Environment,
   Html,
-  OrbitControls,
   useTexture,
 } from "@react-three/drei";
 import SHADERS from "../glsl";
 import { useMemo } from "react";
 import useGlitchFrame from "../hooks/use-glitch-frame";
-import { LowVertexModel, LowVertexModelProvider } from "../models/low-vertex";
+import { LowVertexModel } from "../models/low-vertex";
 import { ComputerWithFaceTransform } from "../models/computer";
 import CustomShaderMaterial from "three-custom-shader-material/vanilla";
 import { ThreeDCanvas } from "../components/canvas";
 import { NavigationBar } from "../components/navigation-bar";
+import { BlogList } from "../blogs/list";
+import { Footer } from "../footer";
 
 export class HomeProps {}
 
 export const Home = (props: HomeProps) => {
   return (
     <>
-      <div className="flex flex-col bg-blue-900">
-        <NavigationBar/>
-        <div className="flex flex-col w-screen h-screen z-0">
-          <ThreeDCanvas>
+      <NavigationBar/>
+      <div className="flex flex-col bg-black">
+        <div className="flex flex-col w-screen h-screen min-h-[1200px] z-0">
+          <ThreeDCanvas camera={{rotation: new THREE.Euler(-0.1)}} gl={{alpha: true}} style={{background: 'transparent'}}>
             <Header3d />
           </ThreeDCanvas>
         </div>
-        <div className="absolute top-0 left-0 z-10"></div>
+        <div className="min-h-screen w-full flex">
+          <BlogList/>
+        </div>
+        <Footer/>
       </div>
     </>
   );
@@ -74,7 +76,6 @@ export const Ribbon = (props: any) => {
 
   return (
     <>
-      <color args={["#0E46A3"]} attach={"background"} />
       <mesh
         material={textMaterial}
         position={[3, 3, -5]}
@@ -111,7 +112,7 @@ export const Header3d = (props: any) => {
         ref={airplaneRef}
         material={
           new THREE.MeshBasicMaterial({
-            color: "white",
+            color: "#E5D283",
             side: THREE.DoubleSide,
           })
         }
@@ -119,7 +120,6 @@ export const Header3d = (props: any) => {
         scale={2}
         position={[2, 3, 0]}
       />
-      <color args={["#0E46A3"]} attach={"background"} />
       <ComputerWithFaceTransform scales={[6, 6]} position={[0, 0, 0]}>
         <Html
           transform={true}
@@ -143,7 +143,7 @@ export const Header3d = (props: any) => {
         </Html>
       </ComputerWithFaceTransform>
       <Ribbon
-        position={[0, -1.5, 0.2]}
+        position={[0, -1.2, 0.1]}
         scale={2.5}
       />
     </>

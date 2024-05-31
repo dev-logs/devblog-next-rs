@@ -1,4 +1,4 @@
-import { Environment, useGLTF, useTexture } from "@react-three/drei"
+import { useGLTF, useTexture } from "@react-three/drei"
 import { forwardRef, useContext } from "react"
 import * as THREE from 'three'
 import { LowVertexContext } from "./low-vertex"
@@ -12,7 +12,6 @@ export const ComputerWithFace = forwardRef((props: ComputerWithFaceProps & any, 
   const computerTexture = useTexture('/3d-models/the-scene-1/base-texture-computer-4.jpg')
   computerTexture.colorSpace = THREE.SRGBColorSpace
   computerTexture.flipY = false
-  console.log(model)
 
   model.scene.traverse((c: any) => {
     c.material = new THREE.MeshBasicMaterial({
@@ -21,10 +20,6 @@ export const ComputerWithFace = forwardRef((props: ComputerWithFaceProps & any, 
   })
 
   return <>
-    <Environment
-      files={"/3d-models/the-scene-1/environment-tokio.hdr"}
-      environmentIntensity={10}
-    />
     <primitive ref={ref} object={model.scene} scale={1} {...props}>{props.children}</primitive>
   </>
 })
@@ -39,10 +34,6 @@ export const ComputerWithFaceTransform = (props: ComputerWithFaceTransformProps 
   const toModel: any = useGLTF('/3d-models/the-scene-1/geometries-computer-4.glb').scene.children[0]
 
   return <>
-    <Environment
-      preset="city"
-      environmentIntensity={2}
-    />
     <TransformGeometry
       geometries={[fromModel.geometry, toModel.geometry]}
       scales={[8, 8]}
