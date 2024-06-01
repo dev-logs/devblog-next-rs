@@ -5,6 +5,8 @@ import * as THREE from "three";
 import { useFrame } from "@react-three/fiber";
 import {
   Html,
+  Scroll,
+  useScroll,
   useTexture,
 } from "@react-three/drei";
 import SHADERS from "../glsl";
@@ -15,8 +17,9 @@ import { ComputerWithFaceTransform } from "../models/computer";
 import CustomShaderMaterial from "three-custom-shader-material/vanilla";
 import { ThreeDCanvas } from "../components/canvas";
 import { NavigationBar } from "../components/navigation-bar";
-import { BlogList } from "../blogs/list";
+import { BlogList, BlogListBackground } from "../blogs/list";
 import { Footer } from "../footer";
+import { useThreeDContext } from "../contexts";
 
 export class HomeProps {}
 
@@ -25,19 +28,36 @@ export const Home = (props: HomeProps) => {
     <>
       <NavigationBar/>
       <div className="flex flex-col bg-black">
-        <div className="flex flex-col w-screen h-screen min-h-[1200px] z-0">
-          <ThreeDCanvas camera={{rotation: new THREE.Euler(-0.1)}} gl={{alpha: true}} style={{background: 'transparent'}}>
-            <Header3d />
+        <div className="flex w-screen h-screen z-0">
+          <ThreeDCanvas gl={{alpha: true}} style={{background: 'transparent'}}>
+            <CameraControls/>
+            <Scroll>
+              <Header3d />
+            </Scroll>
+            <Scroll>
+              <BlogListBackground position={[2.5, -8, 0]}/>
+            </Scroll>
+            <Scroll html>
+              <div className="mt-[150vh]">
+                <BlogList/>
+              </div>
+            </Scroll>
           </ThreeDCanvas>
         </div>
-        <div className="min-h-screen w-full flex">
-          <BlogList/>
-        </div>
-        <Footer/>
       </div>
     </>
   );
 };
+
+const CameraControls = (props: any) => {
+  const data = useScroll()
+  useFrame(() => {
+    const a = data.range(0, 1 / 3)
+    console.log(a)
+  })
+
+  return <></>
+}
 
 export const Ribbon = (props: any) => {
   const [textMaterial, sphereGeometry] = useMemo(() => {
@@ -67,7 +87,7 @@ export const Ribbon = (props: any) => {
 
   const sphereRef: any = useRef(null);
 
-  useGlitchFrame(0.0, (tick: any) => {
+  useFrame((tick: any) => {
     const clock = tick.clock;
     const elapsedTime = clock.getElapsedTime();
 
@@ -120,9 +140,9 @@ export const Header3d = (props: any) => {
         scale={2}
         position={[2, 3, 0]}
       />
-      <ComputerWithFaceTransform scales={[6, 6]} position={[0, 0, 0]}>
+      <ComputerWithFaceTransform scales={[6, 6]} position={[0, -0.5, 0]}>
         <Html
-          transform={true}
+          transform
           wrapperClass="htmlScreen"
           distanceFactor={0.15}
           occlude={"blending"}
@@ -143,7 +163,7 @@ export const Header3d = (props: any) => {
         </Html>
       </ComputerWithFaceTransform>
       <Ribbon
-        position={[0, -1.2, 0.1]}
+        position={[0, -1.5, 0.1]}
         scale={2.5}
       />
     </>

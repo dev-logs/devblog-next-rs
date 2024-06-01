@@ -3,6 +3,7 @@ import { forwardRef } from "react"
 import { ThreeD, ThreeDContext } from "../contexts"
 import { omit } from "lodash"
 import { LowVertexModelProvider } from "../models/low-vertex"
+import { ScrollControls } from "@react-three/drei"
 
 export interface ThreeDCanvasProps extends CanvasProps {
 
@@ -15,9 +16,11 @@ export const ThreeDCanvas = forwardRef((
     const {viewport} = useThree()
     const context = new ThreeD({scale: 10, viewport})
     return <LowVertexModelProvider>
-      <ThreeDContext.Provider value={context}>
-        {props.children}
-      </ThreeDContext.Provider>
+        <ThreeDContext.Provider value={context}>
+          <ScrollControls damping={0.1} pages={3}>
+            {props.children}
+          </ScrollControls>
+        </ThreeDContext.Provider>
     </LowVertexModelProvider>
   }
 

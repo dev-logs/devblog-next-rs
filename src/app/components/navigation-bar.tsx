@@ -3,7 +3,7 @@ const navigationItemClass = () => 'font-roboto text-white'
 
 export const NavigationBar = (props: any) => {
   return <>
-    <div className="grid fixed grid-cols-5 rounded-full gap-16 mx-20 top-5 left-20 right-20 bg-gray-50 bg-opacity-10 backdrop-blur-lg items-center justify-between px-4 py-4 z-10">
+    <div className="grid fixed grid-cols-5 rounded-full gap-16 mx-20 top-5 left-20 right-20 bg-gray-50 bg-opacity-10 backdrop-blur-lg items-center justify-between px-4 py-4 z-50">
       <div className="flex flex-row space-x-10 col-span-2 justify-end">
         <span className={navigationItemClass()}>WORKS</span>
         <span className={navigationItemClass()}>CONTACTS</span>

@@ -1,7 +1,6 @@
 import { Center, Text3D } from "@react-three/drei"
 import { ThreeDCanvas } from "../components/canvas"
 import { useMemo, useRef } from "react"
-import * as fiber from '@react-three/fiber'
 import Shaders from "../glsl"
 import useGlitchFrame from "../hooks/use-glitch-frame"
 import CustomShaderMaterial from "three-custom-shader-material/vanilla"
@@ -20,11 +19,11 @@ export const Footer = (props: FooterProps) => {
 }
 
 export const Implementation = (props: FooterProps) => {
+  const textRef: any = useRef(null)
+
   const textMaterial = useMemo(() => {
     return new CustomShaderMaterial({
       baseMaterial: MeshBasicMaterial,
-      vertexShader: Shaders.SimpleWobbleVertexShader,
-      fragmentShader: Shaders.SimpleWobbleFragmentShader,
       color: 'white',
       uniforms: {
         uTime: {value: 0},
@@ -36,12 +35,17 @@ export const Implementation = (props: FooterProps) => {
   useGlitchFrame(0.3, (tick) => {
     const clock = tick.clock
     const elapsed = clock.getElapsedTime()
-    textMaterial.uniforms.uTime.value = elapsed
+    // textMaterial.uniforms.uTime.value = elapsed
+
+    if (textRef.current) {
+      textRef.current.rotation.x = elapsed * 0.1
+    }
   })
 
   return <>
     <Center>
       <Text3D
+        ref={textRef}
         font={"/fonts/graduate.typeface.json"}
         size={3}
         material={textMaterial}
