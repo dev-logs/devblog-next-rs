@@ -17,7 +17,7 @@ import { ComputerWithFaceTransform } from "../models/computer";
 import CustomShaderMaterial from "three-custom-shader-material/vanilla";
 import { ThreeDCanvas } from "../components/canvas";
 import { NavigationBar } from "../components/navigation-bar";
-import { BlogList, BlogListBackground } from "../blogs/list";
+import { BlogList, BlogListBackground, BlogListTitle } from "../blogs/list";
 import { Footer } from "../footer";
 import { useThreeDContext } from "../contexts";
 
@@ -35,10 +35,10 @@ export const Home = (props: HomeProps) => {
               <Header3d />
             </Scroll>
             <Scroll>
-              <BlogListBackground position={[2.5, -8, 0]}/>
+              <BlogListBackground position={[2.5, -9.5, 0]}/>
             </Scroll>
             <Scroll html>
-              <div className="mt-[150vh]">
+              <div className="mt-[100vh]">
                 <BlogList/>
               </div>
             </Scroll>
