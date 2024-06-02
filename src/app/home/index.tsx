@@ -2,8 +2,8 @@
 
 import { useRef } from "react";
 import * as THREE from "three";
-import { useFrame } from "@react-three/fiber";
 import {
+    Center,
   Html,
   Scroll,
   useScroll,
@@ -20,6 +20,10 @@ import { NavigationBar } from "../components/navigation-bar";
 import { BlogList, BlogListBackground, BlogListTitle } from "../blogs/list";
 import { Footer } from "../footer";
 import { useThreeDContext } from "../contexts";
+import { Geo } from "next/font/google";
+import { useFrame } from "@react-three/fiber";
+
+const TOTAL_PAGES = 3
 
 export class HomeProps {}
 
@@ -27,21 +31,22 @@ export const Home = (props: HomeProps) => {
   return (
     <>
       <NavigationBar/>
-      <div className="flex flex-col bg-black">
+      <div className="flex flex-col">
         <div className="flex w-screen h-screen z-0">
           <ThreeDCanvas
             gl={{alpha: true}}
             style={{background: 'transparent'}}
-            scroll={{pages: 3, maxSpeed: 0.8}}>
+            scroll={{infinite: false, pages: TOTAL_PAGES, maxSpeed: 1.1}}>
             <CameraControls/>
-            <Header3d />
+            <Scroll>
+              <Background/>
+            </Scroll>
+            <Header3d/>
             <Scroll>
               <BlogListBackground position={[2.5, -9.5, 0]}/>
             </Scroll>
-            <Scroll html>
-              <div className="mt-[100vh] mr-5">
-                <BlogList/>
-              </div>
+            <Scroll>
+              <HtmlDoms/>
             </Scroll>
           </ThreeDCanvas>
         </div>
@@ -50,11 +55,54 @@ export const Home = (props: HomeProps) => {
   );
 };
 
+const HtmlDoms = (props: any) => {
+  const scrollData = useScroll();
+
+  return <Html
+    portal={{current: scrollData.fixed}}>
+    <div className="absolute top-[50vh] left-[-50vw] mr-5 h-screen w-screen">
+      <BlogList/>
+    </div>
+  </Html>
+}
+
+const Background = (props: any) => {
+  const scroll = useScroll()
+  const [material] = useMemo(() => {
+    const material = new CustomShaderMaterial({
+      baseMaterial: THREE.MeshBasicMaterial,
+      vertexShader: SHADERS.ColorBackgroundVertexShader,
+      fragmentShader: SHADERS.ColorBackgroundFragmentShader,
+      uniforms: {
+        uTime: {value: 0},
+        uProgress: {value: 0},
+        uColor1: {value: new THREE.Color('#0B60B0')},
+        uColor2: {value: new THREE.Color('#191919')}
+      }
+    })
+
+    return [material]
+  }, [])
+
+  useFrame((tick) => {
+    const clock = tick.clock
+    const elapsedTime = clock.getElapsedTime()
+    const scrollRange = scroll.range(0, 1 / TOTAL_PAGES)
+
+    material.uniforms.uTime.value = elapsedTime
+    material.uniforms.uProgress.value = scrollRange
+  })
+
+  return <>
+    <mesh position={[0, 0, -5]} material={material}>
+      <planeGeometry args={[100, 100]}/>
+    </mesh>
+  </>
+}
+
 const CameraControls = (props: any) => {
   const data = useScroll()
   useFrame(() => {
-    const a = data.range(0, 1 / 3)
-    console.log(a)
   })
 
   return <></>
@@ -88,7 +136,6 @@ export const Ribbon = (props: any) => {
 
   const sphereRef: any = useRef(null);
 
-
   useFrame((tick: any) => {
     const clock = tick.clock;
     const elapsedTime = clock.getElapsedTime();
@@ -112,9 +159,10 @@ export const Ribbon = (props: any) => {
 
 export const Header3d = (props: any) => {
   const airplaneRef: any = useRef(null);
+  const scrollData = useScroll();
 
   const scroll = useScroll()
-  useFrame((tick) => {
+  useFrame((tick: any) => {
     const scrollRange = scroll.range(0, 1)
     const clock = tick.clock;
     const elapsedTime = clock.getElapsedTime();
@@ -147,32 +195,32 @@ export const Header3d = (props: any) => {
         position={[2, 3, 0]}
       />
       <Scroll>
-      <ComputerWithFaceTransform scales={[6, 6]} position={[0, -0.5, 0]}>
-        <Html
-          transform
-          wrapperClass="htmlScreen"
-          distanceFactor={0.15}
-          occlude={"blending"}
-          position={[-0.025, 0.2, 0]}
-        >
-          <div className="flex gap-3 flex-col items-center p-2">
-            <div className="flex flex-row gap-1">
-              <span className="text-[#0E46A3] px-3 bg-green-400 font-roboto text-6xl font-black rounded-tr-lg">
-                CREATIVE
+        <ComputerWithFaceTransform scales={[6, 6]} position={[0, -0.5, 0]}>
+          <Html
+            portal={{current: scrollData.fixed}}
+            transform
+            wrapperClass="htmlScreen overflow-hidden h-20 w-20"
+            distanceFactor={0.15}
+            occlude={"blending"}
+            position={[-0.025, 0.2, 0]}>
+            <div className="flex gap-3 flex-col items-center p-2">
+              <div className="flex flex-row gap-1">
+                <span className="text-[#0E46A3] px-3 bg-green-400 font-roboto text-6xl font-black rounded-tr-lg">
+                  CREATIVE
+                </span>
+                <span className="font-roboto text-6xl font-black">STUDIO</span>
+              </div>
+              <span className="font-roboto text-6xl font-black rounded-tr-sm">
+                SOFTWARE
               </span>
-              <span className="font-roboto text-6xl font-black">STUDIO</span>
+              <span className="font-roboto text-6xl font-black">ENGINEERING</span>
             </div>
-            <span className="font-roboto text-6xl font-black rounded-tr-sm">
-              SOFTWARE
-            </span>
-            <span className="font-roboto text-6xl font-black">ENGINEERING</span>
-          </div>
-        </Html>
-      </ComputerWithFaceTransform>
-      <Ribbon
-        position={[0, -1.5, 0.1]}
-        scale={2.5}
-      />
+          </Html>
+        </ComputerWithFaceTransform>
+        <Ribbon
+          position={[0, -1.5, 0.1]}
+          scale={2.5}
+        />
       </Scroll>
     </>
   );

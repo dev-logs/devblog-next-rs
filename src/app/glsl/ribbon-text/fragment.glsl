@@ -12,8 +12,9 @@ void main()
     uv.x = max(uv.x, 0.0);
 
     vec4 color = texture2D(uTexture, uv);
-    color.rgb += vElevation;
+    color.rgb -= vElevation;
     color.rgb += uv.y - 0.5;
+    color.rgb = max(vec3(0.0), color.rgb);
 
     // Bugs fix: a strangth line appear when load an image
     color.a = step(0.45, 1.0 - vUv.y) * color.a;

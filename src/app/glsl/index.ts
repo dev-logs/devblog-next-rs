@@ -12,6 +12,8 @@ import RibbonBackgroundVertexShader from './ribbon-background/vertex.glsl'
 import RibbonBackgroundFragmentShader from './ribbon-background/fragment.glsl'
 import ElectricalEffectVertexShader from './electrical-effect/vertex.glsl'
 import ElectricalEffectFragmentShader from './electrical-effect/fragment.glsl'
+import ColorBackgroundVertexShader from './color-background/vertex.glsl'
+import ColorBackgroundFragmentShader from './color-background/fragment.glsl'
 
 const Shaders = {
   SimpleWobbleVertexShader,
@@ -27,7 +29,9 @@ const Shaders = {
   RibbonBackgroundVertexShader,
   RibbonBackgroundFragmentShader,
   ElectricalEffectVertexShader,
-  ElectricalEffectFragmentShader
+  ElectricalEffectFragmentShader,
+  ColorBackgroundVertexShader,
+  ColorBackgroundFragmentShader
 }
 
 export default Shaders

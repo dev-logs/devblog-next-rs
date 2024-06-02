@@ -22,9 +22,6 @@ export const TransformGeometry = (props: TransformGeometryProps & any) => {
   let { geometries, selectedIndex, delay, duration, scales, normalScale, glitchTimeout, onComplete } =
     props;
 
-  const map = useTexture("/3d-models/the-scene-1/environment-tokio.jpg");
-  map.colorSpace = THREE.SRGBColorSpace;
-
   const { mesh, material, updateAttributes, saveAnimation } = useMemo(() => {
     const material = new CustomShaderMaterial({
       baseMaterial: THREE.MeshPhysicalMaterial,
@@ -36,7 +33,6 @@ export const TransformGeometry = (props: TransformGeometryProps & any) => {
       wireframe: false,
       silent: true,
       vertexColors: true,
-      map,
       uniforms: {
         uTime: { value: 0.0 },
         uNormalScale: { value: normalScale }

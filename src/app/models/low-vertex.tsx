@@ -69,5 +69,3 @@ export const LowVertexModel = forwardRef((props: LowVertexModelProps, ref) => {
 })
 
 LowVertexModel.displayName = 'LowVertexModel'
-
-useGLTF.preload('/3d-models/low-vertex/geometries.glb')
