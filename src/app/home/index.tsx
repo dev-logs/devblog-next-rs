@@ -29,16 +29,17 @@ export const Home = (props: HomeProps) => {
       <NavigationBar/>
       <div className="flex flex-col bg-black">
         <div className="flex w-screen h-screen z-0">
-          <ThreeDCanvas gl={{alpha: true}} style={{background: 'transparent'}}>
+          <ThreeDCanvas
+            gl={{alpha: true}}
+            style={{background: 'transparent'}}
+            scroll={{pages: 3, maxSpeed: 0.8}}>
             <CameraControls/>
-            <Scroll>
-              <Header3d />
-            </Scroll>
+            <Header3d />
             <Scroll>
               <BlogListBackground position={[2.5, -9.5, 0]}/>
             </Scroll>
             <Scroll html>
-              <div className="mt-[100vh]">
+              <div className="mt-[100vh] mr-5">
                 <BlogList/>
               </div>
             </Scroll>
@@ -62,7 +63,7 @@ const CameraControls = (props: any) => {
 export const Ribbon = (props: any) => {
   const [textMaterial, sphereGeometry] = useMemo(() => {
     const geometry = new THREE.IcosahedronGeometry(1, 8);
-    const ribbonTextMap = useTexture("/images/ribbon2.png");
+    const ribbonTextMap = useTexture("/images/ribbon.png");
     ribbonTextMap.colorSpace = THREE.SRGBColorSpace;
 
     const material = new CustomShaderMaterial({
@@ -86,6 +87,7 @@ export const Ribbon = (props: any) => {
   }, []);
 
   const sphereRef: any = useRef(null);
+
 
   useFrame((tick: any) => {
     const clock = tick.clock;
@@ -111,7 +113,9 @@ export const Ribbon = (props: any) => {
 export const Header3d = (props: any) => {
   const airplaneRef: any = useRef(null);
 
+  const scroll = useScroll()
   useFrame((tick) => {
+    const scrollRange = scroll.range(0, 1)
     const clock = tick.clock;
     const elapsedTime = clock.getElapsedTime();
     if (airplaneRef.current) {
@@ -123,6 +127,8 @@ export const Header3d = (props: any) => {
       airplaneRef.current.rotation.x = Math.sin(elapsedTime);
       airplaneRef.current.rotation.z =
         Math.cos(elapsedTime * 2) * 0.3 * Math.PI;
+
+      airplaneRef.current.position.y += scrollRange * 8
     }
   });
 
@@ -140,6 +146,7 @@ export const Header3d = (props: any) => {
         scale={2}
         position={[2, 3, 0]}
       />
+      <Scroll>
       <ComputerWithFaceTransform scales={[6, 6]} position={[0, -0.5, 0]}>
         <Html
           transform
@@ -166,6 +173,7 @@ export const Header3d = (props: any) => {
         position={[0, -1.5, 0.1]}
         scale={2.5}
       />
+      </Scroll>
     </>
   );
 };
