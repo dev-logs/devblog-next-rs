@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import * as THREE from "three";
 import {
     Center,
@@ -13,15 +13,14 @@ import SHADERS from "../glsl";
 import { useMemo } from "react";
 import useGlitchFrame from "../hooks/use-glitch-frame";
 import { LowVertexModel } from "../models/low-vertex";
-import { ComputerWithFaceTransform } from "../models/computer";
+import { ComputerWithFace, ComputerWithFaceTransform } from "../models/computer";
 import CustomShaderMaterial from "three-custom-shader-material/vanilla";
 import { ThreeDCanvas } from "../components/canvas";
 import { NavigationBar } from "../components/navigation-bar";
 import { BlogList, BlogListBackground, BlogListTitle } from "../blogs/list";
-import { Footer } from "../footer";
-import { useThreeDContext } from "../contexts";
-import { Geo } from "next/font/google";
 import { useFrame } from "@react-three/fiber";
+import { MacOne } from "../models/macone";
+import { Tivi } from "../components/tivi";
 
 const TOTAL_PAGES = 3
 
@@ -38,9 +37,7 @@ export const Home = (props: HomeProps) => {
             style={{background: 'transparent'}}
             scroll={{infinite: false, pages: TOTAL_PAGES, maxSpeed: 1.1}}>
             <CameraControls/>
-            <Scroll>
-              <Background/>
-            </Scroll>
+            <Background/>
             <Header3d/>
             <Scroll>
               <BlogListBackground position={[2.5, -9.5, 0]}/>
@@ -58,8 +55,11 @@ export const Home = (props: HomeProps) => {
 const HtmlDoms = (props: any) => {
   const scrollData = useScroll();
 
-  return <Html
-    portal={{current: scrollData.fixed}}>
+  return <Html portal={{current: scrollData.fixed}}>
+  <div className="absolute top-[-75vh] left-[-50vw] flex flex-col gap-10 items-center p-2 w-screen h-screen justify-center">
+    <span className="text-9xl font-graduate text-black">DEVLOGS STUDIO</span>
+    <span className="text-8xl font-graduate text-black">CREATIVE STUDIO</span>
+  </div>
     <div className="absolute top-[50vh] left-[-50vw] mr-5 h-screen w-screen">
       <BlogList/>
     </div>
@@ -76,7 +76,7 @@ const Background = (props: any) => {
       uniforms: {
         uTime: {value: 0},
         uProgress: {value: 0},
-        uColor1: {value: new THREE.Color('#0B60B0')},
+        uColor1: {value: new THREE.Color('#191919')},
         uColor2: {value: new THREE.Color('#191919')}
       }
     })
@@ -149,7 +149,7 @@ export const Ribbon = (props: any) => {
         material={textMaterial}
         position={[3, 3, -5]}
         ref={sphereRef}
-        scale={1}
+        scale={2}
         geometry={sphereGeometry}
         {...props}
       ></mesh>
@@ -185,9 +185,10 @@ export const Header3d = (props: any) => {
       <LowVertexModel
         ref={airplaneRef}
         material={
-          new THREE.MeshBasicMaterial({
-            color: "#E5D283",
-            side: THREE.DoubleSide,
+          new THREE.MeshStandardMaterial({
+            color: "#C5FF95",
+            emissive: '#C5FF95',
+            side: THREE.DoubleSide
           })
         }
         name="paper-airplane"
@@ -195,32 +196,11 @@ export const Header3d = (props: any) => {
         position={[2, 3, 0]}
       />
       <Scroll>
-        <ComputerWithFaceTransform scales={[6, 6]} position={[0, -0.5, 0]}>
-          <Html
-            portal={{current: scrollData.fixed}}
-            transform
-            wrapperClass="htmlScreen overflow-hidden h-20 w-20"
-            distanceFactor={0.15}
-            occlude={"blending"}
-            position={[-0.025, 0.2, 0]}>
-            <div className="flex gap-3 flex-col items-center p-2">
-              <div className="flex flex-row gap-1">
-                <span className="text-[#0E46A3] px-3 bg-green-400 font-roboto text-6xl font-black rounded-tr-lg">
-                  CREATIVE
-                </span>
-                <span className="font-roboto text-6xl font-black">STUDIO</span>
-              </div>
-              <span className="font-roboto text-6xl font-black rounded-tr-sm">
-                SOFTWARE
-              </span>
-              <span className="font-roboto text-6xl font-black">ENGINEERING</span>
-            </div>
-          </Html>
-        </ComputerWithFaceTransform>
-        <Ribbon
-          position={[0, -1.5, 0.1]}
-          scale={2.5}
-        />
+        <Tivi scale={9} position={[0, -2.5, 0]}/>
+      <Ribbon
+        position={[0, -1.8, 0.1]}
+        scale={2.5}
+      />
       </Scroll>
     </>
   );

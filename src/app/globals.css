@@ -2,6 +2,19 @@
 @tailwind components;
 @tailwind utilities;
 
+.typeJsWrapper {
+  padding: 50px;
+}
+
+.typeJsWrapper .typeJsText {
+  text-align: center;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+  font-size: 48px;
+  display: inline-block;
+  padding: 0;
+  border-right: 1px solid #414141;
+}
+
 :root {
   --foreground-rgb: 0, 0, 0;
   --background-start-rgb: 214, 219, 220;

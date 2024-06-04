@@ -19,6 +19,7 @@ export default function RootLayout({
       <head>
         <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400;500;700;900&display=swap" rel="stylesheet"/>
         <link href="https://fonts.googleapis.com/css2?family=Calistoga&family=Graduate&display=swap" rel="stylesheet"/>
+        <link href="https://fonts.googleapis.com/css2?family=Arvo:ital,wght@0,700;1,400;1,700&display=swap" rel="stylesheet"/>
       </head>
       <body className={`${inter.className} h-screen w-screen`}>{children}</body>
     </html>

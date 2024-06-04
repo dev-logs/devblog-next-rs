@@ -33,7 +33,7 @@ export const ElectricalEffect = (props: ElectricalEffectProps) => {
 
   return <>
     <EffectComposer>
-      <Bloom luminanceThreshold={ 1.1 } mipmapBlur intensity={0.5}/>
+      <Bloom luminanceThreshold={ 1.1 } mipmapBlur intensity={1}/>
     </EffectComposer>
     <directionalLight castShadow position={ [ 1, 2, 3 ] } intensity={ 4.5 } />
     <ambientLight intensity={ 4.1 } />

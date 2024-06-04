@@ -14,6 +14,8 @@ import ElectricalEffectVertexShader from './electrical-effect/vertex.glsl'
 import ElectricalEffectFragmentShader from './electrical-effect/fragment.glsl'
 import ColorBackgroundVertexShader from './color-background/vertex.glsl'
 import ColorBackgroundFragmentShader from './color-background/fragment.glsl'
+import TvFragmentShader from './tv/c1/fragment.glsl'
+import TvVertexShader from './tv/c1/vertex.glsl'
 
 const Shaders = {
   SimpleWobbleVertexShader,
@@ -31,7 +33,9 @@ const Shaders = {
   ElectricalEffectVertexShader,
   ElectricalEffectFragmentShader,
   ColorBackgroundVertexShader,
-  ColorBackgroundFragmentShader
+  ColorBackgroundFragmentShader,
+  TvVertexShader,
+  TvFragmentShader
 }
 
 export default Shaders
