@@ -10,7 +10,8 @@ const config: Config = {
     extend: {
       fontFamily: {
         roboto: ['Roboto', 'sans-serif'],
-        graduate: ['Graduate', 'Calistoga', 'Roboto', 'sans-serif']
+        graduate: ['Graduate', 'Calistoga', 'Roboto', 'sans-serif'],
+        Alfa: ['Alfa Slab One', 'sans-serif']
       },
       fontWeight: {
         thin: '100',

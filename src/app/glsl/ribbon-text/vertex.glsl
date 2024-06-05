@@ -12,6 +12,6 @@ void main() {
     vUv = uv;
 
     csm_Position.y += cos(csm_Position.x * 2.0 - uTime) * uStrength * uSpeed;
-    csm_Position.z += sin(csm_Position.y * 0.5 - uTime) * 0.2 * uSpeed;
+    csm_Position.z += sin(csm_Position.y * 0.4 - uTime) * 0.1 * uSpeed;
     vElevation = vec3(csm_Position.z * 0.1);
 }

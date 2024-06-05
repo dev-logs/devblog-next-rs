@@ -21,8 +21,9 @@ import { BlogList, BlogListBackground, BlogListTitle } from "../blogs/list";
 import { useFrame } from "@react-three/fiber";
 import { MacOne } from "../models/macone";
 import { Tivi } from "../components/tivi";
+import { BasicInteraction } from "../components/basic-interaction";
 
-const TOTAL_PAGES = 3
+const TOTAL_PAGES = 4
 
 export class HomeProps {}
 
@@ -60,9 +61,13 @@ const HtmlDoms = (props: any) => {
     <span className="text-9xl font-graduate text-black">DEVLOGS STUDIO</span>
     <span className="text-8xl font-graduate text-black">CREATIVE STUDIO</span>
   </div>
-    <div className="absolute top-[50vh] left-[-50vw] mr-5 h-screen w-screen">
-      <BlogList/>
+  <div className="absolute top-[50vh] left-[-50vw] mr-5 w-screen flex flex-col gap-52">
+    <BlogList/>
+    <div className="my-10">
+      <BasicInteraction/>
     </div>
+    <div className="h-96"></div>
+  </div>
   </Html>
 }
 
@@ -76,7 +81,7 @@ const Background = (props: any) => {
       uniforms: {
         uTime: {value: 0},
         uProgress: {value: 0},
-        uColor1: {value: new THREE.Color('#191919')},
+        uColor1: {value: new THREE.Color('#F1EFEF')},
         uColor2: {value: new THREE.Color('#191919')}
       }
     })
@@ -168,15 +173,14 @@ export const Header3d = (props: any) => {
     const elapsedTime = clock.getElapsedTime();
     if (airplaneRef.current) {
       airplaneRef.current.position.x = Math.sin(elapsedTime) * 3 * 0.7;
-      airplaneRef.current.position.y = Math.cos(elapsedTime) * 3 * 0.4 + 0.9;
+      airplaneRef.current.position.y = Math.cos(elapsedTime) * 3 * 0.4;
       airplaneRef.current.position.z = Math.cos(elapsedTime) * 3 * 0.4;
 
       airplaneRef.current.rotation.y = elapsedTime;
       airplaneRef.current.rotation.x = Math.sin(elapsedTime);
-      airplaneRef.current.rotation.z =
-        Math.cos(elapsedTime * 2) * 0.3 * Math.PI;
+      airplaneRef.current.rotation.z = Math.cos(elapsedTime * 2) * 0.3 * Math.PI;
 
-      airplaneRef.current.position.y += scrollRange * 8
+      airplaneRef.current.position.y += scrollRange * 12
     }
   });
 
@@ -185,22 +189,22 @@ export const Header3d = (props: any) => {
       <LowVertexModel
         ref={airplaneRef}
         material={
-          new THREE.MeshStandardMaterial({
-            color: "#C5FF95",
-            emissive: '#C5FF95',
+          new THREE.MeshBasicMaterial({
+            color: "#F05454",
             side: THREE.DoubleSide
           })
         }
         name="paper-airplane"
-        scale={2}
-        position={[2, 3, 0]}
+        scale={3}
+        position={[2, -3, 0]}
       />
       <Scroll>
-        <Tivi scale={9} position={[0, -2.5, 0]}/>
-      <Ribbon
-        position={[0, -1.8, 0.1]}
-        scale={2.5}
-      />
+        <Tivi
+          scale={9}
+          position={[0, -2.5, 0]}/>
+        <Ribbon
+          position={[0, -1.8, 0.1]}
+          scale={2.5}/>
       </Scroll>
     </>
   );

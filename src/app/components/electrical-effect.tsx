@@ -4,6 +4,7 @@ import * as THREE from 'three'
 import CustomShaderMaterial from 'three-custom-shader-material/vanilla'
 import { useGLTF } from '@react-three/drei'
 import { Bloom, Noise, Glitch, ToneMapping, Vignette, EffectComposer } from '@react-three/postprocessing'
+import { Source_Serif_4 } from 'next/font/google'
 
 interface ElectricalEffectProps {
   position: any
@@ -12,7 +13,6 @@ interface ElectricalEffectProps {
 export const ElectricalEffect = (props: ElectricalEffectProps) => {
   const [material, geometry, wireGeometry]: any = useMemo(() => {
     const wireGeometry = useGLTF('/3d-models/bloom/geometries.glb')
-    console.log('debug', wireGeometry)
 
     const material = new CustomShaderMaterial({
       baseMaterial: THREE.MeshBasicMaterial,
@@ -33,9 +33,9 @@ export const ElectricalEffect = (props: ElectricalEffectProps) => {
 
   return <>
     <EffectComposer>
-      <Bloom luminanceThreshold={ 1.1 } mipmapBlur intensity={1}/>
+      <Bloom luminanceThreshold={ 1.2 } mipmapBlur intensity={2}/>
     </EffectComposer>
-    <directionalLight castShadow position={ [ 1, 2, 3 ] } intensity={ 4.5 } />
+    <directionalLight position={ [ 1, 2, 3 ] } intensity={ 4.5 } />
     <ambientLight intensity={ 4.1 } />
     {/* <primitive object={wireGeometry.scene} {...props}/> */}
     <mesh geometry={wireGeometry.scene.children[0].geometry} rotation-y={1} scale={0.5} {...props}>

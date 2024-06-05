@@ -13,10 +13,7 @@ export const Tivi = (props: any) => {
 
   const [screenMaterial]: any = useMemo(() => {
     const screenMaterial = new CustomShaderMaterial({
-      baseMaterial: THREE.MeshStandardMaterial,
-      emissiveIntensity: 0.1,
-      emissive: '#E0C097',
-      color: '#E0C097',
+      baseMaterial: THREE.MeshBasicMaterial,
       vertexShader: Shaders.TvVertexShader,
       fragmentShader: Shaders.TvFragmentShader,
       uniforms: {
