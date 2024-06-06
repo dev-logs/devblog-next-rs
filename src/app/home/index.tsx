@@ -58,12 +58,11 @@ const HtmlDoms = (props: any) => {
 
   return <Html portal={{current: scrollData.fixed}}>
   <div className="absolute top-[-75vh] left-[-50vw] flex flex-col gap-10 items-center p-2 w-screen h-screen justify-center">
-    <span className="text-9xl font-graduate text-black">DEVLOGS STUDIO</span>
-    <span className="text-8xl font-graduate text-black">CREATIVE STUDIO</span>
+    <span className="text-8xl font-graduate text-center text-black">DEVLOGS STUDIO, CREATIVE SOFTWARE DESIGN</span>
   </div>
   <div className="absolute top-[50vh] left-[-50vw] mr-5 w-screen flex flex-col gap-52">
     <BlogList/>
-    <div className="my-10">
+    <div className="mx-10">
       <BasicInteraction/>
     </div>
     <div className="h-96"></div>
@@ -114,9 +113,9 @@ const CameraControls = (props: any) => {
 }
 
 export const Ribbon = (props: any) => {
+  const ribbonTextMap = useTexture("/images/ribbon.png");
   const [textMaterial, sphereGeometry] = useMemo(() => {
     const geometry = new THREE.IcosahedronGeometry(1, 8);
-    const ribbonTextMap = useTexture("/images/ribbon.png");
     ribbonTextMap.colorSpace = THREE.SRGBColorSpace;
 
     const material = new CustomShaderMaterial({

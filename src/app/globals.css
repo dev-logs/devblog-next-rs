@@ -2,6 +2,13 @@
 @tailwind components;
 @tailwind utilities;
 
+@font-face {
+  font-family: 'Damn';
+  src: url('/fonts/damn.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
 .typeJsWrapper {
   padding: 50px;
 }

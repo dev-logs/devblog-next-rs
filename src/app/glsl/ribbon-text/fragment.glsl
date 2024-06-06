@@ -7,7 +7,7 @@ varying vec3 vElevation;
 void main()
 {
     vec2 uv = vUv;
-    uv.x -= uTime * 0.3 * uSpeed;
+    uv.x -= uTime * 0.5 * uSpeed;
     uv.x = mod(uv.x, 1.0);
     uv.x = max(uv.x, 0.0);
 

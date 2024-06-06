@@ -5,6 +5,7 @@ import CustomShaderMaterial from 'three-custom-shader-material/vanilla'
 import { useGLTF } from '@react-three/drei'
 import { Bloom, Noise, Glitch, ToneMapping, Vignette, EffectComposer } from '@react-three/postprocessing'
 import { Source_Serif_4 } from 'next/font/google'
+import { mx_bits_to_01 } from 'three/examples/jsm/nodes/materialx/lib/mx_noise.js'
 
 interface ElectricalEffectProps {
   position: any
@@ -33,7 +34,7 @@ export const ElectricalEffect = (props: ElectricalEffectProps) => {
 
   return <>
     <EffectComposer>
-      <Bloom luminanceThreshold={ 1.2 } mipmapBlur intensity={2}/>
+      <Bloom luminanceThreshold={ 1.1 } mipmapBlur intensity={2}/>
     </EffectComposer>
     <directionalLight position={ [ 1, 2, 3 ] } intensity={ 4.5 } />
     <ambientLight intensity={ 4.1 } />

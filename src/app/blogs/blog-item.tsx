@@ -12,8 +12,8 @@ export const ClassicBlogItemContainer = (props: BlogItemProps) => {
       <div className="flex flex-col">
         <img className="aspect-auto w-full h-auto rounded-t-xl" src={props.imageUrl}/>
         <div className="flex flex-col mt-5 gap-5 mx-5">
-          <span className="font-graduate uppercase text-white text-2xl">{props.title}</span>
-          <span className="font-graduate text-white text-lg font-thin">{props.description}</span>
+          <span className="font-roboto font-bold uppercase text-white text-2xl">{props.title}</span>
+          <span className="font-roboto font-semibold text-white text-lg">{props.description}</span>
         </div>
       </div>
       <div className="flex flex-row justify-between mb-5 mx-5 pt-20 items-center">
