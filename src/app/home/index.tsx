@@ -23,6 +23,7 @@ import { MacOne } from "../models/macone";
 import { Tivi } from "../components/tivi";
 import { BasicInteraction } from "../components/basic-interaction";
 import { RunningText } from "../components/running-text";
+import { Exo_2 } from "next/font/google";
 
 const TOTAL_PAGES = 4
 
@@ -173,15 +174,15 @@ export const Header3d = (props: any) => {
     const clock = tick.clock;
     const elapsedTime = clock.getElapsedTime();
     if (airplaneRef.current) {
-      airplaneRef.current.position.x = Math.sin(elapsedTime) * 3 * 0.7;
-      airplaneRef.current.position.y = Math.cos(elapsedTime) * 3 * 0.4;
-      airplaneRef.current.position.z = Math.cos(elapsedTime) * 3 * 0.4;
+      airplaneRef.current.position.x = Math.sin(elapsedTime) * 4 * 0.7;
+      airplaneRef.current.position.y = Math.cos(elapsedTime) * 4 * 0.2;
+      airplaneRef.current.position.z = Math.cos(elapsedTime) * 4 * 0.4;
 
       airplaneRef.current.rotation.y = elapsedTime;
-      airplaneRef.current.rotation.x = Math.sin(elapsedTime);
-      airplaneRef.current.rotation.z = Math.cos(elapsedTime * 2) * 0.3 * Math.PI;
+      airplaneRef.current.rotation.x = Math.sin(elapsedTime * 2) * 0.8;
+      airplaneRef.current.rotation.z = Math.cos(elapsedTime * 2) * 0.1;
 
-      airplaneRef.current.position.y += scrollRange * 12
+      airplaneRef.current.position.y += scrollRange * 30
     }
   });
 
