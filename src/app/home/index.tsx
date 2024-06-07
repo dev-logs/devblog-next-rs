@@ -22,6 +22,7 @@ import { useFrame } from "@react-three/fiber";
 import { MacOne } from "../models/macone";
 import { Tivi } from "../components/tivi";
 import { BasicInteraction } from "../components/basic-interaction";
+import { RunningText } from "../components/running-text";
 
 const TOTAL_PAGES = 4
 
@@ -60,8 +61,9 @@ const HtmlDoms = (props: any) => {
   <div className="absolute top-[-75vh] left-[-50vw] flex flex-col gap-10 items-center p-2 w-screen h-screen justify-center">
     <span className="text-8xl font-graduate text-center text-black">DEVLOGS STUDIO, CREATIVE SOFTWARE DESIGN</span>
   </div>
-  <div className="absolute top-[50vh] left-[-50vw] mr-5 w-screen flex flex-col gap-52">
+  <div className="absolute top-[50vh] left-[-50vw] mr-5 w-screen flex flex-col gap-14">
     <BlogList/>
+    <RunningText/>
     <div className="mx-10">
       <BasicInteraction/>
     </div>
