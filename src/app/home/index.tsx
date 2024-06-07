@@ -1,8 +1,9 @@
 "use client";
 
-import { useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import * as THREE from "three";
 import {
+    Center,
     Html,
     Scroll,
     useScroll
@@ -11,19 +12,21 @@ import { LowVertexModel } from "../models/low-vertex";
 import { ThreeDCanvas } from "../components/canvas";
 import { NavigationBar } from "../components/navigation-bar";
 import { BlogList, BlogListBackground } from "../blogs/list";
-import { useFrame } from "@react-three/fiber";
+import { useFrame, useThree } from "@react-three/fiber";
 import { Tivi } from "../components/tivi";
 import { BasicInteraction } from "../components/basic-interaction";
 import { RunningText } from "../components/running-text";
-import { Footer } from "../components/footer";
 import { Ribbon } from "../components/ribbon";
 import { HomeBackground } from "./background";
+import { Footer3d, FooterHtml } from "../components/footer";
+import { debounce } from "lodash";
 
-export const TOTAL_PAGES = 4
+export const TOTAL_PAGES = 5
 
 export class HomeProps {}
 
 export const Home = (props: HomeProps) => {
+  const footer3dRef = useRef(null)
   return (
     <>
       <NavigationBar/>
@@ -39,10 +42,12 @@ export const Home = (props: HomeProps) => {
               <BlogListBackground position={[2.5, -9.5, 0]}/>
             </Scroll>
             <Scroll>
-              <HtmlDoms/>
+              <HtmlDoms footer3dRef={footer3dRef}/>
             </Scroll>
             <Scroll>
-              <Footer meshProps={{position: [2.5, -22, 0]}}/>
+              <Center disableY>
+                <Footer3d ref={footer3dRef}/>
+              </Center>
             </Scroll>
           </ThreeDCanvas>
         </div>
@@ -52,17 +57,34 @@ export const Home = (props: HomeProps) => {
 };
 
 const HtmlDoms = (props: any) => {
-  const scrollData = useScroll();
+  const scrollData = useScroll()
+  const co = useThree()
+
+  const cam: any = co.camera!
+  const [viewport, updateViewPort]: any = useState(null)
+
+  const xF = debounce(useCallback(() => {
+    const vec = new THREE.Vector2(0)
+    cam.getViewSize(cam.position.z, vec)
+    updateViewPort({height: vec.y})
+  }, [updateViewPort, cam]), 1000)
+
+  useEffect(() => {
+    xF()
+  }, [window.innerHeight, cam])
 
   return <Html portal={{current: scrollData.fixed}}>
   <div className="absolute top-[-75vh] left-[-50vw] flex flex-col gap-10 items-center p-2 w-screen h-screen justify-center">
-    <span className="text-8xl font-graduate text-center text-black">DEVLOGS STUDIO, CREATIVE SOFTWARE DESIGN</span>
+    <span className="md:text-8xl text-4xl font-graduate text-center text-black">DEVLOGS STUDIO, CREATIVE SOFTWARE DESIGN</span>
   </div>
   <div className="absolute top-[50vh] left-[-50vw] mr-5 w-screen flex flex-col gap-14">
     <BlogList/>
     <RunningText/>
     <div className="mx-10">
       <BasicInteraction/>
+    </div>
+    <div>
+      <FooterHtml scrollData={scrollData} viewport={viewport} footer3dRef={props.footer3dRef}/>
     </div>
     <div className="h-96"></div>
   </div>

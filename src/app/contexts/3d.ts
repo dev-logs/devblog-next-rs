@@ -12,7 +12,7 @@ export class ThreeD {
   constructor(props: {scale: number, viewport: any}) {
     this.mousePosition = new MousePosition(0, 0)
     this.scale = props.scale
-    this.updateViewport(props.viewport)
+    // this.updateViewport(props.viewport)
   }
 
   updateMousePosition(mousePosition: MousePosition) {
@@ -21,8 +21,8 @@ export class ThreeD {
   }
 
   updateViewport(viewport: any) {
-    this.height = this.scale
-    this.width = viewport.aspect * this.scale
+    this.height = viewport.height
+    this.width = viewport.width
     this.aspect = viewport.aspect
   }
 }
@@ -34,7 +34,7 @@ export const useThreeDContext = () => {
   const {viewport} = useThree()
 
   useEffect(() => {
-    context.updateViewport(viewport)
+    // context.updateViewport(viewport)
   }, [viewport])
 
   return context
