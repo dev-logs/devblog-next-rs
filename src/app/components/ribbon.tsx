@@ -1,30 +1,55 @@
-import { useMemo } from "react"
+import { useTexture } from "@react-three/drei";
+import { useMemo, useRef } from "react";
 import * as THREE from 'three'
+import SHADERS from '../glsl'
+import CustomShaderMaterial from "three-custom-shader-material/vanilla";
+import { useFrame } from "@react-three/fiber";
 
-export const RibbonText = (props: any) => {
-  const [material, geometry, debugGeometry] = useMemo(() => {
-    const sphereGeometry = new THREE.SphereGeometry(1, 30, 30)
+export const Ribbon = (props: any) => {
+  const ribbonTextMap = useTexture("/images/ribbon.png");
+  const [textMaterial, sphereGeometry] = useMemo(() => {
+    const geometry = new THREE.IcosahedronGeometry(1, 8);
+    ribbonTextMap.colorSpace = THREE.SRGBColorSpace;
 
-    const numOfCurve = 6
-    const curvePoints = []
-    for (let i = 0; i < numOfCurve; i++) {
-      let theta = i / numOfCurve * Math.PI * 2
-      curvePoints.push(new THREE.Vector3().setFromSphericalCoords(
-        1, Math.PI / 2 + (Math.random() - 0.5), theta))
-    }
+    const material = new CustomShaderMaterial({
+      baseMaterial: THREE.MeshBasicMaterial,
+      vertexShader: SHADERS.RibbonTextVertexShader,
+      fragmentShader: SHADERS.RibbonTextFragmentShader,
+      map: ribbonTextMap,
+      silent: true,
+      transparent: true,
+      side: THREE.DoubleSide,
+      color: "white",
+      uniforms: {
+        uTime: { value: 0.0 },
+        uStrength: { value: 0.3 },
+        uSpeed: { value: 0.5 },
+        uTexture: { value: ribbonTextMap },
+      },
+    });
 
-    const curve = new THREE.CatmullRomCurve3(curvePoints)
-    curve.tension = 1;
-    curve.closed = true
+    return [material, geometry];
+  }, []);
 
-    const points = curve.getPoints(50)
-    const geometry = new THREE.BufferGeometry().setFromPoints(points)
+  const sphereRef: any = useRef(null);
 
-    const material = new THREE.LineBasicMaterial({color: 0xff000})
-    return [material, geometry, sphereGeometry]
-  }, [])
+  useFrame((tick: any) => {
+    const clock = tick.clock;
+    const elapsedTime = clock.getElapsedTime();
 
-  return <>
-    <mesh geometry={geometry} material={material}/>
-  </>
-}
+    textMaterial.uniforms.uTime.value = elapsedTime;
+  });
+
+  return (
+    <>
+      <mesh
+        material={textMaterial}
+        position={[3, 3, -5]}
+        ref={sphereRef}
+        scale={2}
+        geometry={sphereGeometry}
+        {...props}
+      ></mesh>
+    </>
+  );
+};

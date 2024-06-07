@@ -1,31 +1,25 @@
 "use client";
 
-import { useCallback, useEffect, useRef } from "react";
+import { useRef } from "react";
 import * as THREE from "three";
 import {
-    Center,
-  Html,
-  Scroll,
-  useScroll,
-  useTexture,
+    Html,
+    Scroll,
+    useScroll
 } from "@react-three/drei";
-import SHADERS from "../glsl";
-import { useMemo } from "react";
-import useGlitchFrame from "../hooks/use-glitch-frame";
 import { LowVertexModel } from "../models/low-vertex";
-import { ComputerWithFace, ComputerWithFaceTransform } from "../models/computer";
-import CustomShaderMaterial from "three-custom-shader-material/vanilla";
 import { ThreeDCanvas } from "../components/canvas";
 import { NavigationBar } from "../components/navigation-bar";
-import { BlogList, BlogListBackground, BlogListTitle } from "../blogs/list";
+import { BlogList, BlogListBackground } from "../blogs/list";
 import { useFrame } from "@react-three/fiber";
-import { MacOne } from "../models/macone";
 import { Tivi } from "../components/tivi";
 import { BasicInteraction } from "../components/basic-interaction";
 import { RunningText } from "../components/running-text";
-import { Exo_2 } from "next/font/google";
+import { Footer } from "../components/footer";
+import { Ribbon } from "../components/ribbon";
+import { HomeBackground } from "./background";
 
-const TOTAL_PAGES = 4
+export const TOTAL_PAGES = 4
 
 export class HomeProps {}
 
@@ -39,14 +33,16 @@ export const Home = (props: HomeProps) => {
             gl={{alpha: true}}
             style={{background: 'transparent'}}
             scroll={{infinite: false, pages: TOTAL_PAGES, maxSpeed: 1.1}}>
-            <CameraControls/>
-            <Background/>
+            <HomeBackground/>
             <Header3d/>
             <Scroll>
               <BlogListBackground position={[2.5, -9.5, 0]}/>
             </Scroll>
             <Scroll>
               <HtmlDoms/>
+            </Scroll>
+            <Scroll>
+              <Footer meshProps={{position: [2.5, -22, 0]}}/>
             </Scroll>
           </ThreeDCanvas>
         </div>
@@ -72,97 +68,6 @@ const HtmlDoms = (props: any) => {
   </div>
   </Html>
 }
-
-const Background = (props: any) => {
-  const scroll = useScroll()
-  const [material] = useMemo(() => {
-    const material = new CustomShaderMaterial({
-      baseMaterial: THREE.MeshBasicMaterial,
-      vertexShader: SHADERS.ColorBackgroundVertexShader,
-      fragmentShader: SHADERS.ColorBackgroundFragmentShader,
-      uniforms: {
-        uTime: {value: 0},
-        uProgress: {value: 0},
-        uColor1: {value: new THREE.Color('#F1EFEF')},
-        uColor2: {value: new THREE.Color('#191919')}
-      }
-    })
-
-    return [material]
-  }, [])
-
-  useFrame((tick) => {
-    const clock = tick.clock
-    const elapsedTime = clock.getElapsedTime()
-    const scrollRange = scroll.range(0, 1 / TOTAL_PAGES)
-
-    material.uniforms.uTime.value = elapsedTime
-    material.uniforms.uProgress.value = scrollRange
-  })
-
-  return <>
-    <mesh position={[0, 0, -5]} material={material}>
-      <planeGeometry args={[100, 100]}/>
-    </mesh>
-  </>
-}
-
-const CameraControls = (props: any) => {
-  const data = useScroll()
-  useFrame(() => {
-  })
-
-  return <></>
-}
-
-export const Ribbon = (props: any) => {
-  const ribbonTextMap = useTexture("/images/ribbon.png");
-  const [textMaterial, sphereGeometry] = useMemo(() => {
-    const geometry = new THREE.IcosahedronGeometry(1, 8);
-    ribbonTextMap.colorSpace = THREE.SRGBColorSpace;
-
-    const material = new CustomShaderMaterial({
-      baseMaterial: THREE.MeshBasicMaterial,
-      vertexShader: SHADERS.RibbonTextVertexShader,
-      fragmentShader: SHADERS.RibbonTextFragmentShader,
-      map: ribbonTextMap,
-      silent: true,
-      transparent: true,
-      side: THREE.DoubleSide,
-      color: "white",
-      uniforms: {
-        uTime: { value: 0.0 },
-        uStrength: { value: 0.3 },
-        uSpeed: { value: 0.5 },
-        uTexture: { value: ribbonTextMap },
-      },
-    });
-
-    return [material, geometry];
-  }, []);
-
-  const sphereRef: any = useRef(null);
-
-  useFrame((tick: any) => {
-    const clock = tick.clock;
-    const elapsedTime = clock.getElapsedTime();
-
-    textMaterial.uniforms.uTime.value = elapsedTime;
-  });
-
-  return (
-    <>
-      <mesh
-        material={textMaterial}
-        position={[3, 3, -5]}
-        ref={sphereRef}
-        scale={2}
-        geometry={sphereGeometry}
-        {...props}
-      ></mesh>
-    </>
-  );
-};
 
 export const Header3d = (props: any) => {
   const airplaneRef: any = useRef(null);
