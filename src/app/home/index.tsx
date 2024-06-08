@@ -44,11 +44,6 @@ export const Home = (props: HomeProps) => {
             <Scroll>
               <HtmlDoms footer3dRef={footer3dRef}/>
             </Scroll>
-            <Scroll>
-              <Center disableY>
-                <Footer3d ref={footer3dRef}/>
-              </Center>
-            </Scroll>
           </ThreeDCanvas>
         </div>
       </div>
@@ -58,21 +53,6 @@ export const Home = (props: HomeProps) => {
 
 const HtmlDoms = (props: any) => {
   const scrollData = useScroll()
-  const co = useThree()
-
-  const cam: any = co.camera!
-  const [viewport, updateViewPort]: any = useState(null)
-
-  const xF = debounce(useCallback(() => {
-    const vec = new THREE.Vector2(0)
-    cam.getViewSize(cam.position.z, vec)
-    updateViewPort({height: vec.y})
-  }, [updateViewPort, cam]), 1000)
-
-  useEffect(() => {
-    xF()
-  }, [window.innerHeight, cam])
-
   return <Html portal={{current: scrollData.fixed}}>
   <div className="absolute top-[-75vh] left-[-50vw] flex flex-col gap-10 items-center p-2 w-screen h-screen justify-center">
     <span className="md:text-8xl text-4xl font-graduate text-center text-black">DEVLOGS STUDIO, CREATIVE SOFTWARE DESIGN</span>
@@ -84,7 +64,7 @@ const HtmlDoms = (props: any) => {
       <BasicInteraction/>
     </div>
     <div>
-      <FooterHtml scrollData={scrollData} viewport={viewport} footer3dRef={props.footer3dRef}/>
+      <FooterHtml scrollData={scrollData} footer3dRef={props.footer3dRef}/>
     </div>
     <div className="h-96"></div>
   </div>
