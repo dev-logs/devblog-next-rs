@@ -4,26 +4,14 @@ import {useThree} from '@react-three/fiber'
 
 export class ThreeD {
   mousePosition: MousePosition
-  scale: number
-  aspect: number = 1
-  width: number = 0
-  height: number = 0
 
-  constructor(props: {scale: number, viewport: any}) {
+  constructor() {
     this.mousePosition = new MousePosition(0, 0)
-    this.scale = props.scale
-    // this.updateViewport(props.viewport)
   }
 
   updateMousePosition(mousePosition: MousePosition) {
     this.mousePosition.x = mousePosition.x
     this.mousePosition.y = mousePosition.y
-  }
-
-  updateViewport(viewport: any) {
-    this.height = viewport.height
-    this.width = viewport.width
-    this.aspect = viewport.aspect
   }
 }
 

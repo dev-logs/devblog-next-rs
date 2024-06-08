@@ -14,10 +14,10 @@ export const Footer3d = forwardRef((props: any, ref) => {
 export const FooterHtml = (props: any) => {
   return <>
     <div className={`flex flex-col h-screen w-screen items-center pt-36`}>
-      <span className='font-head scale-y-[2.5] text-[350px] text-white uppercase'>DEVLOGS STUDIO</span>
+      <span className='font-head scale-y-[2.5] text-[24vw] text-white uppercase'>DEVLOGS STUDIO</span>
       <div className='flex flex-row justify-between gap-5 w-full items-center px-10 md:px-16'>
         <div className='flex flex-row items-center gap-5'>
-          <a href="devlogsstudio@gmail.com" className='font-roboto font-bold underline'>devlogsstudio@gmail.com</a>
+          <a href="devlogstudio@gmail.com" className='font-roboto font-bold underline'>devlogstudio@gmail.com</a>
           <a href={"https://www.instagram.com/dev_logs/?hl=en"} className='font-roboto flex flex-row gap-1 justify-center items-center'>
             <InstagramIcon width={20} fill="white"/>
             Instagram
