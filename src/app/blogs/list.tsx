@@ -41,7 +41,7 @@ export const BlogListTitle = (props: any) => {
   return <>
     <div className="flex w-full flex-col m-4">
       <span className="font-head md:text-6xl text-3xl tracking-wider text-white">We're writing blogs every week</span>
-      <div className="flex bg-yellow-400 md:p-5 p-1 mr-8 mt-5 w-fit md:w-[97vw] flex-col">
+      <div className="flex bg-yellow-400 md:p-5 p-1 mr-8 mt-5 w-[97vw] flex-col">
         <span className="font-roboto text-sm md:text-lg text-black">
           We're creating software product, we would love to share with you all knowledge during our journey
         </span>
