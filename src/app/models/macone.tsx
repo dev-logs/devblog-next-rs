@@ -16,7 +16,6 @@ export const MacOne = (props: any) => {
     model.scene.traverse((c: any) => {
       if (c.name === 'Body') {
         c.material = bodyMaterial || new THREE.MeshBasicMaterial({
-          side: THREE.DoubleSide,
           map: texture
         })
       }

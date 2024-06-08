@@ -1,9 +1,8 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { Fragment, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import * as THREE from "three";
 import {
-    Center,
     Html,
     Scroll,
     useScroll
@@ -20,29 +19,44 @@ import { Ribbon } from "../components/ribbon";
 import { HomeBackground } from "./background";
 import { Footer3d, FooterHtml } from "../components/footer";
 import { debounce } from "lodash";
+import Stats from 'stats.js'
+import Media from 'react-media';
+import { Reponsive } from "../components/reponsive";
 
 export const TOTAL_PAGES = 5
 
-export class HomeProps {}
+export interface HomeProps {
+  totalPages: number | 0
+}
 
 export const Home = (props: HomeProps) => {
+  return <Reponsive>
+    {(matches: any) => <Fragment>
+        {matches.small && matches.short && <_Home totalPages={4}/>}
+        {matches.small && !matches.short && <_Home totalPages={3.8}/>}
+        {!matches.small && <_Home totalPages={4.2}/>}
+      </Fragment>}
+  </Reponsive>
+}
+
+const _Home = (props: HomeProps) => {
   const footer3dRef = useRef(null)
   return (
     <>
       <NavigationBar/>
-      <div className="flex flex-col">
+      <div className="flex flex-col bg-black">
         <div className="flex w-screen h-screen z-0">
           <ThreeDCanvas
-            gl={{alpha: true}}
-            style={{background: 'transparent'}}
-            scroll={{infinite: false, pages: TOTAL_PAGES, maxSpeed: 1.1}}>
-            <HomeBackground/>
+            gl={{alpha: true, antialias: false}}
+            scroll={{infinite: false, pages: props.totalPages, maxSpeed: 1.1}}>
             <Header3d/>
             <Scroll>
-              <BlogListBackground position={[2.5, -9.5, 0]}/>
+              <BlogListBackground/>
             </Scroll>
             <Scroll>
               <HtmlDoms footer3dRef={footer3dRef}/>
+            </Scroll>
+            <Scroll>
             </Scroll>
           </ThreeDCanvas>
         </div>
@@ -53,9 +67,14 @@ export const Home = (props: HomeProps) => {
 
 const HtmlDoms = (props: any) => {
   const scrollData = useScroll()
-  return <Html portal={{current: scrollData.fixed}}>
-  <div className="absolute top-[-75vh] left-[-50vw] flex flex-col gap-10 items-center p-2 w-screen h-screen justify-center">
-    <span className="md:text-8xl text-4xl font-graduate text-center text-black">DEVLOGS STUDIO, CREATIVE SOFTWARE DESIGN</span>
+  return <Html portal={{current: scrollData.fixed}} occlude={"blending"}>
+  <div className="absolute top-[-50vh] left-[-50vw] w-screen h-[200vh]">
+    <ThreeDCanvas orthographic camera={{zoom: 100}} performance={{min: 0, max: 0}}>
+      <HomeBackground scrollData={scrollData}/>
+    </ThreeDCanvas>
+  </div>
+  <div className="absolute top-[-70vh] md:top-[-75vh] left-[-50vw] flex flex-col gap-10 items-center p-2 w-screen h-screen justify-center">
+    <span className="xl:text-8xl md:text-4xl text-2xl font-graduate text-center text-black">DEVLOGS STUDIO, CREATIVE SOFTWARE DESIGN</span>
   </div>
   <div className="absolute top-[50vh] left-[-50vw] mr-5 w-screen flex flex-col gap-14">
     <BlogList/>
@@ -72,9 +91,19 @@ const HtmlDoms = (props: any) => {
 }
 
 export const Header3d = (props: any) => {
-  const airplaneRef: any = useRef(null);
-  const scrollData = useScroll();
+  const stats = useMemo(() => {
+    const stats = new Stats()
+    stats.showPanel(0)
+    document.body.appendChild(stats.dom)
+    return stats
+  }, [])
 
+  useFrame(() => {
+    stats.begin()
+    stats.end()
+  })
+
+  const airplaneRef: any = useRef(null);
   const scroll = useScroll()
   useFrame((tick: any) => {
     const scrollRange = scroll.range(0, 1)
@@ -95,26 +124,57 @@ export const Header3d = (props: any) => {
 
   return (
     <>
-      <LowVertexModel
-        ref={airplaneRef}
-        material={
-          new THREE.MeshBasicMaterial({
-            color: "#F05454",
-            side: THREE.DoubleSide
-          })
-        }
-        name="paper-airplane"
-        scale={3}
-        position={[2, -3, 0]}
-      />
-      <Scroll>
-        <Tivi
-          scale={9}
-          position={[0, -2.5, 0]}/>
-        <Ribbon
-          position={[0, -1.8, 0.1]}
-          scale={2.5}/>
-      </Scroll>
+      <Reponsive>
+        {(matches: any) => (
+          <Fragment>
+            {matches.small && <>
+              <LowVertexModel
+               ref={airplaneRef}
+               material={
+                 new THREE.MeshBasicMaterial({
+                   color: "#F05454",
+                   side: THREE.DoubleSide
+                 })
+               }
+               name="paper-airplane"
+               scale={2}
+               position={[2, -4, -1]}
+              />
+              <Scroll>
+                <Tivi
+                  scale={7}
+                  position={[0, -1.5, -1]}/>
+                <Ribbon
+                  position={[0, -1, -0.7]}
+                  scale={1.5}/>
+              </Scroll>
+            </>}
+            {matches.medium && <>
+              <LowVertexModel
+               ref={airplaneRef}
+               material={
+                 new THREE.MeshBasicMaterial({
+                   color: "#F05454",
+                   side: THREE.DoubleSide
+                 })
+               }
+               name="paper-airplane"
+               scale={3}
+               position={[2, -3, -1]}
+             />
+             <Scroll>
+               <Tivi
+                 scale={9}
+                 position={[0, -2.5, -1]}/>
+               <Ribbon
+                 position={[0, -1.8, -1.1]}
+                 scale={2.5}/>
+             </Scroll>
+            </>
+          }
+          </Fragment>
+        )}
+      </Reponsive>
     </>
   );
 };

@@ -19,7 +19,6 @@ export const Ribbon = (props: any) => {
       silent: true,
       transparent: true,
       side: THREE.DoubleSide,
-      color: "white",
       uniforms: {
         uTime: { value: 0.0 },
         uStrength: { value: 0.3 },

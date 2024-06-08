@@ -12,10 +12,5 @@ void main() {
     vec4 image = texture2D(uImage, uv);
 
     csm_FragColor.rgb = image.rgb;
-    csm_FragColor.a *= 0.1;
-
-    // Calculate the size of each cell in the grid
-    float grid_size = 40.0;
-    vec2 grid = fract(vUv * grid_size);
-    float square_size = 0.5;
+    csm_FragColor.a *= 0.3;
 }

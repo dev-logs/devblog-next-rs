@@ -6,8 +6,9 @@ import SHADERS from '../glsl'
 import { useFrame } from "@react-three/fiber"
 import { TOTAL_PAGES } from "."
 
-export const HomeBackground = (props: any) => {
-  const scroll = useScroll()
+export const HomeBackground = (props: any = {}) => {
+  const scroll = props.scrollData || useScroll()
+  if (!scroll) return
   const [material] = useMemo(() => {
     const material = new CustomShaderMaterial({
       baseMaterial: THREE.MeshBasicMaterial,

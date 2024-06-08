@@ -14,18 +14,27 @@ export const ThreeDCanvas = forwardRef((
   props: ThreeDCanvasProps &
   React.RefAttributes<HTMLCanvasElement>, ref: any) => {
   const Implementation = () => {
-    // const context = new ThreeD({scale: 10, viewport})
+    const context = new ThreeD()
     return <LowVertexModelProvider>
-        <ThreeDContext.Provider value={{} as any}>
+        <ThreeDContext.Provider value={context}>
           {props.background || <></>}
-          {props.scroll ? <ScrollControls damping={0.1} {...props.scroll}>
+          {props.scroll ? <ScrollControls damping={0.05} maxSpeed={4} {...props.scroll}>
             {props.children}
           </ScrollControls> : props.children}
         </ThreeDContext.Provider>
     </LowVertexModelProvider>
   }
 
-  return <Canvas ref={ref} {...omit(props, ['children'])}>
+  return <Canvas
+    gl={{
+      antialias: false,
+      alpha: false,
+      pixelRatio: 1,
+      preserveDrawingBuffer: false,
+    }}
+    shadows={false}
+    dpr={1}
+    ref={ref} {...omit(props, ['children'])}>
     <Implementation/>
   </Canvas>
 })
