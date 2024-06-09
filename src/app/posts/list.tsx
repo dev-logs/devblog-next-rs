@@ -1,21 +1,20 @@
-import { Html, OrbitControls, Scroll } from "@react-three/drei"
 import { ElectricalEffect } from "../components/electrical-effect"
-import { DeployFlutterWebBlogItem } from "./deploy-flutter-web/item"
 import { Reponsive } from "../components/reponsive"
 import { Fragment } from "react"
+import { allPosts } from "contentlayer/generated"
+import DeployFlutterWebPage from "../pages/blog/deploy-flutter-web"
+import { ClassicPostItemContainer } from "./post-item"
 
 export const BlogList = (props: any) => {
   return <>
     <div className="relative flex flex-col h-full w-full">
       <BlogListTitle/>
       <div className="mt-2 md:mt-20 mx-2 md:mx-10 bg-zinc-900 md:gap-5 p-2 md:p-10 grid md:grid-cols-2 xl:grid-cols-3 gap-2 grid-cols-1 rounded-2xl bg-opacity-60 h-fit z-10">
-        <DeployFlutterWebBlogItem/>
-        <DeployFlutterWebBlogItem/>
+        {allPosts.map((post) => <ClassicPostItemContainer post={post as any}/>)}
       </div>
     </div>
   </>
 }
-
 
 export const BlogListBackground = (props: any) => {
   return <>

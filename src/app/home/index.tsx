@@ -10,7 +10,7 @@ import {
 import { LowVertexModel } from "../models/low-vertex";
 import { ThreeDCanvas } from "../components/canvas";
 import { NavigationBar } from "../components/navigation-bar";
-import { BlogList, BlogListBackground } from "../blogs/list";
+import { BlogList, BlogListBackground } from "../posts/list";
 import { useFrame, useThree } from "@react-three/fiber";
 import { Tivi } from "../components/tivi";
 import { BasicInteraction } from "../components/basic-interaction";

@@ -3,3 +3,4 @@ yarn**.log
 out
 node_modules
 .next
+.contentlayer
