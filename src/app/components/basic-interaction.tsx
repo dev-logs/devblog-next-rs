@@ -17,7 +17,7 @@ export const BasicInteraction = (props: any) => {
           <Background/>
         </ThreeDCanvas>
       </div>
-      <div className="z-10 absolute left-0 top-0 rounded-2xl justify-center w-full py-14 px-10 flex flex-col h-[50vh] items-center">
+      <div className="z-10 absolute left-0 top-0 rounded-2xl justify-center w-full py-14 px-10 flex flex-col xl:h-[50vh] h-[40vh] items-center">
         <div className="w-[70vw] min-w-[250px] max-w-[500px]">
           <NewSletterSubscription />
         </div>

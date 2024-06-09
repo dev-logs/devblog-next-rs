@@ -24,7 +24,7 @@ export const BlogListBackground = (props: any) => {
         {
           (matches: any) => <Fragment>
             {matches.small && <>
-              <ElectricalEffect position={[1, -5.8, 0]} scale={[0.2, 0.15, 0.2]}/>
+              <ElectricalEffect position={[1, -5.9, 0]} scale={[0.2, 0.18, 0.2]}/>
             </>}
             {matches.medium && <>
               <ElectricalEffect position={[2.5, -9.5, 0]} scale={0.7}/>
@@ -40,9 +40,9 @@ export const BlogListBackground = (props: any) => {
 export const BlogListTitle = (props: any) => {
   return <>
     <div className="flex w-full flex-col xl:mx-10 mx-4">
-      <span className="font-head md:text-6xl text-3xl tracking-wider text-white px-2">We're writing blogs every week</span>
+      <span className="font-head md:text-6xl text-3xl tracking-wider text-white">We're writing blogs every week</span>
       <div className="flex bg-yellow-400 md:p-5 p-1 mt-5 w-[97vw] flex-col">
-        <span className="font-roboto text-sm md:text-lg text-black">
+        <span className="font-roboto text-sm md:text-lg text-black px-2">
           We're creating software product, we would love to share with you all knowledge during our journey
         </span>
       </div>
@@ -52,7 +52,7 @@ export const BlogListTitle = (props: any) => {
             <h2 className="font-head text-2xl md:text-7xl px-2">Topics we write</h2>
           </div>
         </div>
-        <div className="flex flex-col md:gap-5 gap-2 md:h-64 h-fit items-start mt-10">
+        <div className="flex flex-col md:gap-5 gap-2 md:h-64 h-32 items-start mt-10">
           <span className="font-head text-xl md:text-5xl">System design</span>
           <span className="font-head text-xl md:text-5xl">Mobile development</span>
           <span className="font-head text-xl md:text-5xl">Web development</span>

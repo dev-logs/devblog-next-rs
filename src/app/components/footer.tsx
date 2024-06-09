@@ -13,8 +13,8 @@ export const Footer3d = forwardRef((props: any, ref) => {
 
 export const FooterHtml = (props: any) => {
   return <>
-    <div className={`flex flex-col h-screen w-screen items-center xl:pt-56 md:scroll-pt-28 pt-14`}>
-      <span className='font-head md:scale-y-[2] scale-y-[3.55] text-[24vw] text-white uppercase'>DEVLOGS STUDIO</span>
+    <div className={`flex flex-col h-full w-screen items-center pt-14`}>
+      <span className='font-head md:scale-y-[2] scale-y-[3.55] align-bottom md:py-14 py-8 text-[24vw] text-white uppercase'>DEVLOGS STUDIO</span>
       <div className='flex md:flex-row flex-col md:gap-5 w-full justify-between items-center md:px-16'>
         <div className='flex flex-row items-center md:gap-5 gap-1 md:text-xl justify-between'>
           <a href="devlogstudio@gmail.com" className='font-roboto md:text-xl text-sm font-bold underline'>devlogstudio@gmail.com</a>
