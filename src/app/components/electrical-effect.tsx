@@ -1,11 +1,9 @@
-import {Fragment, useMemo} from 'react'
+import { Fragment, useMemo } from 'react'
 import Shaders from '../glsl'
 import * as THREE from 'three'
 import CustomShaderMaterial from 'three-custom-shader-material/vanilla'
 import { useGLTF } from '@react-three/drei'
-import { Bloom, Noise, Glitch, ToneMapping, Vignette, EffectComposer } from '@react-three/postprocessing'
-import { Source_Serif_4 } from 'next/font/google'
-import { mx_bits_to_01 } from 'three/examples/jsm/nodes/materialx/lib/mx_noise.js'
+import { Bloom, EffectComposer } from '@react-three/postprocessing'
 import { Reponsive } from './reponsive'
 
 interface ElectricalEffectProps {
@@ -36,18 +34,18 @@ export const ElectricalEffect = (props: ElectricalEffectProps) => {
 
   return <>
     <EffectComposer enableNormalPass={false} resolutionScale={1}>
-      <Bloom luminanceThreshold={ 1.1 } mipmapBlur intensity={1.5}/>
+      <Bloom luminanceThreshold={ 1.1 } mipmapBlur intensity={0.4}/>
     </EffectComposer>
     <directionalLight position={ [ 1, 2, 3 ] } intensity={ 25 } />
     <Reponsive>{
       (matches: any) => (<Fragment>
         {matches.small && <>
-          <mesh geometry={wireGeometry.scene.children[0].geometry} rotation-y={1} scale={0.5} {...props}>
+          <mesh geometry={wireGeometry.scene.children[0].geometry} rotation-y={1} {...props}>
             <meshStandardMaterial color={'orange'} emissive={'orange'} emissiveIntensity={0.9} />
           </mesh>
         </>}
         {matches.medium && <>
-          <mesh geometry={wireGeometry.scene.children[0].geometry} rotation-y={1} scale={0.5} {...props}>
+          <mesh geometry={wireGeometry.scene.children[0].geometry} rotation-y={1} {...props}>
             <meshStandardMaterial color={'orange'} emissive={'orange'} emissiveIntensity={0.9} />
           </mesh>
         </>}

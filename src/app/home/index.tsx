@@ -79,7 +79,7 @@ const HtmlDoms = (props: any) => {
   <div className="absolute top-[50vh] left-[-50vw] mr-5 w-screen flex flex-col gap-14">
     <BlogList/>
     <RunningText/>
-    <div className="mx-10">
+    <div className="xl:mx-10 mx-4">
       <BasicInteraction/>
     </div>
     <div>
