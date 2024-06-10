@@ -1,6 +1,6 @@
 "use client";
 
-import { Fragment, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { Fragment, useMemo, useRef } from "react";
 import * as THREE from "three";
 import {
     Html,
@@ -11,16 +11,14 @@ import { LowVertexModel } from "../models/low-vertex";
 import { ThreeDCanvas } from "../components/canvas";
 import { NavigationBar } from "../components/navigation-bar";
 import { BlogList, BlogListBackground } from "../posts/list";
-import { useFrame, useThree } from "@react-three/fiber";
+import { useFrame } from "@react-three/fiber";
 import { Tivi } from "../components/tivi";
 import { BasicInteraction } from "../components/basic-interaction";
 import { RunningText } from "../components/running-text";
 import { Ribbon } from "../components/ribbon";
 import { HomeBackground } from "./background";
-import { Footer3d, FooterHtml } from "../components/footer";
-import { debounce } from "lodash";
-import Stats from 'stats.js'
-import Media from 'react-media';
+import { FooterHtml } from "../components/footer";
+import Stats from 'stats.js';
 import { Reponsive } from "../components/reponsive";
 
 export const TOTAL_PAGES = 5
@@ -29,7 +27,7 @@ export interface HomeProps {
   totalPages: number | 0
 }
 
-export const Home = (props: HomeProps) => {
+export const Home = (props: any) => {
   return <Reponsive>
     {(matches: any) => <Fragment>
         {matches.small && matches.short && <_Home totalPages={4}/>}
@@ -43,7 +41,6 @@ const _Home = (props: HomeProps) => {
   const footer3dRef = useRef(null)
   return (
     <>
-      <NavigationBar/>
       <div className="flex flex-col bg-black">
         <div className="flex w-screen h-screen z-0">
           <ThreeDCanvas

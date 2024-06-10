@@ -84,3 +84,30 @@ body {
   animation: scroll2 40s linear infinite;
   animation-delay: -20s;
 }
+
+h1>a>.icon.icon-link:before,
+h2>a>.icon.icon-link:before,
+h3>a>.icon.icon-link:before {
+    content: "#";
+    font-size: 0.8rem;
+}
+
+h2 > a, h3>a {
+    text-decoration: none !important;
+}
+
+.glow-overlay {
+	--glow-size: 25rem;
+	position: absolute;
+	inset: 0;
+	pointer-events: none;
+	user-select: none;
+	opacity: var(--glow-opacity, 0);
+	mask: radial-gradient(
+		var(--glow-size) var(--glow-size) at var(--glow-x) var(--glow-y),
+		var(--glow-color) 1%,
+		transparent 90%
+	);
+	transition: 400ms mask ease;
+	will-change: mask;
+}

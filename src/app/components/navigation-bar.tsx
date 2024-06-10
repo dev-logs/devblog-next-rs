@@ -1,4 +1,3 @@
-
 const navigationItemClass = () => 'font-head md:text-xl tracking-widest text-white'
 
 export const NavigationBar = (props: any) => {

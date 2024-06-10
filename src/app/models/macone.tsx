@@ -1,6 +1,5 @@
 import { useGLTF, useTexture } from "@react-three/drei"
 import * as THREE from 'three'
-import { PrimitiveProps } from "@react-three/fiber"
 import CustomShaderMaterial from "three-custom-shader-material/vanilla"
 import { useEffect } from "react"
 

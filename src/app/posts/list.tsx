@@ -2,7 +2,6 @@ import { ElectricalEffect } from "../components/electrical-effect"
 import { Reponsive } from "../components/reponsive"
 import { Fragment } from "react"
 import { allPosts } from "contentlayer/generated"
-import DeployFlutterWebPage from "../pages/blog/deploy-flutter-web"
 import { ClassicPostItemContainer } from "./post-item"
 
 export const BlogList = (props: any) => {

@@ -1,8 +1,8 @@
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import './globals.css'
+import { NavigationBar } from './components/navigation-bar'
 
-import Stats from 'stats.js'
 const inter = Inter({subsets: ['latin']})
 
 export const metadata: Metadata = {
@@ -23,7 +23,10 @@ export default function RootLayout({
         <link href="https://fonts.googleapis.com/css2?family=Arvo:ital,wght@0,700;1,400;1,700&display=swap" rel="stylesheet"/>
         <link href="https://fonts.googleapis.com/css2?family=Alfa+Slab+One&display=swap" rel="stylesheet"/>
       </head>
-      <body className={`${inter.className} h-screen w-screen`}>{children}</body>
+      <body className={`${inter.className} h-screen w-screen`}>
+        <NavigationBar/>
+        {children}
+      </body>
     </html>
   )
 }

@@ -1,7 +1,6 @@
 import * as THREE from 'three'
 import noop from 'lodash/noop'
 import { useEffect, useMemo } from 'react';
-import { useTexture } from '@react-three/drei';
 import CustomShaderMaterial from "three-custom-shader-material/vanilla";
 import SHADERS from '../glsl';
 import gsap from 'gsap'

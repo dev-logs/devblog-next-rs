@@ -1,10 +1,15 @@
 // contentlayer.config.ts
 import { defineDocumentType, makeSource } from 'contentlayer/source-files'
 import readingTime from "reading-time";
+import rehypeAutolinkHeadings from "rehype-autolink-headings";
+import rehypePrettyCode from "rehype-pretty-code";
+import rehypeSlug from "rehype-slug";
+import remarkGfm from "remark-gfm";
 
 export const Post = defineDocumentType(() => ({
   name: 'Post',
   filePathPattern: `**/*.mdx`,
+  contentType: "mdx",
   fields: {
     title: { type: 'string', required: true },
     publishedDate: { type: 'date', required: true },
@@ -24,4 +29,13 @@ export const Post = defineDocumentType(() => ({
   },
 }))
 
-export default makeSource({ contentDirPath: 'content', documentTypes: [Post] })
+const codeOptions = {
+  theme: 'github-dark',
+  grid: false,
+}
+
+export default makeSource({
+  contentDirPath: 'content',
+  mdx: { remarkPlugins: [remarkGfm], rehypePlugins: [rehypeSlug, [rehypeAutolinkHeadings, {behavior: "append"}], [rehypePrettyCode, codeOptions] ] },
+  documentTypes: [Post]
+})
