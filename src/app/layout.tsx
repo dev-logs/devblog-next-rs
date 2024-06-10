@@ -24,7 +24,9 @@ export default function RootLayout({
         <link href="https://fonts.googleapis.com/css2?family=Alfa+Slab+One&display=swap" rel="stylesheet"/>
       </head>
       <body className={`${inter.className} h-screen w-screen`}>
-        <NavigationBar/>
+        <div className=''>
+          <NavigationBar/>
+        </div>
         {children}
       </body>
     </html>
