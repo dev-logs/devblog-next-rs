@@ -30,7 +30,7 @@ export default function PostPage(props: any = {}) {
         <div className="lg:col-span-3 col-span-full lg:items-start items-center flex flex-row h-fit lg:sticky lg:left-5 lg:top-10 lg:justify-start justify-center">
           <TableOfContent post={post} />
         </div>
-        <div className="flex flex-col items-center lg:col-span-9 col-span-full">
+        <div className="flex lg:justify-start flex-col lg:items-start lg:pl-16 items-center lg:col-span-9 col-span-full">
           <article className="prose md:prose-xl prose-sm mb-56 w-full lg:p-0 p-8">
             <MdxContent post={post} />
           </article>
