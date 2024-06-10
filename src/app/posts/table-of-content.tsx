@@ -27,7 +27,7 @@ export const TableOfContent = (props: any) => {
                       </span>
                     ) : null}
 
-                    <span className="hover:underline">{heading.text}</span>
+                    <span className="hover:underline text-gray-200">{heading.text}</span>
                   </a>
                 </li>
               );
