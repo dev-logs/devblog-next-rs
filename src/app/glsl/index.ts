@@ -20,26 +20,26 @@ import BackgroundFrameFragmentShader from './background-frame/fragment.glsl'
 import BackgroundFrameVertexShader from './background-frame/vertex.glsl'
 
 const Shaders = {
-  SimpleWobbleVertexShader,
-  SimpleWobbleFragmentShader,
-  SimpleWobbleColorVertexShader,
-  SimpleWobbleColorFragmentShader,
-  WobbleFragmentShader,
-  WobbleVertexShader,
-  PointerFragmentShader,
-  PointerVertexShader,
-  RibbonTextVertexShader,
-  RibbonTextFragmentShader,
-  RibbonBackgroundVertexShader,
-  RibbonBackgroundFragmentShader,
-  ElectricalEffectVertexShader,
-  ElectricalEffectFragmentShader,
-  ColorBackgroundVertexShader,
-  ColorBackgroundFragmentShader,
-  TvVertexShader,
-  TvFragmentShader,
-  BackgroundFrameFragmentShader,
-  BackgroundFrameVertexShader
+    SimpleWobbleVertexShader,
+    SimpleWobbleFragmentShader,
+    SimpleWobbleColorVertexShader,
+    SimpleWobbleColorFragmentShader,
+    WobbleFragmentShader,
+    WobbleVertexShader,
+    PointerFragmentShader,
+    PointerVertexShader,
+    RibbonTextVertexShader,
+    RibbonTextFragmentShader,
+    RibbonBackgroundVertexShader,
+    RibbonBackgroundFragmentShader,
+    ElectricalEffectVertexShader,
+    ElectricalEffectFragmentShader,
+    ColorBackgroundVertexShader,
+    ColorBackgroundFragmentShader,
+    TvVertexShader,
+    TvFragmentShader,
+    BackgroundFrameFragmentShader,
+    BackgroundFrameVertexShader
 }
 
 export default Shaders

@@ -26,7 +26,9 @@
       "@/*": [
         "./src/*"
       ],
-      "contentlayer/generated": ["./.contentlayer/generated"]
+      "contentlayer/generated": [
+        "./.contentlayer/generated"
+      ]
     }
   },
   "include": [

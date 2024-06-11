@@ -3,111 +3,111 @@
 @tailwind utilities;
 
 @font-face {
-  font-family: 'Damn';
-  src: url('/fonts/damn.ttf') format('truetype');
-  font-weight: normal;
-  font-style: normal;
+    font-family: 'Damn';
+    src: url('/fonts/damn.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
 }
 
 .typeJsWrapper {
-  padding: 50px;
+    padding: 50px;
 }
 
 .typeJsWrapper .typeJsText {
-  text-align: center;
-  font-family: Verdana, Geneva, Tahoma, sans-serif;
-  font-size: 48px;
-  display: inline-block;
-  padding: 0;
-  border-right: 1px solid #414141;
+    text-align: center;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    font-size: 48px;
+    display: inline-block;
+    padding: 0;
+    border-right: 1px solid #414141;
 }
 
 :root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
+    --foreground-rgb: 0, 0, 0;
+    --background-start-rgb: 214, 219, 220;
+    --background-end-rgb: 255, 255, 255;
 }
 
 @media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
-  }
+    :root {
+        --foreground-rgb: 255, 255, 255;
+        --background-start-rgb: 0, 0, 0;
+        --background-end-rgb: 0, 0, 0;
+    }
 }
 
 body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+    color: rgb(var(--foreground-rgb));
+    background: linear-gradient(
+            to bottom,
+            transparent,
+            rgb(var(--background-end-rgb))
+    ) rgb(var(--background-start-rgb));
 }
 
 @layer utilities {
-  .text-balance {
-    text-wrap: balance;
-  }
+    .text-balance {
+        text-wrap: balance;
+    }
 }
 
 .text-only-stroke {
-  -webkit-text-stroke: 2px #FFF;
-  color: transparent;
+    -webkit-text-stroke: 2px #FFF;
+    color: transparent;
 }
 
 @keyframes scroll1 {
-  0% {
-    transform: translateX(100%);
-  }
-  100% {
-    transform: translateX(-100%);
-  }
+    0% {
+        transform: translateX(100%);
+    }
+    100% {
+        transform: translateX(-100%);
+    }
 }
 
 @keyframes scroll2 {
-  0% {
-    transform: translateX(0%);
-  }
-  100% {
-    transform: translateX(-200%);
-  }
+    0% {
+        transform: translateX(0%);
+    }
+    100% {
+        transform: translateX(-200%);
+    }
 }
 
 .animate-scroll1 {
-  animation: scroll1 40s linear infinite;
-  animation-delay: -40s;
+    animation: scroll1 40s linear infinite;
+    animation-delay: -40s;
 }
 
 .animate-scroll2 {
-  animation: scroll2 40s linear infinite;
-  animation-delay: -20s;
+    animation: scroll2 40s linear infinite;
+    animation-delay: -20s;
 }
 
-h1>a>.icon.icon-link:before,
-h2>a>.icon.icon-link:before,
-h3>a>.icon.icon-link:before {
+h1 > a > .icon.icon-link:before,
+h2 > a > .icon.icon-link:before,
+h3 > a > .icon.icon-link:before {
     content: "#";
     font-size: 0.8rem;
 }
 
-h2 > a, h3>a {
+h2 > a, h3 > a {
     text-decoration: none !important;
 }
 
 .glow-overlay {
-	--glow-size: 25rem;
-	position: absolute;
-	inset: 0;
-	pointer-events: none;
-	user-select: none;
-	opacity: var(--glow-opacity, 0);
-	mask: radial-gradient(
-		var(--glow-size) var(--glow-size) at var(--glow-x) var(--glow-y),
-		var(--glow-color) 1%,
-		transparent 90%
-	);
-	transition: 400ms mask ease;
-	will-change: mask;
+    --glow-size: 25rem;
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    user-select: none;
+    opacity: var(--glow-opacity, 0);
+    mask: radial-gradient(
+            var(--glow-size) var(--glow-size) at var(--glow-x) var(--glow-y),
+            var(--glow-color) 1%,
+            transparent 90%
+    );
+    transition: 400ms mask ease;
+    will-change: mask;
 }
+scroll-behavior: smooth;

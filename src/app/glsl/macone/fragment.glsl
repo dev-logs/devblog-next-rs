@@ -23,12 +23,12 @@ void main()
     light += ambientLight(vec3(1.0), 2.5);
 
     light += pointLightReflect(
-        lightColor, // color
-        2.2, // intensity
-        normal, // surface direction
-        normalize(lightPosition), // lightDirection
-        vPosition, // model position to cal view pos
-        cameraPosition // cam position to cal view pos
+    lightColor, // color
+    2.2, // intensity
+    normal, // surface direction
+    normalize(lightPosition), // lightDirection
+    vPosition, // model position to cal view pos
+    cameraPosition// cam position to cal view pos
     );
 
     color *= light;
