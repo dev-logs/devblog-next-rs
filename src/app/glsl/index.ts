@@ -18,6 +18,8 @@ import TvFragmentShader from './tv/c1/fragment.glsl'
 import TvVertexShader from './tv/c1/vertex.glsl'
 import BackgroundFrameFragmentShader from './background-frame/fragment.glsl'
 import BackgroundFrameVertexShader from './background-frame/vertex.glsl'
+import GradientBackgroundVertexShader from './gradient-background/vertex.glsl'
+import GradientBackgroundFragmentShader from './gradient-background/fragment.glsl'
 
 const Shaders = {
     SimpleWobbleVertexShader,
@@ -39,7 +41,9 @@ const Shaders = {
     TvVertexShader,
     TvFragmentShader,
     BackgroundFrameFragmentShader,
-    BackgroundFrameVertexShader
+    BackgroundFrameVertexShader,
+    GradientBackgroundVertexShader,
+    GradientBackgroundFragmentShader
 }
 
 export default Shaders

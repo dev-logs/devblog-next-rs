@@ -28,7 +28,7 @@ export const DiscussionItem = ({ discussion }: DiscussionItemProps) => {
                     <i className="ri-more-line"></i>
                 </button>
             </div>
-            <div className="mt-2 text-gray-400">
+            <div className="mt-2 text-gray-50">
                 <p>{discussion.content}</p>
             </div>
             <div className="flex items-center mt-2">
@@ -43,7 +43,7 @@ export const DiscussionItem = ({ discussion }: DiscussionItemProps) => {
                         </button>
                     ))}
                 </div>
-                <span className="ml-4 text-gray-500 text-sm">{discussion.timestamp}</span>
+                <span className="ml-4 text-gray-50 text-sm">{discussion.timestamp}</span>
             </div>
         </div>
     );

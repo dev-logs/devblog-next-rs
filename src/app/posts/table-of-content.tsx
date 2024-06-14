@@ -1,10 +1,10 @@
 export const TableOfContent = (props: any) => {
     const {post} = props || {};
     return (
-        <div className="gap-y-8 lg:gap-8 sxl:gap-16 mt-8 mx-5 xl:max-w-full max-w-prose text-sm">
+        <div className="gap-y-8 lg:gap-8 sxl:gap-16 mt-8 mx-5 xl:max-w-full max-w-prose text-sm bg-black backdrop-blur-3xl bg-opacity-40 rounded-xl">
             <div className="col-span-full">
                 <details
-                    className="border-[1px] border-solid border-dark dark:border-light text-dark dark:text-light rounded-lg p-4 sticky top-6 max-h-[80vh] overflow-hidden overflow-y-auto">
+                    className="rounded-xl p-4 sticky top-6 max-h-[80vh] overflow-hidden overflow-y-auto">
                     <summary className="text-sm font-semibold capitalize cursor-pointer">
                         Table Of Content
                     </summary>

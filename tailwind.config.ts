@@ -1,6 +1,7 @@
 import type {Config} from "tailwindcss";
 
 const config: Config = {
+    darkMode: 'class',
     content: [
         "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
         "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
@@ -8,6 +9,12 @@ const config: Config = {
     ],
     theme: {
         extend: {
+            scrollbar: ['rounded'],
+            colors: {
+                'scrollbar-bg': '#000000',
+                'scrollbar-thumb': '#2d3748',
+                'scrollbar-thumb-hover': '#4a5568',
+            },
             fontFamily: {
                 roboto: ['Roboto', 'sans-serif'],
                 graduate: ['Graduate', 'Calistoga', 'Roboto', 'sans-serif'],
@@ -31,10 +38,14 @@ const config: Config = {
                 'skew1': 'skewY(-2deg) scale(0.98)',
             },
         },
+        variants: {
+            scrollbar: ['dark'],
+        },
     },
     plugins: [
         require('@tailwindcss/forms'),
-        require('@tailwindcss/typography')
+        require('@tailwindcss/typography'),
+        require('tailwind-scrollbar')
     ],
 };
 export default config;
