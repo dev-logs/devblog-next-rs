@@ -18,7 +18,9 @@ interface DiscussionsProps {
 
 export const Discussions = ({ discussions, totalComments }: DiscussionsProps) => {
     return (
-        <div className="max-w-prose 2xl:prose-xl prose-lg scrollbar overflow-scroll overflow-x-hidden h-screen bg-white bg-opacity-30 backdrop-blur-xl text-white p-8 shadow rounded-xl">
+        <div
+            className="max-w-prose prose-lg z-20 scrollbar overflow-hidden overflow-x-hidden h-screen bg-black bg-opacity-45 backdrop-blur-3xl text-white p-8 shadow rounded-xl">
+            <div className="absolute left-0 top-0 bg-gradient-to-b z-10 from-gray-600 opacity-15  w-screen h-[80vh]"/>
             <div className="flex justify-between items-center mb-4">
                 <div className="flex items-center">
                     <h2 className="text-lg font-semibold">Discussions</h2>
@@ -26,18 +28,18 @@ export const Discussions = ({ discussions, totalComments }: DiscussionsProps) =>
                 </div>
                 <div className="flex items-center">
                     <label className="mr-2">
-                        <input type="radio" name="sort" value="latest" defaultChecked className="mr-1" />
+                        <input type="radio" name="sort" value="latest" defaultChecked className="mr-1"/>
                         Latest
                     </label>
                     <label>
-                        <input type="radio" name="sort" value="popular" className="mr-1" />
+                        <input type="radio" name="sort" value="popular" className="mr-1"/>
                         Popular
                     </label>
                 </div>
             </div>
             <DiscussionInput/>
             {discussions.map(discussion => (
-                <DiscussionItem key={discussion.id} discussion={discussion} />
+                <DiscussionItem key={discussion.id} discussion={discussion}/>
             ))}
             <div className="flex justify-center items-center mt-4">
         <span className="text-gray-500">

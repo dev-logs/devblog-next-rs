@@ -20,6 +20,8 @@ import BackgroundFrameFragmentShader from './background-frame/fragment.glsl'
 import BackgroundFrameVertexShader from './background-frame/vertex.glsl'
 import GradientBackgroundVertexShader from './gradient-background/vertex.glsl'
 import GradientBackgroundFragmentShader from './gradient-background/fragment.glsl'
+import WingingBackgroundFragmentShader from './winging-background/fragment.glsl'
+import WingingVertexFragmentShader from './winging-background/vertex.glsl'
 
 const Shaders = {
     SimpleWobbleVertexShader,
@@ -43,7 +45,9 @@ const Shaders = {
     BackgroundFrameFragmentShader,
     BackgroundFrameVertexShader,
     GradientBackgroundVertexShader,
-    GradientBackgroundFragmentShader
+    GradientBackgroundFragmentShader,
+    WingingVertexFragmentShader,
+    WingingBackgroundFragmentShader
 }
 
 export default Shaders

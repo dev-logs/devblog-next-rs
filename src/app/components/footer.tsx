@@ -2,7 +2,7 @@ import {InstagramIcon} from '../icons/instagram'
 
 export const FooterHtml = (props: any) => {
     return <>
-        <div className={`flex flex-col h-full w-screen items-center pt-14`}>
+        <div className={`z-20 flex flex-col h-full w-screen items-center pt-14 overflow-hidden`}>
             <span
                 className='font-head md:scale-y-[2] scale-y-[3.55] align-bottom md:py-14 py-8 text-[24vw] text-white uppercase'>DEVLOGS STUDIO</span>
             <div className='flex md:flex-row flex-col md:gap-5 w-full justify-between items-center md:px-16'>

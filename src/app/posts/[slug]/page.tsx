@@ -67,7 +67,7 @@ export default function PostPage(props: any) {
 
 function HtmlDom(props: any = {}) {
     const {
-        params: {slug},
+        params: {slug}
     } = props;
 
     const post = allPosts.find((post) => post._raw.flattenedPath === slug)!;
@@ -88,7 +88,7 @@ function HtmlDom(props: any = {}) {
                         </article>
                     </div>
                 </div>
-                <div className="w-screen h-fit">
+                <div className="w-screen h-full">
                     <PostFooter discussions={discussions}/>
                 </div>
             </div>

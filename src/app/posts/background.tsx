@@ -16,7 +16,7 @@ export const PostBackground = (props: any) => {
             uniforms: {
                 uTime: {value: 0},
                 uColor1: {value: new THREE.Color('#FF6701')},
-                uColor2: {value: new THREE.Color('#E93B81')},
+                uColor2: {value: new THREE.Color('#30475E')},
             }
         })
 
@@ -32,6 +32,6 @@ export const PostBackground = (props: any) => {
     })
 
     return <>
-      <mesh material={material} geometry={geometry}/>
+      <mesh material={material} geometry={geometry} position-z={-1}/>
     </>
 }
