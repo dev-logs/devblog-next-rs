@@ -29,11 +29,10 @@ export const ThreeDCanvas = forwardRef((
         gl={{
             antialias: false,
             alpha: false,
-            pixelRatio: 1,
             preserveDrawingBuffer: false,
         }}
         shadows={false}
-        dpr={1}
+        dpr={2}
         ref={ref} {...omit(props, ['children'])}>
         <Implementation/>
     </Canvas>

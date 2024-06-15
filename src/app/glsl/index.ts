@@ -22,6 +22,8 @@ import GradientBackgroundVertexShader from './gradient-background/vertex.glsl'
 import GradientBackgroundFragmentShader from './gradient-background/fragment.glsl'
 import WingingBackgroundFragmentShader from './winging-background/fragment.glsl'
 import WingingVertexFragmentShader from './winging-background/vertex.glsl'
+import MacOneFragmentShader from './macone/fragment.glsl'
+import MacOneVertexShader from './macone/vertex.glsl'
 
 const Shaders = {
     SimpleWobbleVertexShader,
@@ -47,7 +49,9 @@ const Shaders = {
     GradientBackgroundVertexShader,
     GradientBackgroundFragmentShader,
     WingingVertexFragmentShader,
-    WingingBackgroundFragmentShader
+    WingingBackgroundFragmentShader,
+    MacOneFragmentShader,
+    MacOneVertexShader
 }
 
 export default Shaders

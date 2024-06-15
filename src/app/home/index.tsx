@@ -67,8 +67,9 @@ const HtmlDoms = (props: any) => {
             </ThreeDCanvas>
         </div>
         <div
-            className="absolute top-[-70vh] md:top-[-75vh] left-[-50vw] flex flex-col gap-10 items-center p-2 w-screen h-screen justify-center">
-            <span className="xl:text-8xl md:text-4xl text-2xl font-graduate text-center text-black">DEVLOGS STUDIO, CREATIVE SOFTWARE DESIGN</span>
+            className="absolute top-[-70vh] md:top-[-75vh] left-[-50vw] flex flex-col gap-5 items-center p-2 w-screen h-screen justify-center">
+            <span className="xl:text-6xl md:text-4xl text-2xl font-graduate bg-black bg-opacity-15 p-2 text-center text-black">DEVLOGS STUDIO</span>
+            <span className="xl:text-5xl md:text-3xl text-1xl py-4 font-graduate bg-black bg-opacity-15 p-2 px-10 rounded-full text-center text-black">CREATIVE STUDIO</span>
         </div>
         <div className="absolute top-[50vh] left-[-50vw] mr-5 w-screen flex flex-col gap-14">
             <BlogList/>
@@ -140,7 +141,7 @@ export const Header3d = (props: any) => {
                                     position={[0, -1.5, -1]}/>
                                 <Ribbon
                                     position={[0, -1, -0.7]}
-                                    scale={1.5}/>
+                                    scale={2.5}/>
                             </Scroll>
                         </>}
                         {matches.medium && <>
@@ -153,16 +154,16 @@ export const Header3d = (props: any) => {
                                     })
                                 }
                                 name="paper-airplane"
-                                scale={3}
+                                scale={2.4}
                                 position={[2, -3, -1]}
                             />
                             <Scroll>
                                 <Tivi
-                                    scale={9}
+                                    scale={10}
                                     position={[0, -2.5, -1]}/>
                                 <Ribbon
                                     position={[0, -1.8, -1.1]}
-                                    scale={2.5}/>
+                                    scale={3.5}/>
                             </Scroll>
                         </>
                         }
