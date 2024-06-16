@@ -3,7 +3,7 @@ import {PostBackground} from "@/app/posts/background";
 import {FooterHtml} from "@/app/components/footer";
 import {Discussions} from "@/app/components/discussion";
 
-export const PostFooter = (props: any) => {
+export default function PostFooter(props: any) {
     const {discussions} = props || {}
     return <div className="relative w-full h-full">
         <div

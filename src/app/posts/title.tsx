@@ -9,7 +9,7 @@ import {Bounds, Stage, useTexture} from "@react-three/drei";
 import {useFrame} from "@react-three/fiber";
 import {PostBackground} from "@/app/posts/background";
 
-export const PostTitle = (props: any) => {
+export default function PostTitle(props: any) {
     const {post}: { post: Post } = props || {}
     return <>
         <div className="relative w-full 2xl:h-[100vh] xl:h-[70vh] h-[50vh] bg-black bg-opacity-15 backdrop-blur-3xl">

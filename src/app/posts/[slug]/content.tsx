@@ -3,8 +3,9 @@
 import {allPosts} from "contentlayer/generated";
 import {MdxContent} from "../mdx";
 import {TableOfContent} from "../table-of-content";
-import {PostTitle} from "../title";
-import {PostFooter} from "@/app/posts/footer";
+import {TASKS} from "@/app/posts/[slug]/page";
+import dynamic from "next/dynamic";
+import {Suspense} from "react";
 
 const discussions = [
     {
@@ -61,15 +62,20 @@ export default function PostPageContent(props: any) {
 
 function HtmlDom(props: any = {}) {
     const {
-        params: {slug}
+        params: {slug},
+        tasks
     } = props;
 
     const post = allPosts.find((post) => post._raw.flattenedPath === slug)!;
+    const TitleLazy: any = dynamic(() => tasks[TASKS.POST_TITLE])
+    const FooterLazy: any = dynamic(() => tasks[TASKS.POST_FOOTER])
 
     return (
         <div className={"h-full w-full mt-10"}>
             <div className="w-screen flex flex-col">
-                <PostTitle post={post}/>
+                <Suspense>
+                    <TitleLazy post={post}/>
+                </Suspense>
                 <div className="grid grid-cols-12 w-full lg:pb-56 pb-14 backdrop-blur-3xl">
                     <div
                         className="lg:col-span-3 col-span-full lg:items-start items-center flex flex-row h-fit lg:sticky lg:left-5 lg:top-20 lg:justify-start justify-center">
@@ -83,7 +89,9 @@ function HtmlDom(props: any = {}) {
                     </div>
                 </div>
                 <div className="w-screen h-full">
-                    <PostFooter discussions={discussions}/>
+                    <Suspense>
+                        <FooterLazy discussions={discussions} post={post}/>
+                    </Suspense>
                 </div>
             </div>
         </div>
