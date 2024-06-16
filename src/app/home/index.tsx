@@ -75,7 +75,7 @@ const HtmlDoms = (props: any) => {
                     className="xl:text-2xl col-span-5 w-fit text-1xl font-graduate bg-black bg-opacity-25 p-2 text-center h-fit text-white">DEVLOG STUDIO</span>
             </div>
             <div
-                className="flex flex-row gap-2 md:w-fit lg:gap-2 gap-1 w-screen h-fit justify-start items-start">
+                className="flex flex-row gap-2 md:w-fit lg:gap-2 w-screen h-fit justify-start items-start">
                 <span
                     className="xl:text-2xl md:text-2xl col-span-2 w-fit text-1xl font-graduate bg-blue-400 bg-opacity-15 p-2 px-1 text-center h-fit text-black">THE CREATIVE</span>
                 <span
@@ -117,7 +117,7 @@ export const Header3d = (props: any) => {
         const elapsedTime = clock.getElapsedTime();
         if (airplaneRef.current) {
             airplaneRef.current.position.x = Math.sin(elapsedTime) * 4 * 0.7;
-            airplaneRef.current.position.y = Math.cos(elapsedTime) * 4 * 0.2;
+            airplaneRef.current.position.y = Math.cos(elapsedTime) * 4 * 0.3;
             airplaneRef.current.position.z = Math.cos(elapsedTime) * 4 * 0.4;
 
             airplaneRef.current.rotation.y = elapsedTime;
@@ -144,15 +144,15 @@ export const Header3d = (props: any) => {
                                 }
                                 name="paper-airplane"
                                 scale={2}
-                                position={[2, -4, -1]}
+                                position={[2, -4, 1]}
                             />
                             <Scroll>
                                 <Tivi
-                                    scale={7}
-                                    position={[0, -1.5, -1]}/>
+                                    scale={5}
+                                    position={[0, -1.4, 1]}/>
                                 <Ribbon
-                                    position={[0, -1, -0.7]}
-                                    scale={2.5}/>
+                                    position={[0, -1.25, 1]}
+                                    scale={1.5}/>
                             </Scroll>
                         </>}
                         {matches.medium && <>
@@ -166,15 +166,16 @@ export const Header3d = (props: any) => {
                                 }
                                 name="paper-airplane"
                                 scale={2.4}
-                                position={[2, -3, -1]}
+                                position={[2, -2, 2.3]}
                             />
                             <Scroll>
                                 <Tivi
-                                    scale={10}
-                                    position={[0, -2.5, -1]}/>
+                                    scale={8}
+                                    position={[0, -2, 1]}/>
                                 <Ribbon
-                                    position={[0, -1.8, -1.1]}
-                                    scale={3.5}/>
+                                    rotation-x={Math.PI * -0.02}
+                                    position={[0, -2.2, -0.1]}
+                                    scale={3}/>
                             </Scroll>
                         </>
                         }

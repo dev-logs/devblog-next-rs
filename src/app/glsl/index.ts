@@ -24,6 +24,8 @@ import WingingBackgroundFragmentShader from './winging-background/fragment.glsl'
 import WingingVertexFragmentShader from './winging-background/vertex.glsl'
 import MacOneFragmentShader from './macone/fragment.glsl'
 import MacOneVertexShader from './macone/vertex.glsl'
+import MacOneLCDFragmentShader from './macone-lcd/fragment.glsl'
+import MacOneLCDVertexShader from './macone-lcd/vertex.glsl'
 
 const Shaders = {
     SimpleWobbleVertexShader,
@@ -51,7 +53,9 @@ const Shaders = {
     WingingVertexFragmentShader,
     WingingBackgroundFragmentShader,
     MacOneFragmentShader,
-    MacOneVertexShader
+    MacOneVertexShader,
+    MacOneLCDFragmentShader,
+    MacOneLCDVertexShader
 }
 
 export default Shaders
