@@ -3,9 +3,9 @@
 import {allPosts} from "contentlayer/generated";
 import {MdxContent} from "../mdx";
 import {TableOfContent} from "../table-of-content";
-import {TASKS} from "@/app/posts/[slug]/page";
 import dynamic from "next/dynamic";
 import {Suspense} from "react";
+import {TASKS} from "@/app/posts/[slug]/config";
 
 const discussions = [
     {
