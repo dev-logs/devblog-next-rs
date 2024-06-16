@@ -4,7 +4,7 @@ import CustomShaderMaterial from "three-custom-shader-material/vanilla"
 import * as THREE from 'three'
 import SHADERS from '../glsl'
 import {useFrame} from "@react-three/fiber"
-import {TOTAL_PAGES} from "."
+import {TOTAL_PAGES} from "@/app/home/index";
 
 export const HomeBackground = (props: any = {}) => {
     const scroll = props.scrollData || useScroll()

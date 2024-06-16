@@ -1,4 +1,4 @@
-import {Home as Homee} from './home'
+import Homee from './home'
 
 export default function Home() {
     return (

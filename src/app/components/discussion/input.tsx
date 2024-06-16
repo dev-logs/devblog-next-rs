@@ -3,7 +3,7 @@ import React from 'react';
 export const DiscussionInput = () => {
     return (
         <div className="bg-black border border-blue-500 rounded-md p-2 mb-4">
-            <div contentEditable="true" className="w-full h-full min-h-[40px] mb-2 outline-none">
+            <div className="w-full h-full min-h-[40px] mb-2 outline-none">
                 <p>Hi <a className="text-blue-500">@Jo</a></p>
             </div>
             <div className="flex justify-between items-center border-t border-gray-600 pt-3">

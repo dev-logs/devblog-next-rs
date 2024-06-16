@@ -5,7 +5,6 @@ const nextConfig = {
     // output: 'export',
     // distDir: 'server/out/',
     images: {
-        unoptimized: true
     },
     trailingSlash: true,
     webpack: (config) => {

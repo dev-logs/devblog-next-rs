@@ -53,3 +53,5 @@ export const ElectricalEffect = (props: ElectricalEffectProps) => {
         </Reponsive>
     </>
 }
+
+useGLTF.preload('/3d-models/bloom/geometries.glb')

@@ -1,4 +1,5 @@
 import {Post} from "contentlayer/generated"
+import Link from "next/link";
 
 export interface PostItemProps {
     post: Post
@@ -21,8 +22,8 @@ export const ClassicPostItemContainer = (props: PostItemProps) => {
                 </div>
             </div>
             <div className="flex flex-row justify-between md:mb-5 md:mx-5 pt-10 md:pt-20 items-center">
-                <a href={post.url}
-                   className="font-roboto border-green-400 text-sm rounded-full border py-2 px-4">{"Read more ->"}</a>
+                <Link href={post.url}
+                   className="font-roboto border-green-400 text-sm rounded-full border py-2 px-4">{"Read more ->"}</Link>
                 <span className="font-roboto text-pink-400 text-sm">{`${post.readingTime.text}`}</span>
             </div>
         </div>

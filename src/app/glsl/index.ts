@@ -26,6 +26,8 @@ import MacOneFragmentShader from './macone/fragment.glsl'
 import MacOneVertexShader from './macone/vertex.glsl'
 import MacOneLCDFragmentShader from './macone-lcd/fragment.glsl'
 import MacOneLCDVertexShader from './macone-lcd/vertex.glsl'
+import LoadingVertexShader from './loading/vertex.glsl'
+import LoadingFragmentShader from './loading/fragment.glsl'
 
 const Shaders = {
     SimpleWobbleVertexShader,
@@ -55,7 +57,9 @@ const Shaders = {
     MacOneFragmentShader,
     MacOneVertexShader,
     MacOneLCDFragmentShader,
-    MacOneLCDVertexShader
+    MacOneLCDVertexShader,
+    LoadingVertexShader,
+    LoadingFragmentShader
 }
 
 export default Shaders

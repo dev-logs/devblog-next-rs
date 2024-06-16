@@ -64,7 +64,9 @@ export const Tivi = (props: any) => {
     }, []);
 
     return <>
-        <Environment preset={"warehouse"} environmentIntensity={0.7}/>
+        <Environment preset={"city"} environmentIntensity={1.4}/>
         <MacOne ref={meshRef} bodyMaterial={bodyMaterial} screenMaterial={screenMaterial} cloneScreen {...props}/>
     </>
 }
+
+useTexture.preload('/images/dale-typing-pixelated-frame.jpg')

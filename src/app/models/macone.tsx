@@ -9,21 +9,18 @@ export const MacOne = forwardRef((props: any, ref) => {
     const {screenMaterial, bodyMaterial} = props || {}
 
     const model = useGLTF('/3d-models/macone/geometries2.glb')
-    const texture = useTexture('/3d-models/macone/body-texture.jpg')
     const helloWorldLCD = useTexture('/images/hello-world-lcd.jpg')
     helloWorldLCD.colorSpace = THREE.SRGBColorSpace
-    texture.colorSpace = THREE.SRGBColorSpace
     helloWorldLCD.wrapS = THREE.RepeatWrapping
     helloWorldLCD.wrapT = THREE.RepeatWrapping
-    texture.flipY = true
 
     const [shineMaterial] = useMemo(() => {
         const shineMaterial = new THREE.MeshStandardMaterial({
             color: '#DDDDDD',
-            metalness: 1,
-            roughness: 0.1,
+            metalness: 1.1,
+            roughness: 0.0,
             emissive: '#DDDDDD',
-            emissiveIntensity: 1
+            emissiveIntensity: 1.05
         })
 
         return [shineMaterial]
@@ -34,7 +31,6 @@ export const MacOne = forwardRef((props: any, ref) => {
         model.scene.traverse((c: any) => {
             if (c.name === 'Body001') {
                 c.material = bodyMaterial || new THREE.MeshBasicMaterial({
-                    map: texture
                 })
             } else if (c.name === 'Screen007') {
                 c.material = screenMaterial || new CustomShaderMaterial({
@@ -91,3 +87,6 @@ export const MacOne = forwardRef((props: any, ref) => {
         <primitive ref={ref} {...props} object={model.scene}/>
     </>
 })
+
+useGLTF.preload('/3d-models/macone/geometries2.glb')
+useTexture.preload('/images/hello-world-lcd.jpg')
