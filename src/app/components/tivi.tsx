@@ -9,10 +9,8 @@ import gsap from "gsap";
 
 export const Tivi = (props: any) => {
     const beerMugTexture = useTexture('/images/dale-typing-pixelated-frame.jpg')
-    beerMugTexture.flipY = true
+    beerMugTexture.flipY = false
     beerMugTexture.colorSpace = THREE.SRGBColorSpace
-
-    const texture = useTexture('/3d-models/macone/body-texture.jpg')
 
     const [screenMaterial, bodyMaterial]: any = useMemo(() => {
         const screenMaterial = new CustomShaderMaterial({
