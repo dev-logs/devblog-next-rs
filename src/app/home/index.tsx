@@ -66,10 +66,21 @@ const HtmlDoms = (props: any) => {
                 <HomeBackground scrollData={scrollData}/>
             </ThreeDCanvas>
         </div>
-        <div
-            className="absolute top-[-70vh] md:top-[-75vh] left-[-50vw] flex flex-col gap-5 items-center p-2 w-screen h-screen justify-center">
-            <span className="xl:text-6xl md:text-4xl text-2xl font-graduate bg-black bg-opacity-15 p-2 text-center text-black">DEVLOGS STUDIO</span>
-            <span className="xl:text-5xl md:text-3xl text-1xl py-4 font-graduate bg-black bg-opacity-15 p-2 px-10 rounded-full text-center text-black">CREATIVE STUDIO</span>
+        <div className="absolute top-[-70vh] ml-10 gap-3 left-[-50vw] h-screen flex justify-center items-start flex-col">
+            <div
+                className="flex flex-row gap-2 md:w-fit lg:gap-2 w-screen h-fit justify-start items-start">
+                <span
+                    className="xl:text-2xl col-span-1 px-4 w-fit text-1xl font-graduate bg-pink-700 bg-opacity-25 p-2 rounded-full text-center h-fit text-black">THE</span>
+                <span
+                    className="xl:text-2xl col-span-5 w-fit text-1xl font-graduate bg-black bg-opacity-25 p-2 text-center h-fit text-white">DEVLOG STUDIO</span>
+            </div>
+            <div
+                className="flex flex-row gap-2 md:w-fit lg:gap-2 gap-1 w-screen h-fit justify-start items-start">
+                <span
+                    className="xl:text-2xl md:text-2xl col-span-2 w-fit text-1xl font-graduate bg-blue-400 bg-opacity-15 p-2 px-1 text-center h-fit text-black">THE CREATIVE</span>
+                <span
+                    className="xl:text-2xl text-1xl col-span-3 w-fit font-graduate bg-black bg-opacity-15 p-2 px-1 h-fit text-center text-black">SOFTWARE DEVELOPMENT</span>
+            </div>
         </div>
         <div className="absolute top-[50vh] left-[-50vw] mr-5 w-screen flex flex-col gap-14">
             <BlogList/>
