@@ -10,7 +10,7 @@ varying vec3 vPosition;
 
 void main() {
     vec2 uv = vUv;
-    uv.x += uTime * 0.3;
+    uv.x -= uTime * 0.3;
     uv.x /= 2.0;
     vec4 textureColor = texture2D(uTexture, uv);
     vec3 color = textureColor.rgb;
