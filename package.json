@@ -27,6 +27,7 @@
     "next": "^14.2.3",
     "next-contentlayer": "^0.3.4",
     "next-sitemap": "^4.2.3",
+    "postprocessing": "^6.35.5",
     "react": "18",
     "react-dom": "18",
     "react-media": "^1.10.0",
@@ -41,11 +42,14 @@
     "three-custom-shader-material": "5.4.0"
   },
   "devDependencies": {
+    "@types/color-thief-node": "^1.0.4",
     "@types/lodash": "4.17.4",
     "@types/node": "20",
     "@types/react": "18",
     "@types/react-dom": "18",
     "@types/three": "0.164.0",
+    "canvas": "^2.11.2",
+    "color-thief-node": "^1.0.4",
     "concurrently": "8.2.2",
     "eslint": "9.3.0",
     "eslint-config-next": "14.2.3",

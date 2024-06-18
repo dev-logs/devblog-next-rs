@@ -80,7 +80,9 @@ export const MacOne = forwardRef((props: any, ref) => {
         const clock = tick.clock
         const elapsedTime = clock.getElapsedTime()
 
-        bottomTagMaterial.uniforms.uTime.value = elapsedTime
+        if (bottomTagMaterial) {
+          bottomTagMaterial.uniforms.uTime.value = elapsedTime
+        }
     })
 
     return <>

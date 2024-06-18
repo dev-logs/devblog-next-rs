@@ -34,18 +34,18 @@ export const ElectricalEffect = (props: ElectricalEffectProps) => {
 
     return <>
         <EffectComposer enableNormalPass={false} resolutionScale={1}>
-            <Bloom intensity={1} luminanceThreshold={1.1} mipmapBlur/>
+            <Bloom intensity={0.3} luminanceThreshold={1.1} mipmapBlur/>
         </EffectComposer>
         <Reponsive>{
             (matches: any) => (<Fragment>
                 {matches.small && <>
                     <mesh geometry={wireGeometry.scene.children[0].geometry} rotation-y={1} {...props}>
-                        <meshStandardMaterial color={'orange'} emissive={'orange'} emissiveIntensity={0.9}/>
+                        <meshStandardMaterial color={'orange'} emissive={'orange'} emissiveIntensity={2}/>
                     </mesh>
                 </>}
                 {matches.medium && <>
                     <mesh geometry={wireGeometry.scene.children[0].geometry} rotation-y={1} {...props}>
-                        <meshStandardMaterial color={'orange'} emissive={'orange'} emissiveIntensity={0.9}/>
+                        <meshStandardMaterial color={'orange'} emissive={'orange'} emissiveIntensity={2}/>
                     </mesh>
                 </>}
             </Fragment>)}

@@ -28,7 +28,7 @@ export const ThreeDCanvas = forwardRef((
     return <Canvas
         gl={{
             antialias: false,
-            alpha: false,
+            alpha: true,
             preserveDrawingBuffer: false,
         }}
         shadows={false}

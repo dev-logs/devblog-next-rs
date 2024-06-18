@@ -25,9 +25,9 @@ export const Tivi = (props: any) => {
         })
 
         const bodyMaterial = new  THREE.MeshStandardMaterial({
-            color: '#F1EFEF',
-            metalness: 0.3,
-            roughness: 0.5,
+            color: 'white',
+            metalness: 0.4,
+            roughness: 0.4,
         })
 
         return [screenMaterial, bodyMaterial]
@@ -64,7 +64,7 @@ export const Tivi = (props: any) => {
     }, []);
 
     return <>
-        <Environment preset={"city"} environmentIntensity={1.4}/>
+        <Environment files={"/images/warehouse.hdr"} environmentIntensity={0.8}/>
         <MacOne ref={meshRef} bodyMaterial={bodyMaterial} screenMaterial={screenMaterial} cloneScreen {...props}/>
     </>
 }
