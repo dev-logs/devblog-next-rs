@@ -71,7 +71,7 @@ function HtmlDom(props: any = {}) {
     const FooterLazy: any = dynamic(() => tasks[TASKS.POST_FOOTER])
 
     return (
-        <div className={"h-full w-full mt-10"}>
+        <div className={"h-full w-full"}>
             <div className="w-screen flex flex-col">
                 <Suspense>
                     <TitleLazy post={post}/>

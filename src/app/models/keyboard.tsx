@@ -18,7 +18,7 @@ export default function Keyboard(props: any) {
   }, [model])
 
   return <>
-    <Environment files={'/images/warehouse.hdr'} environmentIntensity={1}/>
+    <Environment files={'/images/warehouse.hdr'} environmentIntensity={3}/>
     <primitive {...props} object={model.scene}/>
   </>
 }
