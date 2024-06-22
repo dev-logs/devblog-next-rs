@@ -4,19 +4,19 @@ import {useMemo} from "react";
 import CustomShaderMaterial from "three-custom-shader-material/vanilla";
 import Shaders from '../glsl'
 import {useFrame} from "@react-three/fiber";
+import {EffectComposer, Grid} from "@react-three/postprocessing";
 
 export const PostBackground = (props: any) => {
     const [material, geometry] = useMemo(() => {
         const material = new CustomShaderMaterial({
             baseMaterial: THREE.MeshBasicMaterial,
-            color: 'black',
             vertexShader: Shaders.GradientBackgroundVertexShader,
             fragmentShader: Shaders.GradientBackgroundFragmentShader,
             transparent: true,
             uniforms: {
                 uTime: {value: 0},
-                uColor1: {value: new THREE.Color('#FF6701')},
-                uColor2: {value: new THREE.Color('#30475E')},
+                uColor1: {value: new THREE.Color('#030637')},
+                uColor2: {value: new THREE.Color('#3C0753')},
             }
         })
 
@@ -32,6 +32,9 @@ export const PostBackground = (props: any) => {
     })
 
     return <>
-      <mesh material={material} geometry={geometry} position-z={-1}/>
+        <EffectComposer>
+            <Grid scale={3.75} lineWidth={1.75}/>
+        </EffectComposer>
+        <mesh material={material} geometry={geometry} position-z={-1}/>
     </>
 }

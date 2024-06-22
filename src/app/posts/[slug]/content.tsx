@@ -51,10 +51,8 @@ const discussions = [
 ];
 
 export default function PostPageContent(props: any) {
-    return <div className={"relative h-screen w-screen overflow-hidden"}>
-        <div className={"z-0 h-full w-full top-0 left-0"}>
-        </div>
-        <div className={"z-10 absolute h-screen w-screen top-0 left-0 overflow-scroll"}>
+    return <div className={"relative h-screen w-screen"}>
+        <div className={"h-screen w-screen"}>
             <HtmlDom {...props}/>
         </div>
     </div>

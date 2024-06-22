@@ -11,10 +11,7 @@ void main() {
     float strength = uv.y;
 
     float noise = simplexNoise3d(vec3(uv, uTime * 0.2)) * 1.0;
-//    noise *= simplexNoise3d(vec3(uv, uTime));
-    vec3 color = mix(uColor2, uColor1, noise * 1.0);
-    color.r = floor(color.r * 10.0);
-    color.g = floor(color.g * 10.0);
-    color.b = floor(color.b * 10.0);
-    csm_FragColor.rgb = color * 0.2;
+    vec3 color = mix(uColor1, uColor2, uv.y * 2.0);
+
+    csm_FragColor.rgb = color;
 }

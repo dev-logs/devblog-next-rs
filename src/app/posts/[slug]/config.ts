@@ -5,5 +5,6 @@ export const TASKS = {
 
 export const getTask = () => [
     import('../title'),
-    import('../footer')
+    import('../footer'),
+    new Promise((r, rj) => setTimeout(r, 2000)) // wait for canvas to load
 ]
