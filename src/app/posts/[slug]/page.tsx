@@ -1,11 +1,8 @@
 'use client'
 import React, {Suspense, useCallback, useMemo, useState} from "react";
-import dynamic from "next/dynamic";
 import PostPageContent from "@/app/posts/[slug]/content";
 import {LoadingOverlay} from "@/app/components/loading-overlay";
 import {getTask} from "@/app/posts/[slug]/config";
-import {hidden} from "kleur/colors";
-
 
 export default function PostPage(props: any) {
     const tasks = useMemo(() => getTask(), [])
