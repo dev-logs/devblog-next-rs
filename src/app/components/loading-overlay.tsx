@@ -3,10 +3,12 @@
 import {useEffect, useRef, useState} from "react";
 import {useProgress} from "@react-three/drei";
 import gsap from "gsap";
+import noop from 'lodash/noop'
 
 export const LoadingOverlay = (props: any) => {
     const {
-        tasks = []
+        tasks = [],
+        onComplete = noop
     }: any = props || {}
 
     const [progress, updateProgress] = useState(0)
@@ -61,7 +63,10 @@ export const LoadingOverlay = (props: any) => {
         }
     }, [progress]);
 
-    if (isComplete) return <></>
+    if (isComplete) {
+        onComplete()
+        return <></>
+    }
 
     return <>
         <div

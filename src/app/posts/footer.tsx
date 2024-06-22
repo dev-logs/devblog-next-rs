@@ -15,7 +15,7 @@ export default function PostFooter(props: any) {
         <div
             className="absolute left-0 top-0 z-10 bg-black bg-opacity-25 backdrop-blur-3xl from-black w-screen h-[200vh]"
         />
-        <div className="absolute top-0 left-0 z-0 w-screen h-[200vh]">
+        <div className="absolute top-0 left-0 z-0 w-screen h-full">
             <ThreeDCanvas gl={{alpha: false, antialias: false}} dpr={1}>
                 <PostBackground/>
             </ThreeDCanvas>

@@ -10,26 +10,10 @@ export default function PostTitle(props: any) {
     const {post}: { post: Post } = props || {}
     return <div className="relative w-screen sm:h-screen h-[60vh]">
         <div className="absolute top-0 left-0 w-screen h-full z-40">
-            <div className={`absolute left-0 z-20 bg-gradient-to-b opacity-20 top-0 w-screen h-[30vh]`} style={{
-                '--tw-gradient-from': `${'#000000'} var(--tw-gradient-from-position)`,
-                '--tw-gradient-to': 'rgb(0 0 0 / 0) var(--tw-gradient-to-position)',
-                '--tw-gradient-stops': 'var(--tw-gradient-from), var(--tw-gradient-to)'
-            }}/>
-            <div className="absolute left-0 opacity-60 bottom-0 bg-gradient-to-t z-40 w-screen h-[60vh]" style={{
-                '--tw-gradient-from': `${'#000000'} var(--tw-gradient-from-position)`,
-                '--tw-gradient-to': 'rgb(0 0 0 / 0) var(--tw-gradient-to-position)',
-                '--tw-gradient-stops': 'var(--tw-gradient-from), var(--tw-gradient-to)'
-            }}/>
-            <div className="absolute left-0 opacity-40 bg-gradient-to-r z-20 from-black h-full w-[60vh]" style={{
-                '--tw-gradient-from': `${'#000000'} var(--tw-gradient-from-position)`,
-                '--tw-gradient-to': 'rgb(0 0 0 / 0) var(--tw-gradient-to-position)',
-                '--tw-gradient-stops': 'var(--tw-gradient-from), var(--tw-gradient-to)'
-            }}/>
-            <div className="absolute right-0 opacity-40 bg-gradient-to-l z-10 from-black h-full w-[60vh]" style={{
-                '--tw-gradient-from': `${'#000000'} var(--tw-gradient-from-position)`,
-                '--tw-gradient-to': 'rgb(0 0 0 / 0) var(--tw-gradient-to-position)',
-                '--tw-gradient-stops': 'var(--tw-gradient-from), var(--tw-gradient-to)'
-            }}/>
+            <div className={`absolute left-0 z-20 bg-gradient-to-b opacity-20 top-0 w-screen h-[30vh]`}/>
+            <div className="absolute left-0 opacity-60 bottom-0 bg-gradient-to-t z-40 w-screen h-[60vh]"/>
+            <div className="absolute left-0 opacity-40 bg-gradient-to-r z-20 from-black h-full w-[60vh]"/>
+            <div className="absolute right-0 opacity-40 bg-gradient-to-l z-10 from-black h-full w-[60vh]"/>
             <div className="absolute opacity-10 bottom-0 left-0 h-full w-screen">
                 <img src={post.publicImage} className="w-full h-full object-cover"/>
             </div>

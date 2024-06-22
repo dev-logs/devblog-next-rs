@@ -3,7 +3,6 @@ import React from 'react'
 import {useMDXComponent} from 'next-contentlayer/hooks'
 import Image from 'next/image'
 
-
 const mdxComponents = {
     Image
 }

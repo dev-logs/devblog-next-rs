@@ -93,5 +93,5 @@ function HtmlDom(props: any = {}) {
                 </div>
             </div>
         </div>
-    );
+    )
 }

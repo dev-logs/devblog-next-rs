@@ -33,7 +33,7 @@ export const PostBackground = (props: any) => {
 
     return <>
         <EffectComposer>
-            <Grid scale={3.75} lineWidth={1.75}/>
+            <Grid scale={2.75} lineWidth={3.75}/>
         </EffectComposer>
         <mesh material={material} geometry={geometry} position-z={-1}/>
     </>
