@@ -80,8 +80,8 @@ function HtmlDom(props: any = {}) {
                         <TableOfContent post={post}/>
                     </div>
                     <div
-                        className="flex lg:justify-start flex-col lg:items-start lg:pl-16 items-center  lg:col-span-9 col-span-full mt-8">
-                        <article className="prose 2xl:prose-xl prose-lg mb-10 w-full p-8 rounded-xl backdrop-blur-lg">
+                        className="flex lg:justify-start flex-col lg:items-start lg:pl-16 items-center lg:col-span-9 col-span-full md:mt-8 mt-2">
+                        <article className="prose 2xl:prose-xl md:prose-lg prose-sm mb-10 w-full sm:px-8 px-5 rounded-xl backdrop-blur-lg">
                             <MdxContent post={post}/>
                         </article>
                     </div>

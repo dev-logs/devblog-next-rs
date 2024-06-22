@@ -8,8 +8,8 @@ import {useFrame} from "@react-three/fiber";
 
 export default function PostTitle(props: any) {
     const {post}: { post: Post } = props || {}
-    return <div className="relative w-screen h-screen">
-        <div className="absolute top-0 left-0 w-screen h-screen z-40">
+    return <div className="relative w-screen sm:h-screen h-[60vh]">
+        <div className="absolute top-0 left-0 w-screen h-full z-40">
             <div className={`absolute left-0 z-20 bg-gradient-to-b opacity-20 top-0 w-screen h-[30vh]`} style={{
                 '--tw-gradient-from': `${'#000000'} var(--tw-gradient-from-position)`,
                 '--tw-gradient-to': 'rgb(0 0 0 / 0) var(--tw-gradient-to-position)',
@@ -20,23 +20,23 @@ export default function PostTitle(props: any) {
                 '--tw-gradient-to': 'rgb(0 0 0 / 0) var(--tw-gradient-to-position)',
                 '--tw-gradient-stops': 'var(--tw-gradient-from), var(--tw-gradient-to)'
             }}/>
-            <div className="absolute left-0 opacity-40 bg-gradient-to-r z-20 from-black h-screen w-[60vh]" style={{
+            <div className="absolute left-0 opacity-40 bg-gradient-to-r z-20 from-black h-full w-[60vh]" style={{
                 '--tw-gradient-from': `${'#000000'} var(--tw-gradient-from-position)`,
                 '--tw-gradient-to': 'rgb(0 0 0 / 0) var(--tw-gradient-to-position)',
                 '--tw-gradient-stops': 'var(--tw-gradient-from), var(--tw-gradient-to)'
             }}/>
-            <div className="absolute right-0 opacity-40 bg-gradient-to-l z-10 from-black h-screen w-[60vh]" style={{
+            <div className="absolute right-0 opacity-40 bg-gradient-to-l z-10 from-black h-full w-[60vh]" style={{
                 '--tw-gradient-from': `${'#000000'} var(--tw-gradient-from-position)`,
                 '--tw-gradient-to': 'rgb(0 0 0 / 0) var(--tw-gradient-to-position)',
                 '--tw-gradient-stops': 'var(--tw-gradient-from), var(--tw-gradient-to)'
             }}/>
-            <div className="absolute opacity-10 bottom-0 left-0 h-screen w-screen">
+            <div className="absolute opacity-10 bottom-0 left-0 h-full w-screen">
                 <img src={post.publicImage} className="w-full h-full object-cover"/>
             </div>
             <div
-                className="absolute pt-28 left-0 top-0 h-screen w-screen z-20 flex flex-col px-20 gap-5 justify-between items-center">
-                <span className="text-xl font-graduate text-blue-400 font-bold">technical blog</span>
-                <span className="text-5xl max-w-[50vw] text-center font-Alfa">{post.title}</span>
+                className="absolute pt-28 left-0 top-0 sm:h-screen h-[60vh] w-screen z-20 flex flex-col xl:px-20 px-5 md:gap-5 gap-1 justify-between items-center">
+                <span className="text-sm lg:text-xl font-mono capitalize text-pink-700 underline underline-offset-1 font-bold">#{post.keywords}</span>
+                <span className="xl:text-5xl md:text-3xl text-xl xl:max-w-[50vw] text-center font-Alfa">{post.title}</span>
                 <ThreeDCanvas gl={{
                     antialias: false,
                     alpha: true,
@@ -60,7 +60,6 @@ const HtmlDOM = (props: any) => {
              className="lg:text-7xl md:text-4xl overflow-visible text-3xl font-bold font-graduate text-gray-200">
            DEVLOGS STUDIO
          </span>
-            {/*<img src={post.publicImage} className="w-full h-[120px] object-cover"/>*/}
         </div>
         <div className="flex flex-col w-full h-full justify-start items-center z-10 px-3">
            <span

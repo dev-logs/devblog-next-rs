@@ -19,22 +19,11 @@ interface DiscussionsProps {
 export const Discussions = ({ discussions, totalComments }: DiscussionsProps) => {
     return (
         <div
-            className="max-w-prose prose-lg z-20 scrollbar overflow-hidden overflow-x-hidden h-screen bg-black bg-opacity-45 backdrop-blur-3xl text-white p-8 shadow rounded-xl">
-            <div className="absolute left-0 top-0 bg-gradient-to-b z-10 from-gray-600 opacity-15  w-screen h-[80vh]"/>
+            className="max-w-prose prose 2xl:prose-xl md:prose-lg prose-sm h-fit overflow-x-hidden z-20 bg-black bg-opacity-45 backdrop-blur-3xl text-white p-5 shadow rounded-xl">
             <div className="flex justify-between items-center mb-4">
-                <div className="flex items-center">
-                    <h2 className="text-lg font-semibold">Discussions</h2>
+                <div className="flex flex-row justify-center items-center">
+                    <h2 className="text-lg font-semibold text-white">Discussions</h2>
                     <div className="ml-2 bg-gray-50 text-black text-xs px-2 py-1 rounded-full">{totalComments}</div>
-                </div>
-                <div className="flex items-center">
-                    <label className="mr-2">
-                        <input type="radio" name="sort" value="latest" defaultChecked className="mr-1"/>
-                        Latest
-                    </label>
-                    <label>
-                        <input type="radio" name="sort" value="popular" className="mr-1"/>
-                        Popular
-                    </label>
                 </div>
             </div>
             <DiscussionInput/>

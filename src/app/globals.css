@@ -134,3 +134,12 @@ h2 > a, h3 > a {
     background-color: #4a5568;
 }
 
+/* Hide the default scrollbar */
+textarea::-webkit-scrollbar {
+    display: none;
+}
+
+textarea {
+    overflow: hidden;
+    resize: none; /* Optional: disable resizing by the user */
+}

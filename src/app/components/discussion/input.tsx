@@ -3,9 +3,8 @@ import React from 'react';
 export const DiscussionInput = () => {
     return (
         <div className="bg-black border border-blue-500 rounded-md p-2 mb-4">
-            <div className="w-full h-full min-h-[40px] mb-2 outline-none">
-                <p>Hi <a className="text-blue-500">@Jo</a></p>
-            </div>
+            <textarea className="w-full h-fit font-roboto focus:border-none border-none mb-2 outline-none bg-transparent bg-opacity-0">
+            </textarea>
             <div className="flex justify-between items-center border-t border-gray-600 pt-3">
                 <div className="flex items-center space-x-2">
                     <button className="btn"><i className="ri-bold"></i></button>
