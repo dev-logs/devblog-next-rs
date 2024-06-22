@@ -6,7 +6,6 @@ import rehypePrettyCode from "rehype-pretty-code";
 import rehypeSlug from "rehype-slug";
 import remarkGfm from "remark-gfm";
 import GithubSlugger from 'github-slugger'
-import {getMainColor, getSideColors, rgbToHex} from './src/build/color-thief'
 
 export const Post = defineDocumentType(() => ({
     name: "Post",
@@ -33,24 +32,6 @@ export const Post = defineDocumentType(() => ({
         readingTime: {
             type: "json",
             resolve: (doc) => readingTime(doc.body.raw),
-        },
-        colors: {
-          type: "json",
-          required: true,
-          resolve: async (post) => {
-            const imageUrl = post.image.filePath.replace("../", "")
-            const mainColor = await getMainColor(imageUrl)
-            const sideColors = await getSideColors(imageUrl)
-
-            const result = {
-              mainColor,
-              sideColors
-            }
-
-            console.log(`Generated color for ${post.title}`, result)
-
-            return result
-          }
         },
         toc: {
             type: "json",

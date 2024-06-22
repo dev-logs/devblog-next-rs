@@ -1,11 +1,12 @@
 import {withContentlayer} from 'next-contentlayer'
 
+const env = {
+  DEVBLOG_API_URL: process.env.DEVBLOG_API_URL || 'http://localhost:3001'
+}
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-    // output: 'export',
-    // distDir: 'server/out/',
-    images: {
-    },
+    env,
     trailingSlash: true,
     webpack: (config) => {
         config.module.rules.push({
@@ -15,6 +16,7 @@ const nextConfig = {
                 'ts-shader-loader'
             ]
         })
+
         return config
     }
 }
