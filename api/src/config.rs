@@ -3,7 +3,8 @@ use std::env;
 
 #[derive(Debug)]
 pub struct GRPCServer {
-    pub port: u16
+    pub port: u16,
+    pub web_port: u16
 }
 
 impl Default for GRPCServer {
@@ -12,6 +13,9 @@ impl Default for GRPCServer {
             port: env::var("DEVLOGS_DEVBLOG_API_GRPC_PORT")
                 .map(|env_var| env_var.parse().expect("The DEVLOGS_DEVBLOG_API_GRPC_PORT must be number"))
                 .unwrap_or(30001),
+            web_port: env::var("DEVLOGS_DEVBLOG_GRPC_WEB_PORT")
+                .map(|env_var| env_var.parse().expect("The DEVLOGS_DEVBLOG_API_GRPC_WEB_PORT must be number"))
+                .unwrap_or(30002),
         }
     }
 }

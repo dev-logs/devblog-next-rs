@@ -8,11 +8,36 @@ use log::info;
 use pretty_env_logger::formatted_timed_builder;
 use schema::devblog::devblog::devblog_discussion_service_server::DevblogDiscussionServiceServer;
 use tonic::transport::Server;
+use tonic_web::*;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     setup_logger();
-    setup_grpc_server().await?;
+
+    let grpc_server_async_task = setup_grpc_server();
+    let grpc_server_web_async_task = setup_grpc_web_server();
+
+    let (server, web) = tokio::join!(grpc_server_async_task, grpc_server_web_async_task);
+
+    server?;
+    web?;
+
+    Ok(())
+}
+
+async fn setup_grpc_web_server() -> Result<(), Box<dyn std::error::Error>> {
+    let ns = "devblog-api-grpc-web-server";
+    let addr = format!("[::1]:{}", CONFIGS.grpc_server.web_port).parse()?;
+    let discussion_service = DiscussionGrpcService::new();
+
+    info!(target: ns, "Starting grpc web server at {}", addr);
+    Server::builder()
+           .accept_http1(true)
+           .layer(GrpcWebLayer::new())
+           .add_service(DevblogDiscussionServiceServer::new(discussion_service))
+           .serve(addr)
+           .await?;
+
     Ok(())
 }
 

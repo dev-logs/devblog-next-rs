@@ -28,7 +28,7 @@ export const DiscussionItem = ({ discussion }: DiscussionItemProps) => {
                     <i className="ri-more-line"></i>
                 </button>
             </div>
-            <div className="mt-2 text-gray-50">
+            <div className="mt-2 text-gray-300">
                 <p>{discussion.content}</p>
             </div>
             <div className="flex items-center mt-2">
