@@ -1,6 +1,12 @@
-import React from 'react';
+import React, {useCallback} from 'react';
+import DiscussionService from "@/app/services/new-discussion";
 
 export const DiscussionInput = () => {
+    const onClickHandler = useCallback(async () => {
+        const service = new DiscussionService()
+        await service.getDiscussions()
+    }, [])
+
     return (
         <div className="bg-black border border-blue-500 rounded-md p-2 mb-4">
             <textarea className="w-full h-fit font-roboto focus:border-none border-none mb-2 outline-none bg-transparent bg-opacity-0">
@@ -14,7 +20,7 @@ export const DiscussionInput = () => {
                 </div>
                 <div className="flex items-center space-x-4">
                     <button className="btn"><i className="ri-at-line"></i></button>
-                    <button className="btn primary bg-blue-500 text-white px-8 py-1 rounded-md">Send</button>
+                    <button onClick={onClickHandler} className="btn primary bg-blue-500 text-white px-8 py-1 rounded-md">Send</button>
                 </div>
             </div>
         </div>
