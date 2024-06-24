@@ -1,23 +1,43 @@
 pub mod grpc;
 pub mod config;
 
-use http::header::{HeaderValue};
-
 use grpc::{base::GRPCService, discussion::DiscussionGrpcService};
+use surrealdb::{engine::remote::ws::{Client, Ws}, opt::auth::Root, Surreal};
 use tower_http::cors::*;
 
 use config::CONFIGS;
 use log::info;
 use pretty_env_logger::formatted_timed_builder;
 use schema::devblog::devblog::devblog_discussion_service_server::DevblogDiscussionServiceServer;
-use tonic::{server::NamedService, transport::Server};
+use tonic::transport::Server;
 use tonic_web::*;
+use once_cell::sync::Lazy;
+
+type Db = Surreal<Client>;
+
+static DB: Lazy<Db> = Lazy::new(Surreal::init);
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     setup_logger();
-
+    setup_db().await?;
     setup_grpc_server().await?;
+
+    Ok(())
+}
+
+async fn setup_db() -> Result<(), Box<dyn std::error::Error>> {
+    let ns = "devblog-api-db";
+    DB.connect::<Ws>(CONFIGS.surreal_db.socket_address.clone()).await.expect("Failed while connecting to surreal db");
+    DB.use_ns(CONFIGS.surreal_db.namespace.clone()).use_db(CONFIGS.surreal_db.db_name.clone()).await.unwrap();
+    DB.signin(Root {
+        username: CONFIGS.surreal_db.db_username.clone().as_str(),
+        password: CONFIGS.surreal_db.db_password.clone().as_str()
+    }).await.unwrap();
+
+    let db_version = DB.version().await.expect("Failed to get the surreal db version");
+
+    info!(target: &ns, "Connected to SurrealDb version: {} {}", db_version, CONFIGS.surreal_db.socket_address);
 
     Ok(())
 }

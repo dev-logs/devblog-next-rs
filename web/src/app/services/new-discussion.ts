@@ -7,7 +7,7 @@ export default class DiscussionService {
   private rpcService: DevblogDiscussionServiceClient
 
   constructor() {
-    this.rpcService = new DevblogDiscussionServiceClient('http://localhost:30001')
+    this.rpcService = new DevblogDiscussionServiceClient(process.env.DEVBLOG_API_URL!)
   }
 
   async getDiscussions() {
@@ -20,9 +20,7 @@ export default class DiscussionService {
     request.setPaging(paging)
     return new Promise((resolve, reject) => {
       this.rpcService.get_discussions(request, metadata, (err: any, res: any) => {
-        if (err) {
-          return reject(err)
-        }
+        if (err) return reject(err)
 
         resolve(res!.toObject())
       })

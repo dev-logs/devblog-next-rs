@@ -1,7 +1,7 @@
 import {withContentlayer} from 'next-contentlayer'
 
 const env = {
-  DEVBLOG_API_URL: process.env.DEVLOG_DEVBLOG_API_URL || 'http://localhost:3001'
+  DEVBLOG_API_URL: process.env.DEVLOG_DEVBLOG_API_URL || 'http://localhost:30001'
 }
 
 /** @type {import('next').NextConfig} */

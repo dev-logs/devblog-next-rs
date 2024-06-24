@@ -251,7 +251,7 @@ dependencies = [
  "bitflags 1.3.2",
  "bytes",
  "futures-util",
- "http 0.2.12",
+ "http",
  "http-body",
  "hyper",
  "itoa",
@@ -277,7 +277,7 @@ dependencies = [
  "async-trait",
  "bytes",
  "futures-util",
- "http 0.2.12",
+ "http",
  "http-body",
  "mime",
  "rustversion",
@@ -476,6 +476,38 @@ name = "bytes"
 version = "1.6.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "514de17de45fdb8dc022b1a7975556c53c86f9f0aa5f534b98977b171857c2c9"
+
+[[package]]
+name = "camino"
+version = "1.1.7"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e0ec6b951b160caa93cc0c7b209e5a3bff7aae9062213451ac99493cd844c239"
+dependencies = [
+ "serde",
+]
+
+[[package]]
+name = "cargo-platform"
+version = "0.1.8"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "24b1f0365a6c6bb4020cd05806fd0d33c44d38046b8bd7f0e40814b9763cabfc"
+dependencies = [
+ "serde",
+]
+
+[[package]]
+name = "cargo_metadata"
+version = "0.18.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "2d886547e41f740c616ae73108f6eb70afe6d940c7bc697cb30f13daec073037"
+dependencies = [
+ "camino",
+ "cargo-platform",
+ "semver",
+ "serde",
+ "serde_json",
+ "thiserror",
+]
 
 [[package]]
 name = "cc"
@@ -717,12 +749,14 @@ checksum = "339544cc9e2c4dc3fc7149fd630c5f22263a4fdf18a98afd0075784968b5cf00"
 name = "devblog-api"
 version = "0.1.0"
 dependencies = [
- "http 1.1.0",
  "lazy_static",
  "log",
+ "once_cell",
  "pretty_env_logger",
  "prost",
  "schema",
+ "surreal_derive_plus",
+ "surreal_devl",
  "surrealdb",
  "tokio",
  "tonic",
@@ -1168,7 +1202,7 @@ dependencies = [
  "futures-core",
  "futures-sink",
  "futures-util",
- "http 0.2.12",
+ "http",
  "indexmap 2.2.6",
  "slab",
  "tokio",
@@ -1262,24 +1296,13 @@ dependencies = [
 ]
 
 [[package]]
-name = "http"
-version = "1.1.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "21b9ddb458710bc376481b842f5da65cdf31522de232c1ca8146abce2a358258"
-dependencies = [
- "bytes",
- "fnv",
- "itoa",
-]
-
-[[package]]
 name = "http-body"
 version = "0.4.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "7ceab25649e9960c0311ea418d17bee82c0dcec1bd053b5f9a66e265a693bed2"
 dependencies = [
  "bytes",
- "http 0.2.12",
+ "http",
  "pin-project-lite",
 ]
 
@@ -1318,7 +1341,7 @@ dependencies = [
  "futures-core",
  "futures-util",
  "h2",
- "http 0.2.12",
+ "http",
  "http-body",
  "httparse",
  "httpdate",
@@ -1338,7 +1361,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "ec3efd23720e2049821a693cbc7e65ea87c72f1c58ff2f9522ff332b1491e590"
 dependencies = [
  "futures-util",
- "http 0.2.12",
+ "http",
  "hyper",
  "rustls",
  "tokio",
@@ -2330,7 +2353,7 @@ dependencies = [
  "futures-core",
  "futures-util",
  "h2",
- "http 0.2.12",
+ "http",
  "http-body",
  "hyper",
  "hyper-rustls",
@@ -2629,6 +2652,12 @@ name = "schema"
 version = "0.1.0"
 dependencies = [
  "prost",
+ "prost-types",
+ "serde",
+ "serde_json",
+ "surreal_derive_plus",
+ "surreal_devl",
+ "surrealdb",
  "tonic",
  "tonic-build",
 ]
@@ -2977,6 +3006,32 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "0d0208408ba0c3df17ed26eb06992cb1a1268d41b2c0e12e65203fbe3972cee5"
 
 [[package]]
+name = "surreal_derive_plus"
+version = "1.0.11"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "fc18a46eebd6ede2145ed7fafe8fa83baf5118cb83e9db601210fe161f3746c3"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "surreal_devl",
+ "surrealdb",
+ "surrealdb_id",
+ "syn 2.0.64",
+]
+
+[[package]]
+name = "surreal_devl"
+version = "1.0.5"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "affb8fa8739429a1f4b3b4bdbe7b9439eaeeefd0b08f81d6f0cdbaa8c3ac3fb8"
+dependencies = [
+ "cargo_metadata",
+ "serde",
+ "surrealdb",
+ "surrealdb_id",
+]
+
+[[package]]
 name = "surrealdb"
 version = "1.5.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3110,6 +3165,18 @@ dependencies = [
  "serde_json",
  "sha2",
  "simple_asn1",
+]
+
+[[package]]
+name = "surrealdb_id"
+version = "0.1.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e33c3b5272c137c4b7fce49207b0af329aae5daf89bbf692b80c8171fc04d444"
+dependencies = [
+ "serde",
+ "serde_derive",
+ "serde_json",
+ "surrealdb",
 ]
 
 [[package]]
@@ -3414,7 +3481,7 @@ dependencies = [
  "base64 0.21.7",
  "bytes",
  "h2",
- "http 0.2.12",
+ "http",
  "http-body",
  "hyper",
  "hyper-timeout",
@@ -3450,7 +3517,7 @@ checksum = "dc3b0e1cedbf19fdfb78ef3d672cb9928e0a91a9cb4629cc0c916e8cff8aaaa1"
 dependencies = [
  "base64 0.21.7",
  "bytes",
- "http 0.2.12",
+ "http",
  "http-body",
  "hyper",
  "pin-project",
@@ -3492,7 +3559,7 @@ dependencies = [
  "bytes",
  "futures-core",
  "futures-util",
- "http 0.2.12",
+ "http",
  "http-body",
  "http-range-header",
  "pin-project-lite",
@@ -3569,7 +3636,7 @@ dependencies = [
  "byteorder",
  "bytes",
  "data-encoding",
- "http 0.2.12",
+ "http",
  "httparse",
  "log",
  "rand",
