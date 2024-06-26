@@ -8,10 +8,10 @@ use tower_http::cors::*;
 use config::CONFIGS;
 use log::info;
 use pretty_env_logger::formatted_timed_builder;
-use schema::devblog::devblog::devblog_discussion_service_server::DevblogDiscussionServiceServer;
 use tonic::transport::Server;
 use tonic_web::*;
 use once_cell::sync::Lazy;
+use schema::devlog::devblog::rpc::devblog_discussion_service_server::DevblogDiscussionServiceServer;
 
 type Db = Surreal<Client>;
 

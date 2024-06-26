@@ -755,9 +755,10 @@ dependencies = [
  "pretty_env_logger",
  "prost",
  "schema",
- "surreal_derive_plus",
+ "surreal_derive_plus 1.0.11",
  "surreal_devl",
  "surrealdb",
+ "surrealdb_id",
  "tokio",
  "tonic",
  "tonic-web",
@@ -2654,10 +2655,12 @@ dependencies = [
  "prost",
  "prost-types",
  "serde",
+ "serde_derive",
  "serde_json",
- "surreal_derive_plus",
+ "surreal_derive_plus 1.0.12",
  "surreal_devl",
  "surrealdb",
+ "surrealdb_id",
  "tonic",
  "tonic-build",
 ]
@@ -3011,6 +3014,19 @@ version = "1.0.11"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "fc18a46eebd6ede2145ed7fafe8fa83baf5118cb83e9db601210fe161f3746c3"
 dependencies = [
+ "proc-macro2",
+ "quote",
+ "surreal_devl",
+ "surrealdb",
+ "surrealdb_id",
+ "syn 2.0.64",
+]
+
+[[package]]
+name = "surreal_derive_plus"
+version = "1.0.12"
+dependencies = [
+ "darling",
  "proc-macro2",
  "quote",
  "surreal_devl",
