@@ -755,7 +755,7 @@ dependencies = [
  "pretty_env_logger",
  "prost",
  "schema",
- "surreal_derive_plus 1.0.11",
+ "surreal_derive_plus 1.0.13 (registry+https://github.com/rust-lang/crates.io-index)",
  "surreal_devl",
  "surrealdb",
  "surrealdb_id",
@@ -2657,7 +2657,7 @@ dependencies = [
  "serde",
  "serde_derive",
  "serde_json",
- "surreal_derive_plus 1.0.12",
+ "surreal_derive_plus 1.0.13",
  "surreal_devl",
  "surrealdb",
  "surrealdb_id",
@@ -3010,10 +3010,9 @@ checksum = "0d0208408ba0c3df17ed26eb06992cb1a1268d41b2c0e12e65203fbe3972cee5"
 
 [[package]]
 name = "surreal_derive_plus"
-version = "1.0.11"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "fc18a46eebd6ede2145ed7fafe8fa83baf5118cb83e9db601210fe161f3746c3"
+version = "1.0.13"
 dependencies = [
+ "darling",
  "proc-macro2",
  "quote",
  "surreal_devl",
@@ -3024,7 +3023,9 @@ dependencies = [
 
 [[package]]
 name = "surreal_derive_plus"
-version = "1.0.12"
+version = "1.0.13"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "680fbc017474dce5a431faaa057751080105d567c08e534e0c519c8cb9290443"
 dependencies = [
  "darling",
  "proc-macro2",
