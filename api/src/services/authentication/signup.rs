@@ -1,11 +1,12 @@
-use core_services::services::{base::{Resolve, Service}, errors::Errors};
+use core_services::services::{base::{Resolve, Service}, errors::Errors, token::TokenService};
 use schema::devlog::entities::{Token, User, UserId};
 use surreal_derive_plus::surreal_quote;
 
 use crate::Db;
 
 pub struct SignupService {
-    db: Db
+    db: Db,
+    token_service: TokenService
 }
 
 #[derive(Debug, Clone)]
