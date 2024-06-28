@@ -1,3 +1,3 @@
 pub mod discussion;
-pub mod base;
+pub mod user;
 pub mod authentication;

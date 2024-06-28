@@ -641,6 +641,24 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "06ea2b9bc92be3c2baa9334a323ebca2d6f074ff852cd1d7b11064035cd3868f"
 
 [[package]]
+name = "core-services"
+version = "0.1.0"
+dependencies = [
+ "prost",
+ "prost-types",
+ "serde",
+ "serde_derive",
+ "serde_json",
+ "surreal_derive_plus 1.0.13 (registry+https://github.com/rust-lang/crates.io-index)",
+ "surreal_devl",
+ "surrealdb",
+ "surrealdb_id",
+ "thiserror",
+ "tonic",
+ "tonic-build",
+]
+
+[[package]]
 name = "cpufeatures"
 version = "0.2.12"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -749,16 +767,21 @@ checksum = "339544cc9e2c4dc3fc7149fd630c5f22263a4fdf18a98afd0075784968b5cf00"
 name = "devblog-api"
 version = "0.1.0"
 dependencies = [
+ "core-services",
  "lazy_static",
  "log",
  "once_cell",
  "pretty_env_logger",
  "prost",
  "schema",
+ "serde",
+ "serde_derive",
+ "serde_json",
  "surreal_derive_plus 1.0.13 (registry+https://github.com/rust-lang/crates.io-index)",
  "surreal_devl",
  "surrealdb",
  "surrealdb_id",
+ "thiserror",
  "tokio",
  "tonic",
  "tonic-web",

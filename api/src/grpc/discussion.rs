@@ -1,13 +1,11 @@
 use log::info;
 use schema::devlog::entities::User;
+use schema::devlog::links::user_link;
 use surreal_derive_plus::surreal_quote;
-
-use surrealdb::opt::RecordId;
 use tonic::{Result, Request, Response, Status};
 use schema::devlog::devblog::rpc::devblog_discussion_service_server::DevblogDiscussionService;
 use schema::devlog::devblog::rpc::{GetDiscussionsRequest, GetDiscussionsResponse, NewDiscussionRequest, NewDiscussionResponse};
-use schema::devlog::links::{user_link, UserLink};
-use crate::{Db, DB};
+use crate::DB;
 
 use crate::grpc::base::GRPCService;
 

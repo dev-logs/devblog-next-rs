@@ -1,5 +1,6 @@
 pub mod grpc;
 pub mod config;
+pub mod services;
 
 use grpc::{base::GRPCService, discussion::DiscussionGrpcService};
 use surrealdb::{engine::remote::ws::{Client, Ws}, opt::auth::Root, Surreal};
