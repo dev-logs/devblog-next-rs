@@ -24,3 +24,4 @@ serde_json = "1.0.117"
 thiserror = "1.0.61"
 core-services = {path = "../core-services"}
 jsonwebtoken = "9.3.0"
+tonic-middleware = "0.1.4"

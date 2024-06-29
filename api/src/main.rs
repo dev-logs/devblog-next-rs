@@ -2,8 +2,10 @@ pub mod grpc;
 pub mod config;
 pub mod services;
 
-use grpc::{base::GRPCService, discussion::DiscussionGrpcService};
-use surrealdb::{engine::remote::ws::{Client, Ws}, opt::auth::Root, Surreal};
+use core_services::{grpc::middle::auth::AuthInterceptor, DB};
+use grpc::{authentication::AuthenticationGrpcService, base::GRPCService, discussion::DiscussionGrpcService};
+use surrealdb::{engine::remote::ws::Ws, opt::auth::Root};
+use tonic_middleware::{InterceptorFor, MiddlewareFor};
 use tower_http::cors::*;
 
 use config::CONFIGS;
@@ -11,12 +13,7 @@ use log::info;
 use pretty_env_logger::formatted_timed_builder;
 use tonic::transport::Server;
 use tonic_web::*;
-use once_cell::sync::Lazy;
-use schema::devlog::devblog::rpc::devblog_discussion_service_server::DevblogDiscussionServiceServer;
-
-type Db = Surreal<Client>;
-
-static DB: Lazy<Db> = Lazy::new(Surreal::init);
+use schema::devlog::{devblog::rpc::devblog_discussion_service_server::DevblogDiscussionServiceServer, rpc::authentication_service_server::{AuthenticationService, AuthenticationServiceServer}};
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -47,6 +44,7 @@ async fn setup_grpc_server() -> Result<(), Box<dyn std::error::Error>> {
     let ns = "devblog-api-grpc-server";
     let addr = format!("127.0.0.1:{}", CONFIGS.grpc_server.port).parse()?;
     let discussion_service = DiscussionGrpcService::new();
+    let authentication_service = AuthenticationGrpcService::new();
 
     info!(target: ns, "gRPC server starting at {}", &addr);
 
@@ -60,7 +58,10 @@ async fn setup_grpc_server() -> Result<(), Box<dyn std::error::Error>> {
         .accept_http1(true)
         .layer(cors)
         .layer(GrpcWebLayer::new())
-        .add_service(DevblogDiscussionServiceServer::new(discussion_service))
+        .add_service(AuthenticationServiceServer::new(authentication_service))
+        .add_service(InterceptorFor::new(
+            DevblogDiscussionServiceServer::new(discussion_service),
+            AuthInterceptor::new()))
         .serve(addr)
         .await?;
 
