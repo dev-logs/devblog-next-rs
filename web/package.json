@@ -3,12 +3,14 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "schema:compile": "yarn --cwd ../schema/grpc-web-ts schema:compile; cp -rf ../schema/grpc-web-ts/ ./node_modules/schema/",
     "preinstall": "yarn --cwd ../schema/grpc-web-ts install",
     "lint": "next lint",
     "dev": "yarn next dev"
   },
   "types": "dist/index.d.ts",
   "dependencies": {
+    "@improbable-eng/grpc-web": "^0.13.0",
     "@react-three/drei": "9.105.6",
     "@react-three/fiber": "8.16.6",
     "@react-three/postprocessing": "2.16.2",
@@ -18,8 +20,8 @@
     "contentlayer": "^0.3.4",
     "date-fns": "^3.6.0",
     "github-slugger": "^2.0.0",
+    "grpc-web-ts": "../schema/grpc-web-ts",
     "gsap": "3.12.5",
-    "@improbable-eng/grpc-web": "^0.13.0",
     "intersection-observer": "^0.12.2",
     "leva": "0.9.35",
     "lodash": "4.17.21",

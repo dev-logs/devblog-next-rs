@@ -30,7 +30,6 @@ impl DevblogDiscussionService for DiscussionGrpcService {
     }
 
     async fn get_discussions(&self, request: Request<GetDiscussionsRequest>) -> Result<Response<GetDiscussionsResponse>, Status> {
-        info!(target: "tiendang-debug", "here it come");
         Ok(Response::new(GetDiscussionsResponse {
             discussions: vec![],
             paging: request.get_ref().paging.clone()
