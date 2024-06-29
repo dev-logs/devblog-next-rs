@@ -7,7 +7,7 @@ import {isValidEmail} from '../utils/string'
 
 export default class AuthenticationService extends gRPCClientBase<AuthenticationServiceClient> {
   constructor() {
-    super(AuthenticationServiceSchema)
+    super(AuthenticationServiceClient)
   }
 
   async signin(email: string, password: string) {

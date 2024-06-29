@@ -46,7 +46,7 @@ function createInstance<T>(service: any): T {
 export default class gRPCClientBase<T> {
   client: T
   constructor(clientType: any) {
-    this.client = createInstance<T>(clientType)
+    this.client = new clientType(process.env.API_GRPC_URL!)
   }
 
   getMetadata() {
