@@ -4,7 +4,7 @@ import {FooterHtml} from "@/app/components/footer";
 import {Discussions} from "@/app/components/discussion";
 
 export default function PostFooter(props: any) {
-    const {discussions} = props || {}
+    const {discussions, post} = props || {}
     return <div className="relative w-full h-full">
         <div
             className="absolute left-0 top-0 bg-gradient-to-b z-10 from-black w-screen h-[200vh]"
@@ -21,7 +21,7 @@ export default function PostFooter(props: any) {
             </ThreeDCanvas>
         </div>
         <div className="w-full h-fit z-20 flex flex-col items-center gap-10">
-            <Discussions discussions={discussions} totalComments={discussions.length}/>
+        <Discussions discussions={discussions} totalComments={discussions.length} post={post} />
             <FooterHtml/>
         </div>
     </div>

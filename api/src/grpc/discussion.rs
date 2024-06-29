@@ -1,11 +1,10 @@
 use core_services::services::base::Service;
-use log::info;
 use tonic::{Result, Request, Response, Status};
 use schema::devlog::devblog::rpc::devblog_discussion_service_server::DevblogDiscussionService;
 use schema::devlog::devblog::rpc::{GetDiscussionsRequest, GetDiscussionsResponse, NewDiscussionRequest, NewDiscussionResponse};
 
 use crate::grpc::base::GRPCService;
-use crate::services::discussion::new_discussion::{CreateDiscussionServiceImpl};
+use crate::services::discussion::new_discussion::CreateDiscussionServiceImpl;
 use crate::DB;
 
 #[derive(Debug, Clone)]

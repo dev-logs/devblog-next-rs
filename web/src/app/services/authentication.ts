@@ -1,14 +1,13 @@
-import {AuthenticationServiceClient} from 'schema/dist/schema/devlog/rpc/authentication_pb_service'
+import {AuthenticationServiceClient, AuthenticationService as AuthenticationServiceSchema} from 'schema/dist/schema/devlog/rpc/authentication_pb_service'
 import gRPCClientBase from "./base"
-import { SigninRequest, SignupRequest, SignupResponse } from 'schema/dist/schema/devlog/rpc/authentication_pb'
-import { SigninMethod, SignupMethod } from 'schema/dist/schema/devlog/entities/authentication_pb'
-import { isValidEmail } from '../utils/string'
+import {SigninRequest, SignupRequest, SignupResponse} from 'schema/dist/schema/devlog/rpc/authentication_pb'
+import {SigninMethod, SignupMethod} from 'schema/dist/schema/devlog/entities/authentication_pb'
+import {isValidEmail} from '../utils/string'
+
 
 export default class AuthenticationService extends gRPCClientBase<AuthenticationServiceClient> {
   constructor() {
-    super(AuthenticationServiceClient)
-    console.log('connecting to', process.env.API_GRPC_URL)
-    this.client = new AuthenticationServiceClient(process.env.API_GRPC_URL!, {debug: true})
+    super(AuthenticationServiceSchema)
   }
 
   async signin(email: string, password: string) {
@@ -20,7 +19,7 @@ export default class AuthenticationService extends gRPCClientBase<Authentication
       byEmailPassword.setPassword(password)
       signinMethod.setByEmailPassword(byEmailPassword)
       request.setSignin(signinMethod)
-      this.client.signin(request, this.getInSecureMetadata(), (err, data) => {
+      let progress = this.client.signin(request, this.getInSecureMetadata(), (err, data) => {
         if (err) reject(err)
 
         resolve(data?.toObject())
@@ -44,8 +43,7 @@ export default class AuthenticationService extends gRPCClientBase<Authentication
 
       this.client.signup(request, this.getInSecureMetadata(), (err, data) => {
         if (err) {
-          reject(err.message)
-          return
+          return reject(err.message)
         }
 
         resolve(data!.toObject())

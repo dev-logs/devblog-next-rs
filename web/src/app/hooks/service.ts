@@ -1,5 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import AuthenticationService from '../services/authentication'
+import DiscussionService from "../services/discussion";
+import { Discussion } from "schema/dist/schema/devlog/devblog/entities/discussion_pb";
 
 /**
 * Component don't have ability to handle async task like calling API and error handling
@@ -55,6 +57,12 @@ export function usePromise<T extends any[], R>(fn: AsyncFunction<T, R>): UseProm
 
 export function useService() {
   return {
+    discussion: () => {
+      const discussionService = useMemo(() => new DiscussionService(), [])
+      return {
+        newDiscussion: usePromise(discussionService.newDiscussion.bind(discussionService))
+      }
+    },
     auth: () => {
       const authService = useMemo(() => new AuthenticationService(), [])
       return {

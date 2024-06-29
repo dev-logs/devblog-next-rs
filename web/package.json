@@ -20,7 +20,7 @@
     "contentlayer": "^0.3.4",
     "date-fns": "^3.6.0",
     "github-slugger": "^2.0.0",
-    "grpc-web-ts": "../schema/grpc-web-ts",
+    "grpc-web-ts": "../schema/grpc-web-ts/",
     "gsap": "3.12.5",
     "intersection-observer": "^0.12.2",
     "leva": "0.9.35",

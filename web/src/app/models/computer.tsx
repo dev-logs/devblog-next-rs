@@ -5,8 +5,7 @@ import {LowVertexContext} from "./low-vertex"
 import {TransformGeometry} from "./transform"
 import noop from 'lodash/noop'
 
-export interface ComputerWithFaceProps {
-}
+export interface ComputerWithFaceProps {}
 
 export const ComputerWithFace = forwardRef((props: ComputerWithFaceProps & any, ref) => {
     const model = useGLTF('/3d-models/the-scene-1/geometries-computer-4.glb')
@@ -15,13 +14,13 @@ export const ComputerWithFace = forwardRef((props: ComputerWithFaceProps & any, 
     computerTexture.flipY = false
 
     model.scene.traverse((c: any) => {
-        c.material = new THREE.MeshBasicMaterial({
-            map: computerTexture
-        })
+      c.material = new THREE.MeshBasicMaterial({
+        map: computerTexture
+      })
     })
 
     return <>
-        <primitive ref={ref} object={model.scene} scale={1} {...props}>{props.children}</primitive>
+      <primitive ref={ref} object={model.scene} scale={1} {...props}>{props.children}</primitive>
     </>
 })
 

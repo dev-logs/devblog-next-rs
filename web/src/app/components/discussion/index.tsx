@@ -1,22 +1,24 @@
-import React from 'react';
-import {DiscussionItem} from './item';
-import {DiscussionInput} from './input';
+import React from 'react'
+import {DiscussionItem} from './item'
+import {DiscussionInput} from './input'
+import { Post } from 'contentlayer/generated'
 
 interface Discussion {
-    id: number;
-    user: string;
-    avatar: string;
-    content: string;
-    reactions: { emoji: string; count: number }[];
-    timestamp: string;
+    id: number
+    user: string
+    avatar: string
+    content: string
+    reactions: { emoji: string; count: number }[]
+    timestamp: string
 }
 
 interface DiscussionsProps {
-    discussions: Discussion[];
-    totalComments: number;
+    post: Post
+    discussions: Discussion[]
+    totalComments: number
 }
 
-export const Discussions = ({ discussions, totalComments }: DiscussionsProps) => {
+export const Discussions = ({ discussions, totalComments, post }: DiscussionsProps) => {
     return (
         <div
             className="max-w-prose prose 2xl:prose-xl md:prose-lg prose-sm h-fit overflow-x-hidden z-20 bg-blue-800 bg-opacity-10 backdrop-blur-3xl text-white px-8 shadow rounded-xl">
@@ -26,7 +28,7 @@ export const Discussions = ({ discussions, totalComments }: DiscussionsProps) =>
                     <div className="ml-2 bg-gray-50 text-black text-xs px-2 py-1 rounded-full">{totalComments}</div>
                 </div>
             </div>
-            <DiscussionInput/>
+            <DiscussionInput post={post} />
             {discussions.map(discussion => (
                 <DiscussionItem key={discussion.id} discussion={discussion}/>
             ))}
@@ -36,5 +38,5 @@ export const Discussions = ({ discussions, totalComments }: DiscussionsProps) =>
         </span>
             </div>
         </div>
-    );
-};
+    )
+}
