@@ -654,7 +654,7 @@ dependencies = [
  "serde",
  "serde_derive",
  "serde_json",
- "surreal_derive_plus 1.0.13 (registry+https://github.com/rust-lang/crates.io-index)",
+ "surreal_derive_plus",
  "surreal_devl",
  "surrealdb",
  "surrealdb_id",
@@ -773,6 +773,7 @@ checksum = "339544cc9e2c4dc3fc7149fd630c5f22263a4fdf18a98afd0075784968b5cf00"
 name = "devblog-api"
 version = "0.1.0"
 dependencies = [
+ "chrono",
  "core-services",
  "jsonwebtoken",
  "lazy_static",
@@ -784,7 +785,7 @@ dependencies = [
  "serde",
  "serde_derive",
  "serde_json",
- "surreal_derive_plus 1.0.13 (registry+https://github.com/rust-lang/crates.io-index)",
+ "surreal_derive_plus",
  "surreal_devl",
  "surrealdb",
  "surrealdb_id",
@@ -2713,7 +2714,7 @@ dependencies = [
  "serde",
  "serde_derive",
  "serde_json",
- "surreal_derive_plus 1.0.13",
+ "surreal_derive_plus",
  "surreal_devl",
  "surrealdb",
  "surrealdb_id",
@@ -3063,19 +3064,6 @@ name = "subtle"
 version = "2.6.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "0d0208408ba0c3df17ed26eb06992cb1a1268d41b2c0e12e65203fbe3972cee5"
-
-[[package]]
-name = "surreal_derive_plus"
-version = "1.0.13"
-dependencies = [
- "darling",
- "proc-macro2",
- "quote",
- "surreal_devl",
- "surrealdb",
- "surrealdb_id",
- "syn 2.0.64",
-]
 
 [[package]]
 name = "surreal_derive_plus"

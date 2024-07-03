@@ -4,10 +4,18 @@ import {SigninRequest, SignupRequest, SignupResponse} from 'schema/dist/schema/d
 import {SigninMethod, SignupMethod} from 'schema/dist/schema/devlog/entities/authentication_pb'
 import {isValidEmail} from '../utils/string'
 
-
 export default class AuthenticationService extends gRPCClientBase<AuthenticationServiceClient> {
   constructor() {
     super(AuthenticationServiceClient)
+  }
+
+  async saveAccessToken(token: string | undefined) {
+    if (token) {
+      localStorage.setItem('access-token', token)
+    }
+    else {
+      throw 'Token missing'
+    }
   }
 
   async signin(email: string, password: string) {
@@ -19,8 +27,10 @@ export default class AuthenticationService extends gRPCClientBase<Authentication
       byEmailPassword.setPassword(password)
       signinMethod.setByEmailPassword(byEmailPassword)
       request.setSignin(signinMethod)
-      let progress = this.client.signin(request, this.getInSecureMetadata(), (err, data) => {
+      this.client.signin(request, this.getInSecureMetadata(), async (err, data) => {
         if (err) reject(err)
+
+        await this.saveAccessToken(data?.getAccessToken()?.getContent())
 
         resolve(data?.toObject())
       })
@@ -41,10 +51,12 @@ export default class AuthenticationService extends gRPCClientBase<Authentication
       signupMethod.setByEmail(byEmail)
       request.setSignup(signupMethod)
 
-      this.client.signup(request, this.getInSecureMetadata(), (err, data) => {
+      this.client.signup(request, this.getInSecureMetadata(), async (err, data) => {
         if (err) {
           return reject(err.message)
         }
+
+        this.saveAccessToken(data?.getAccessToken()?.getContent())
 
         resolve(data!.toObject())
       })

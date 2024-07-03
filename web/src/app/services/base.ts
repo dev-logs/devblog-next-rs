@@ -49,8 +49,12 @@ export default class gRPCClientBase<T> {
     this.client = new clientType(process.env.API_GRPC_URL!)
   }
 
-  getMetadata() {
-    return new grpc.Metadata()
+  getSecureMetadata() {
+    const token = localStorage.getItem('access-token')
+    if (!token) throw 'Unnable to access'
+    const metadata = new grpc.Metadata()
+    metadata.set('Authorization', token)
+    return metadata
   }
 
   getInSecureMetadata() {

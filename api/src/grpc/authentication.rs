@@ -1,11 +1,9 @@
-use std::str::FromStr;
-
 use crate::DB;
 
 use super::base::GRPCService;
 use core_services::services::{base::Service, signin::SigninService, signup::SignupService, token::TokenService};
 use schema::devlog::rpc::{authentication_service_server::AuthenticationService, SigninRequest, SigninResponse, SignupRequest, SignupResponse};
-use tonic::{metadata::MetadataValue, Request, Response, Status};
+use tonic::{Request, Response, Status};
 
 #[derive(Debug, Clone)]
 pub struct AuthenticationGrpcService {}
@@ -27,7 +25,7 @@ impl AuthenticationService for AuthenticationGrpcService {
 
         let token = service.execute(request.signin.as_ref().unwrap()).await?;
 
-        let mut res = Response::new(SigninResponse {
+        let res = Response::new(SigninResponse {
             access_token: Some(token),
             user: None
         });

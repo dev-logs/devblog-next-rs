@@ -5,7 +5,7 @@ pub mod services;
 use core_services::{grpc::middle::{auth::AuthInterceptor, response_handler::{self, ResponseHeaderHandler}}, DB};
 use grpc::{authentication::AuthenticationGrpcService, base::GRPCService, discussion::DiscussionGrpcService};
 use surrealdb::{engine::remote::ws::Ws, opt::auth::Root};
-use tonic_middleware::{InterceptorFor, MiddlewareFor, MiddlewareLayer};
+use tonic_middleware::{InterceptorFor, MiddlewareLayer};
 use tower_http::cors::*;
 
 use config::CONFIGS;
@@ -51,8 +51,7 @@ async fn setup_grpc_server() -> Result<(), Box<dyn std::error::Error>> {
 
     let cors = CorsLayer::new()
         .allow_origin(AllowOrigin::exact("http://localhost:3000".parse().unwrap()))
-        .allow_headers(AllowHeaders::any())
-        .allow_methods(AllowMethods::mirror_request());
+        .allow_headers(AllowHeaders::any());
 
     // layer for cors
     Server::builder()

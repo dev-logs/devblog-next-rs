@@ -1,7 +1,7 @@
 use core_services::services::{base::{Resolve, Service}, errors::Errors};
 use core_services::Db;
-use schema::devlog::{devblog::entities::{Discussion, Post}, entities::User, links};
-use schema::devlog::devblog::links as devblog_links;
+use schema::{devlog::{devblog::entities::{Discussion, Post, PostId}, entities::{User, UserId}}, misc::datetime::Datetime};
+use serde::{Deserialize, Serialize};
 use surreal_derive_plus::surreal_quote;
 use surrealdb_id::relation::r#trait::IntoRelation;
 
@@ -9,41 +9,33 @@ pub struct CreateDiscussionServiceImpl {
     pub db: Db
 }
 
-impl <'a> Service<&'a Discussion, Discussion> for CreateDiscussionServiceImpl {
-    async fn execute(self, discussion: &'a Discussion) -> Resolve<Discussion> {
-        let sender_link = discussion.user.as_ref().expect("Sender must be difined").link.as_ref().unwrap();
-        let post_link = discussion.post.as_ref().expect("Post id must be defined").link.as_ref().unwrap();
+#[derive(Debug, Clone)]
+pub struct NewDiscussionParams<'a> {
+    pub discussion: &'a Discussion,
+    pub post_id: &'a PostId,
+    pub user: &'a User
+}
 
-        let mut user_db: Option<User> = None;
-        let user = match sender_link {
-            links::user_link::Link::UserId(user_id) => {
-                let found_user: Option<User> = self.db.query(surreal_quote!("SELECT * FROM #val(&user_id)")).await?.take(0)?;
-                if found_user.is_none() {
-                    return Err(Errors::UnAuthorized("User does not exist".to_owned()));
-                }
+impl <'a> Service<NewDiscussionParams<'a>, Discussion> for CreateDiscussionServiceImpl {
+    async fn execute(self, params: NewDiscussionParams<'a>) -> Resolve<Discussion> {
+        let sender_id: UserId = UserId { email: params.user.email.clone() };
+        let post_id: &PostId = params.post_id;
 
-                user_db = Some(found_user.unwrap());
-                user_db.as_ref().unwrap()
-            },
-            links::user_link::Link::User(user) => user
+        // let found_post: Option<Post> = self.db.query(surreal_quote!("SELECT * FROM #val(&post_id)")).await?.take(0)?;
+        // if found_post.is_none() {
+        //     return Err(Errors::NotFound("Post does not exist".to_owned()));
+        // }
+
+        let mut new_discussion = params.discussion.clone();
+        let created_at = Datetime {
+           utc_millis_since_epoch: chrono::Utc::now().timestamp_millis() as i64
         };
 
-        let mut post_db: Option<Post> = None;
-        let post = match post_link {
-            devblog_links::post_link::Link::PostId(user_id) => {
-                let found_post: Option<Post> = self.db.query(surreal_quote!("SELECT * FROM #val(&user_id)")).await?.take(0)?;
-                if found_post.is_none() {
-                    return Err(Errors::UnAuthorized("User does not exist".to_owned()));
-                }
+        new_discussion.created_at = Some(created_at);
 
-                post_db = Some(found_post.unwrap());
-                post_db.as_ref().unwrap()
-            },
-            devblog_links::post_link::Link::Post(post) => post
-        };
+        let discussion_relation = new_discussion.relate(sender_id, post_id);
+        let created_discussion: Option<Discussion> = self.db.query(surreal_quote!("SELECT * FROM (#relate(&discussion_relation)) FETCH out")).await?.take(0)?;
 
-        let relation = discussion.clone().relate(user, post);
-        let created_discussion: Option<Discussion> = self.db.query("#relate(&relation)").await?.take(0)?;
         Ok(created_discussion.unwrap())
     }
 }

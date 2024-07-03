@@ -4,7 +4,8 @@
   "description": "This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).",
   "main": "index.js",
   "scripts": {
-    "schema:compile": "yarn --cwd schema/grpc-web-ts schema:compile",
+    "schema:compile-web": "yarn --cwd schema/grpc-web-ts schema:compile",
+    "schema:compile-rust": "cd schema/rust; cargo build",
     "web:dev": "yarn --cwd web dev",
     "api:dev": "cd api; cargo-watch -x run"
   },
