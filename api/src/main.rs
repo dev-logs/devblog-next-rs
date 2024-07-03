@@ -17,6 +17,9 @@ use schema::devlog::{devblog::rpc::devblog_discussion_service_server::DevblogDis
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    use std::env;
+
+    println!("{}", env::consts::OS); // Prints the current OS.
     setup_logger();
     setup_db().await?;
     setup_grpc_server().await?;
