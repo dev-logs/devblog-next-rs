@@ -24,9 +24,7 @@ export default class DiscussionService extends gRPCClientBase<DevblogDiscussionS
 
       request.setNewDiscussion(newDiscussion)
       try {
-        console.log('s')
         request.setPostId(postId)
-        console.log('i')
       }
       catch (ignore) {
         console.log(ignore)

@@ -6,7 +6,7 @@ export const BlogList = (props: any) => {
         <div className="relative flex flex-col h-full w-full">
             <BlogListTitle/>
             <div
-                className="mt-2 md:mt-20 mx-2 md:mx-10 bg-zinc-900 md:gap-5 p-2 md:p-10 grid md:grid-cols-2 xl:grid-cols-3 gap-2 grid-cols-1 rounded-2xl bg-opacity-60 h-fit z-10">
+                className="mt-2 md:mt-20 mx-2 md:mx-10 bg-zinc-900 md:gap-5 p-2 md:p-10 grid md:grid-cols-2 xl:grid-cols-3 gap-2 grid-cols-1 rounded-2xl bg-opacity-60 h-min z-10">
                 {allPosts.map((post) => <ClassicPostItemContainer post={post as any}/>)}
             </div>
         </div>

@@ -67,15 +67,14 @@ const Background = (props: any) => {
               uniform sampler2D uTexture;
               uniform vec2 uMousePosition;
               uniform float uTime;
-              
+
               void main() {
                 vUv = uv;
                 vec4 delta = texture2D(uTexture, vUv);
 
                 csm_Position.z += smoothstep(0.5, 1.2, length(delta)) * 2.0;
                 csm_Position.z -= smoothstep(0.5, 1.2, 1.0 - length(delta)) * 2.0;
-                float noise = sin((uMousePosition.x - vUv.x) * uTime * 10.0) * 0.2;
-                noise *= cos((uMousePosition.y - vUv.y) * uTime * 10.0) * 0.2;
+                float noise = sin((uMousePosition.x * 0.1 - vUv.x) * uTime * 10.0) * 0.2;
                 csm_Position.z += noise;
               }
             `,
@@ -89,7 +88,7 @@ const Background = (props: any) => {
                 vec4 color = texture2D(uTexture, vUv);
                 csm_FragColor = color;
                 csm_FragColor *= length(color);
-                csm_FragColor.a = step(abs(uMousePosition.x) * 0.3, color.g);
+                csm_FragColor.a = step(abs(uMousePosition.x * 0.1), color.g);
                 csm_FragColor.a *= (1.0 - uScroll * 1.1);
               }
             `,

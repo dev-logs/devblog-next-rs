@@ -1,16 +1,16 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react"
+import { useEffect, useMemo, useRef, useState } from 'react'
 import AuthenticationService from '../services/authentication'
-import DiscussionService from "../services/discussion";
-import { Discussion } from "schema/dist/schema/devlog/devblog/entities/discussion_pb";
+import DiscussionService from '../services/discussion'
 
 /**
-* Component don't have ability to handle async task like calling API and error handling
-* component should only care about how to display data
-* and those async task should be handle carefully to not blocking the Ui thread
-* These Utils will help:
+* UI components don't need to, can not handle network task like calling API and error handling
+* component should only care about how to display data, so that this hook provide:
 * + Factory pattern: Ui don't need to care about init services
 * + Handle async task and convert to usePromise hook
+* + Each function parameters also be converted into function
+* + For example: service.createDiscussion(title: string, author: string) -> [trigger, setTitle, setAuthor]
 */
+
 type AsyncFunction<T extends any[], R> = (...args: T) => Promise<R>
 
 type UsePromiseReturn<T extends any[], R> = [
