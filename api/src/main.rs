@@ -2,25 +2,24 @@ pub mod grpc;
 pub mod config;
 pub mod services;
 
-use core_services::{grpc::middle::{auth::AuthInterceptor, response_handler::{self, ResponseHeaderHandler}}, DB};
+use core_services::{grpc::middle::{auth::AuthInterceptor, response_handler::{self, ResponseHeaderHandler}}, logger, DB};
 use grpc::{authentication::AuthenticationGrpcService, base::GRPCService, discussion::DiscussionGrpcService};
-use surrealdb::{engine::remote::ws::Ws, opt::auth::Root};
+use surrealdb::{engine::remote::ws::Ws, opt::{auth::Root, capabilities::Targets}};
 use tonic_middleware::{InterceptorFor, MiddlewareLayer};
 use tower_http::cors::*;
 
 use config::CONFIGS;
-use log::info;
-use pretty_env_logger::formatted_timed_builder;
 use tonic::transport::Server;
+use log::info;
 use tonic_web::*;
 use schema::devlog::{devblog::rpc::devblog_discussion_service_server::DevblogDiscussionServiceServer, rpc::authentication_service_server::{AuthenticationService, AuthenticationServiceServer}};
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    use std::env;
+    let namespace = String::from("devblog-api");
+    logger::setup();
+    info!(target: namespace.as_str(), "{:?}", *CONFIGS);
 
-    println!("{}", env::consts::OS); // Prints the current OS.
-    setup_logger();
     setup_db().await?;
     setup_grpc_server().await?;
 
@@ -70,18 +69,4 @@ async fn setup_grpc_server() -> Result<(), Box<dyn std::error::Error>> {
         .await?;
 
     Ok(())
-}
-
-fn setup_logger() {
-    let namespace = String::from("devblog-api");
-    let mut log_builder = formatted_timed_builder();
-    if let Ok(filter_env) = std::env::var("RUST_LOG") {
-        log_builder.parse_filters(&filter_env);
-    }
-    else {
-        log_builder.filter(None, log::LevelFilter::Info);
-    }
-
-    log_builder.init();
-    info!(target: &namespace, "Configs {:?}", *CONFIGS);
 }

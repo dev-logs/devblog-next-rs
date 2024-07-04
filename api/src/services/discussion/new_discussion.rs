@@ -1,5 +1,6 @@
 use core_services::services::base::{Resolve, Service};
 use core_services::Db;
+use log::info;
 use schema::{devlog::{devblog::entities::{Discussion, PostId}, entities::{User, UserId}}, misc::datetime::Datetime};
 use surreal_derive_plus::surreal_quote;
 use surrealdb_id::relation::r#trait::IntoRelation;
@@ -33,6 +34,7 @@ impl <'a> Service<NewDiscussionParams<'a>, Discussion> for CreateDiscussionServi
         new_discussion.created_at = Some(created_at);
 
         let discussion_relation = new_discussion.relate(sender_id, post_id);
+        info!(target: "tiendang-debug", "Creating new discussion");
         let created_discussion: Option<Discussion> = self.db.query(surreal_quote!("SELECT * FROM (#relate(&discussion_relation)) FETCH out")).await?.take(0)?;
 
         Ok(created_discussion.unwrap())

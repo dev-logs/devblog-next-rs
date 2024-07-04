@@ -3,20 +3,22 @@ name = "devblog-api"
 version = "0.1.0"
 edition = "2021"
 
+[toolchain]
+channel = "nightly"
+
 [profile.dev]
-opt-level = 2
+opt-level = 1
 
 [profile.dev.package."*"]
 opt-level = 3
 
 [dependencies]
-tokio = {version = "1.28.2", features = ["full"]}
+tokio = {version = "1.28.2", features = ["sync"]}
 schema = {path = "../schema/rust"}
 tonic = "0.11.0"
 prost = "0.12.6"
 lazy_static = "1.5.0"
-surrealdb = {version="1.5.3", default-features = false}
-pretty_env_logger = "0.5.0"
+surrealdb = {version="1.5.3", default-features = false, features = ["protocol-ws"]}
 log = "0.4.21"
 tonic-web = "0.11.0"
 tower-http = {version="0.4.4", features = ["cors"]}
@@ -32,3 +34,17 @@ core-services = {path = "../core-services"}
 jsonwebtoken = "9.3.0"
 tonic-middleware = "0.1.4"
 chrono = "0.4.38"
+
+[package.metadata]
+# Will log the query command at runtime
+surreal_enable_log = true
+# Will log the generated code at build time
+surreal_enable_compile_log = true
+# Change the naming convention of generated statement into camel case
+surreal_use_camel_case = false
+# The log namespace, apply for both build time log and runtime log
+surreal_namespace = "surrealql"
+# The macro name that use for info log
+surreal_info_log_macro = "log::info"
+# The macro name that use for warning log
+surreal_warn_log_macro = "log::info"
