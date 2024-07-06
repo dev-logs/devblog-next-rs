@@ -1,6 +1,0 @@
-[submodule "schema"]
-	path = schema
-	url = https://github.com/dev-logs/schema.git
-[submodule "core-services"]
-	path = core-services
-	url = https://github.com/dev-logs/core-services.git
