@@ -12,6 +12,7 @@ import {FooterHtml} from "../components/footer";
 import {Reponsive} from "../components/reponsive"
 import {TASKS} from "@/app/home/index";
 import dynamic from "next/dynamic";
+import { VoteForNextTopic } from "../components/vote-next-topic";
 
 export default function HomeContent(props: any) {
     return <Reponsive>
@@ -90,7 +91,10 @@ const HtmlDoms = (props: any) => {
             <div>
                 <FooterHtml scrollData={scrollData} footer3dRef={props.footer3dRef}/>
             </div>
-            <div className="h-96"></div>
+            <div>
+              <VoteForNextTopic/>
+            </div>
+            <div className="h-96"></div>>
         </div>
     </Html>
 }
