@@ -7,9 +7,9 @@ edition = "2021"
 channel = "nightly"
 
 [profile.dev]
-opt-level = 1
+opt-level = 0
 
-[profile.dev.package."*"]
+[profile.release]
 opt-level = 3
 
 [dependencies]

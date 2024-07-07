@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "schema:compile": "yarn --cwd ../schema/grpc-web-ts schema:compile; cp -rf ../schema/grpc-web-ts/ ./node_modules/schema/",
+    "schema:compile": "yarn --cwd ../schema/grpc-web-ts schema:compile; yarn --cwd ../schema/grpc-web-ts build; cp -rf ../schema/grpc-web-ts/ ./node_modules/schema/",
     "preinstall": "yarn --cwd ../schema/grpc-web-ts install",
     "lint": "next lint",
     "dev": "yarn next dev"
@@ -44,14 +44,11 @@
     "three-custom-shader-material": "5.4.0"
   },
   "devDependencies": {
-    "@types/color-thief-node": "^1.0.4",
     "@types/lodash": "4.17.4",
     "@types/node": "20",
     "@types/react": "18",
     "@types/react-dom": "18",
     "@types/three": "0.164.0",
-    "canvas": "^2.11.2",
-    "color-thief-node": "^1.0.4",
     "concurrently": "8.2.2",
     "eslint": "9.3.0",
     "eslint-config-next": "14.2.3",

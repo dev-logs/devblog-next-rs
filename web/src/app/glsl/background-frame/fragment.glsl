@@ -6,7 +6,7 @@ varying float vElevation;
 
 void main() {
     vec2 uv = vUv;
-    uv.x += uTime * 0.05;
+    uv.x += uTime * 0.01;
     uv.x = mod(uv.x, 1.0);
 
     vec4 image = texture2D(uImage, uv);

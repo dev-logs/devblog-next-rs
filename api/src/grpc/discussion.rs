@@ -30,7 +30,6 @@ impl DevblogDiscussionService for DiscussionGrpcService {
         };
 
         let created_discussion = service.execute(params).await?;
-
         let response = NewDiscussionResponse {};
         Ok(Response::new(response))
     }

@@ -8,6 +8,8 @@ import CustomShaderMaterial from "three-custom-shader-material/vanilla"
 import { useFrame } from "@react-three/fiber"
 import { Line, QuadraticBezierLine, useTexture } from "@react-three/drei"
 import gsap from "gsap"
+import { Bloom, EffectComposer, Noise } from "@react-three/postprocessing"
+import { BlendFunction } from "postprocessing"
 
 export function VoteForNextTopic(props: {}) {
   const unPublishPosts = allPosts.filter((post) => !post.isPublished)
@@ -16,26 +18,26 @@ export function VoteForNextTopic(props: {}) {
   return (
     <>
       <div className="flex flex-col h-full py-10 px-10 rounded-sm">
-        <div>
-          <span className="font-Alfa text-3xl text-white">
-            Help us !!! Vote for the next topics
-          </span>
-        </div>
-        <div className="flex h-[130px] w-[100px]">
-          <ThreeDCanvas>
-            <AnimatedCircle duration={2} startPoint={[0, 2, 0]}/>
-          </ThreeDCanvas>
-        </div >
         <div className="w-full h-full relative">
           <div className="absolute top-0 left-0 h-full w-full z-10">
             <ThreeDCanvas>
               <Background/>
             </ThreeDCanvas>
           </div>
-          <div className="absolute top-0 left-0 h-full w-full z-20">
-            {unPublishPosts.map((post) => (
-              <VoteForNextTopicItem post={post} />
-            ))}
+          <div className="absolute flex flex-col top-0 left-0 h-full w-full z-20 p-10">
+            <span className="font-Alfa text-3xl text-white">
+              Vote for our next topic
+            </span>
+            <div className="flex h-[180px] w-[100px]">
+              <ThreeDCanvas gl={{alpha: true}} style={{background: 'transparent'}}>
+                <AnimatedCircle duration={2} startPoint={[0, 3, 0]}/>
+              </ThreeDCanvas   >
+            </div>
+            <div className="flex flex-row gap-10 h-full">
+              {unPublishPosts.map((post) => (
+                <VoteForNextTopicItem post={post} />
+              ))}
+            </div >
           </div>
         </div>
       </div>
@@ -54,8 +56,8 @@ function Background(props: {}) {
       uniforms: {
         uTime: {value: 0},
         uNoiseSampler: {value: perlinSampler},
-        uColor1: {value: new THREE.Color('#DC5F00')},
-        uColor2: {value: new THREE.Color('black')},
+        uColor1: {value: new THREE.Color('#E1AFD1')},
+        uColor2: {value: new THREE.Color('#AD88C6')},
       }
     })
 
@@ -69,7 +71,14 @@ function Background(props: {}) {
 
   return (
     <>
-      <mesh material={material}>
+      <EffectComposer enableNormalPass={false} resolutionScale={1}>
+      <Noise
+        opacity={0.7}
+        premultiply
+        blendFunction={ BlendFunction.OVERLAY }
+      />
+      </EffectComposer>
+      <mesh material={material} scale-x={40} scale-y={10}>
         <planeGeometry args={[1, 1, 1, 1]}/>
       </mesh>
     </>
@@ -174,7 +183,14 @@ function VoteForNextTopicItem(props: { post: Post }) {
   const { post } = props || {}
   return (
     <>
-      <div className="flex flex-col">{post.title}</div>
+      <div className="relative flex flex-col w-[300px] rounded-2xl overflow-clip">
+        <div className="absolute bottom-0 left-0 flex flex-col w-full h-full z-20 bg-white bg-opacity-20 backdrop-blur-2xl justify-center gap-10 py-14 px-5 items-center">
+          <span className="font-Alfa text-xl text-white text-center">{ post.title }</span>
+          <button className="bg-black rounded-xl px-5 py-2 text-white font-Alfa text-xl">Vote</button>
+        </div>
+        <div className="absolute top-0 bottom-0 left-0 w-full h-auto z-10 opacity-75">
+        </div>
+      </div>
     </>
   )
 }

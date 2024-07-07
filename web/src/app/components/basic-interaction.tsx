@@ -10,7 +10,7 @@ import { VoteForNextTopic } from "./vote-next-topic"
 
 export const BasicInteraction = (props: any) => {
     return (
-        <div className="h-[100vh] bg-opacity-0 flex flex-col">
+        <div className="h-[120vh] bg-opacity-0 flex flex-col">
             <div className="h-full w-full relative">
               <div className="z-0 absolute top-0 left-0 h-[50vh] w-full">
                   <ThreeDCanvas

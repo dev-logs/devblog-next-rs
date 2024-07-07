@@ -7,7 +7,8 @@
     "schema:compile-web": "yarn --cwd schema/grpc-web-ts schema:compile",
     "schema:compile-rust": "cd schema/rust; cargo build",
     "web:dev": "yarn --cwd web dev",
-    "api:dev": "cd api; cargo-watch -x run"
+    "api:dev": "cd api; cargo-watch -x run",
+    "dev:tmux": "'For MacOS with tmux installed'; bash scripts/dev/tmux-quick-start.sh"
   },
   "author": "",
   "license": "ISC",
