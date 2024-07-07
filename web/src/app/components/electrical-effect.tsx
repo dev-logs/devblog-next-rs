@@ -4,7 +4,7 @@ import * as THREE from 'three'
 import CustomShaderMaterial from 'three-custom-shader-material/vanilla'
 import {useGLTF} from '@react-three/drei'
 import {Bloom, EffectComposer} from '@react-three/postprocessing'
-import {Reponsive} from './reponsive'
+import {Reponsive, reponsiveMatch} from './reponsive'
 
 interface ElectricalEffectProps {
     position: any,
@@ -37,18 +37,22 @@ export const ElectricalEffect = (props: ElectricalEffectProps) => {
             <Bloom intensity={0.3} luminanceThreshold={1.1} mipmapBlur/>
         </EffectComposer>
         <Reponsive>{
-            (matches: any) => (<Fragment>
-                {matches.small && <>
-                    <mesh geometry={wireGeometry.scene.children[0].geometry} rotation-y={1} {...props}>
-                        <meshStandardMaterial color={'orange'} emissive={'orange'} emissiveIntensity={2}/>
-                    </mesh>
-                </>}
-                {matches.medium && <>
-                    <mesh geometry={wireGeometry.scene.children[0].geometry} rotation-y={1} {...props}>
-                        <meshStandardMaterial color={'orange'} emissive={'orange'} emissiveIntensity={2}/>
-                    </mesh>
-                </>}
-            </Fragment>)}
+        (matches: any) => {
+          const match = reponsiveMatch(matches)
+          return <Fragment>
+            {match.small && <>
+              <mesh geometry={wireGeometry.scene.children[0].geometry} rotation-y={1} {...props}>
+                <meshStandardMaterial color={'orange'} emissive={'orange'} emissiveIntensity={2} />
+              </mesh>
+            </>}
+            {match.medium && <>
+              <mesh geometry={wireGeometry.scene.children[0].geometry} rotation-y={1} {...props}>
+                <meshStandardMaterial color={'orange'} emissive={'orange'} emissiveIntensity={2} />
+              </mesh>
+            </>}
+          </Fragment>
+        }
+        }
         </Reponsive>
     </>
 }

@@ -2,24 +2,85 @@ import { allPosts } from ".contentlayer/generated"
 import { Post } from "contentlayer/generated"
 import { ThreeDCanvas } from "../canvas"
 import GLSL from "../../glsl"
-import { useEffect, useMemo, useRef, useState } from "react"
+import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import * as THREE from "three"
 import CustomShaderMaterial from "three-custom-shader-material/vanilla"
 import { useFrame } from "@react-three/fiber"
-import { Line, QuadraticBezierLine, useTexture } from "@react-three/drei"
+import { Line, useTexture } from "@react-three/drei"
 import gsap from "gsap"
-import { Bloom, EffectComposer, Noise } from "@react-three/postprocessing"
+import { EffectComposer, Noise } from "@react-three/postprocessing"
 import { BlendFunction } from "postprocessing"
+
+enum ItemAnimState {
+  NotVisible,
+  PrepareVisible,
+  Visible,
+  PrepareNotVisible
+}
 
 export function VoteForNextTopic(props: {}) {
   const unPublishPosts = allPosts.filter((post) => !post.isPublished)
+  unPublishPosts.push(...unPublishPosts, ...unPublishPosts)
+
   if (!unPublishPosts.length) return <></>
+
+  useEffect(() => {
+    unPublishPosts.forEach((it, index) => {
+        it.title = `${index}`
+    })
+  }, [unPublishPosts.length])
+
+  const [selectedIndex, updateSelectedIndex] = useState({
+    left: unPublishPosts.length - 1,
+    selected: 0,
+    right: 1
+  })
+
+  const postDoms = useMemo(() => {
+    return unPublishPosts.map((post, index) => {
+      let visibleState
+      switch(index) {
+        case selectedIndex.right:
+          visibleState = ItemAnimState.PrepareVisible
+          break
+        case selectedIndex.selected:
+          visibleState = ItemAnimState.Visible
+          break
+        case selectedIndex.left:
+          visibleState = ItemAnimState.PrepareNotVisible
+          break
+        default:
+          visibleState = ItemAnimState.NotVisible
+          break
+      }
+
+      return <VoteForNextTopicItem key={index.toString()} post={post} state={visibleState} title={index.toString()} />
+    })
+  }, [selectedIndex])
+
+  const onNext = useCallback(() => {
+    const newIndex = selectedIndex.selected + 1 > unPublishPosts.length - 1 - 1 ? 0 : selectedIndex.selected + 1
+    updateSelectedIndex({
+      selected: newIndex ,
+      left: newIndex + 1 > unPublishPosts.length - 1 ? 0 : newIndex + 1,
+      right: newIndex - 1 < 0 ? unPublishPosts.length - 1 : newIndex - 1
+    })
+  }, [selectedIndex])
+
+  const onPrev = useCallback(() => {
+    const newIndex = selectedIndex.selected - 1 < 0 ? unPublishPosts.length - 1 : selectedIndex.selected - 1
+    updateSelectedIndex({
+      selected: newIndex ,
+      left: newIndex + 1 > unPublishPosts.length - 1 ? 0 : newIndex + 1,
+      right: newIndex - 1 < 0 ? unPublishPosts.length - 1 : newIndex - 1
+    })
+  }, [selectedIndex])
 
   return (
     <>
-      <div className="flex flex-col h-full py-10 px-10 rounded-sm">
+      <div className="flex flex-col h-full py-10 px-10 rounded-xl overflow-clip">
         <div className="w-full h-full relative">
-          <div className="absolute top-0 left-0 h-full w-full z-10">
+          <div className="absolute top-0 left-0 h-full w-full z-10 rounded-xl overflow-clip">
             <ThreeDCanvas>
               <Background/>
             </ThreeDCanvas>
@@ -31,13 +92,13 @@ export function VoteForNextTopic(props: {}) {
             <div className="flex h-[180px] w-[100px]">
               <ThreeDCanvas gl={{alpha: true}} style={{background: 'transparent'}}>
                 <AnimatedCircle duration={2} startPoint={[0, 3, 0]}/>
-              </ThreeDCanvas   >
+              </ThreeDCanvas>
             </div>
-            <div className="flex flex-row gap-10 h-full">
-              {unPublishPosts.map((post) => (
-                <VoteForNextTopicItem post={post} />
-              ))}
-            </div >
+            <div className="flex flex-row gap-10 h-full w-full relative">
+              <button onClick={onPrev}>Previous</button>
+              {postDoms}
+              <button onClick={onNext}>Next</button >
+            </div>
           </div>
         </div>
       </div>
@@ -75,8 +136,7 @@ function Background(props: {}) {
       <Noise
         opacity={0.7}
         premultiply
-        blendFunction={ BlendFunction.OVERLAY }
-      />
+        blendFunction={BlendFunction.OVERLAY}/>
       </EffectComposer>
       <mesh material={material} scale-x={40} scale-y={10}>
         <planeGeometry args={[1, 1, 1, 1]}/>
@@ -179,16 +239,56 @@ function AnimatedCircle({ duration, startPoint }: any) {
   )
 }
 
-function VoteForNextTopicItem(props: { post: Post }) {
-  const { post } = props || {}
+function VoteForNextTopicItem(props: {key: any, post: Post, state: ItemAnimState, title: string }) {
+  const { post, state, key, title } = props || {}
+  const itemRef: any = useRef(null)
+
+  const style = useMemo(() => {
+    switch (state) {
+      case ItemAnimState.NotVisible:
+        return {
+          transform: '-50vw',
+          position: 'absolute',
+          left: '50%',
+          zIndex: 0,
+          top: 0
+        }
+      case ItemAnimState.PrepareVisible:
+        return {
+          transform: '-50vw',
+          position: 'absolute',
+          left: '60%',
+          zIndex: 5,
+          top: 0
+        }
+      case ItemAnimState.Visible:
+        return {
+          transform: '-50vw',
+          position: 'absolute',
+          left: '50%',
+          zIndex: 10,
+          top: 0
+        }
+      case ItemAnimState.PrepareNotVisible:
+        return {
+          transform: '-50vw',
+          position: 'absolute',
+          left: '40%',
+          zIndex: 5,
+          top: 0
+        }
+    }
+  },
+  [state])
+
   return (
     <>
-      <div className="relative flex flex-col w-[300px] rounded-2xl overflow-clip">
-        <div className="absolute bottom-0 left-0 flex flex-col w-full h-full z-20 bg-white bg-opacity-20 backdrop-blur-2xl justify-center gap-10 py-14 px-5 items-center">
-          <span className="font-Alfa text-xl text-white text-center">{ post.title }</span>
+      <div ref={itemRef} className="relative flex flex-col w-[300px] rounded-2xl overflow-clip h-full" style={style}>
+        <div className="absolute bottom-0 left-0 flex flex-col w-full h-full z-20 bg-black bg-opacity-40 backdrop-blur-2xl justify-between py-5 px-5 items-center">
+          <img src={post.publicImage} className="h-[50%] w-full object-cover"/>
+          <span className="font-Alfa text-lg text-white text-center">{ `index ${title}`}</span>
+          <span className="font-roboto font-thin text-sm text-white text-center">{ post.description }</span>
           <button className="bg-black rounded-xl px-5 py-2 text-white font-Alfa text-xl">Vote</button>
-        </div>
-        <div className="absolute top-0 bottom-0 left-0 w-full h-auto z-10 opacity-75">
         </div>
       </div>
     </>

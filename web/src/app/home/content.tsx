@@ -9,18 +9,23 @@ import {BasicInteraction} from "../components/basic-interaction";
 import {RunningText} from "../components/running-text";
 import {HomeBackground} from "./background";
 import {FooterHtml} from "../components/footer";
-import {Reponsive} from "../components/reponsive"
+import {Reponsive, reponsiveMatch} from "../components/reponsive"
 import {TASKS} from "@/app/home/index";
 import dynamic from "next/dynamic";
-import { VoteForNextTopic } from "../components/vote-next-topic";
+import { VoteForNextTopic } from "../components/vote-next-topic/list-layout";
 
 export default function HomeContent(props: any) {
     return <Reponsive>
-        {(matches: any) => <Fragment>
-            {matches.small && matches.short && <_Home {...props} totalPages={4}/>}
-            {matches.small && !matches.short && <_Home {...props} totalPages={3.8}/>}
-            {!matches.small && <_Home {...props} totalPages={4.2}/>}
-        </Fragment>}
+      {(matches: any) => {
+        const match = reponsiveMatch(matches)
+        return <Fragment>
+          {match.small && matches.short && <_Home {...props} totalPages={4.0} />}
+          {match.small && !matches.short && <_Home {...props} totalPages={4.0} />}
+          {match.medium && <_Home {...props} totalPages={4.4} />}
+          {match.large && <_Home {...props} totalPages={4.2} />}
+          {match.veryLarge && <_Home {...props} totalPages={4.3} />}
+        </Fragment>
+      }}
     </Reponsive>
 }
 

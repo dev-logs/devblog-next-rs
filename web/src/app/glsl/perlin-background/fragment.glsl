@@ -10,7 +10,10 @@ varying float vNoise;
 
 void main() {
     vec2 uv = vUv;
-    uv.x += uTime * 0.1;
+    uv.y += uTime * 0.02;
+    uv.y = mod(uv.y, 1.0);
+
+    uv.x += uTime * 0.05;
     uv.x = mod(uv.x, 1.0);
     vec4 noise = texture2D(uNoiseSampler, uv);
     noise *= smoothstep(0.0, 0.1, uv.x);

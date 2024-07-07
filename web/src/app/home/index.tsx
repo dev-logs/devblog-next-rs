@@ -3,7 +3,7 @@ import dynamic from "next/dynamic";
 import {Suspense} from "react";
 import {LoadingOverlay} from "@/app/components/loading-overlay";
 
-export const TOTAL_PAGES = 4
+export const TOTAL_PAGES = 5
 
 const getTasks = () => [
     import('../posts/blog-list-background'),
