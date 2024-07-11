@@ -6,7 +6,7 @@ import CustomShaderMaterial from "three-custom-shader-material/vanilla"
 import SHADERS from "../glsl"
 import {useFrame} from "@react-three/fiber"
 import {useTexture} from "@react-three/drei"
-import { VoteForNextTopic } from "./vote-next-topic/list-layout"
+import { VoteForNextTopic } from "./vote-next-topic/card-layout"
 
 export const BasicInteraction = (props: any) => {
     return (

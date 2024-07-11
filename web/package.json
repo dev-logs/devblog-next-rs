@@ -39,6 +39,7 @@
     "remark-gfm": "^3.0.1",
     "schema": "../schema/grpc-web-ts",
     "shiki": "^1.6.3",
+    "swiper": "10.0.0",
     "tailwind-scrollbar": "^3.1.0",
     "three": "0.164.1",
     "three-custom-shader-material": "5.4.0"

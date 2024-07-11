@@ -3,12 +3,12 @@ import AuthenticationService from '../services/authentication'
 import DiscussionService from '../services/discussion'
 
 /**
-* UI components don't need to, can not handle network task like calling API and error handling
-* component should only care about how to display data, so that this hook provide:
+* UI components don't need and can not handle network task like calling API and error handling
+* component should only care about how to display data, this hook provide:
 * + Factory pattern: Ui don't need to care about init services
 * + Handle async task and convert to usePromise hook
-* + Each function parameters also be converted into function
-* + For example: service.createDiscussion(title: string, author: string) -> [trigger, setTitle, setAuthor]
+* + Each function parameters also be converted into function,
+*   for example: service.createDiscussion(title: string, author: string) -> [trigger, setTitle, setAuthor]
 */
 
 type AsyncFunction<T extends any[], R> = (...args: T) => Promise<R>
