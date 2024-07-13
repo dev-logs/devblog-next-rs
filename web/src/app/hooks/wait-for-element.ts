@@ -1,6 +1,8 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 
 const useElementReady = (className: string, callback: (e: any) => void) => {
+  const [windowSize, updateWindowSize] = useState<any>(null)
+
   useEffect(() => {
     const checkElement = () => {
       const element = document.querySelector(`.${className}`)
@@ -25,7 +27,20 @@ const useElementReady = (className: string, callback: (e: any) => void) => {
     return () => {
       observer.disconnect()
     }
-  }, [className, callback])
+  }, [className, callback, windowSize])
+
+  useEffect(() => {
+    const listener = () => {
+      updateWindowSize({
+        width: window.innerWidth,
+        height: window.innerHeight
+      })
+    }
+
+    window.addEventListener('resize', listener)
+
+    return () => window.removeEventListener('resize', listener)
+  }, [])
 }
 
 export default useElementReady

@@ -30,7 +30,7 @@ export function VoteForNextTopic(props: {}) {
             <Background />
           </ThreeDCanvas>
         </div>
-        <div className="absolute flex flex-col top-0 left-0 min-h-fit min-w-fit h-full w-full z-20 p-10">
+        <div className="absolute flex flex-col top-0 left-0 w-full h-full z-20 p-10">
           <span className="font-Alfa xl:text-3xl lg:text-2xl text-md text-white">
             Vote for our next topic
           </span>
@@ -116,13 +116,9 @@ export function VoteForNextTopicCards(props: {}) {
 
   return (
     <div className="w-full h-full flex flex-row justify-center items-center">
-      <button className="w-full h-full" onClick={onPrev}>
-      </button>
-      <div className="flex flex-row gap-10 sm:h-[350px] h-[200px] xl:h-full sm:w-[250px] w-[130px] xl:w-[300px] relative" style={{translate: '-50%'}}>
-        {postDoms}
-      </div>
-      <button className="w-full h-full" onClick={onNext}>
-      </button>
+      <button className="absolute right-0 w-[30%] md:w-[40%] xl:w-[42%] h-full z-40" onClick={onPrev}/>
+      {postDoms}
+      <button className="absolute left-0 w-[30%] md:w-[40%] h-full xl:w-[42%] z-40" onClick={onNext}/>
     </div>
   )
 }
@@ -342,7 +338,7 @@ function VoteForNextTopicItem(props: {
     <>
       <div
         ref={itemRef}
-        className="absolute flex flex-col bg-gray-950 border-gray-300 bg-opacity-70 backdrop-blur-2xl shadow-2xl md:border-2 border md:rounded-2xl rounded-lg overflow-clip sm:h-[350px] h-[200px] xl:h-full sm:w-[250px] w-[130px] xl:w-[300px]">
+        className="absolute flex flex-col bg-gray-950 border-gray-300 bg-opacity-70 backdrop-blur-2xl shadow-2xl md:border-2 border md:rounded-2xl rounded-lg overflow-clip sm:h-[350px] h-[200px] xl:h-full xl:max-h-[500px] sm:w-[250px] w-[130px] xl:w-[300px]">
         <div className="absolute bottom-0 left-0 flex flex-col w-full h-full z-20 shadow-sm shadow-white lg:gap-10 md:gap-5 gap-2 justify-center md:py-10 md:px-5 py-2 px-3 items-center">
           <span className="font-roboto xl:text-2xl md:text-xl text-sm md:font-bold font-semibold text-white text-center">{`${post.title}`}</span>
           <span className="font-roboto xl:text-xl md:text-lg text-sm text-white text-center truncate-text-5">

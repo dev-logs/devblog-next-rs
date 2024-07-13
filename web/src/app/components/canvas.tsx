@@ -18,7 +18,7 @@ export const ThreeDCanvas = forwardRef((
         return <LowVertexModelProvider>
             <ThreeDContext.Provider value={context}>
                 {props.background || <></>}
-                {props.scroll ? <ScrollControls damping={0.3} maxSpeed={0.8} {...props.scroll}>
+                {props.scroll ? <ScrollControls damping={0.2} maxSpeed={0.5} {...props.scroll}>
                     {props.children}
                 </ScrollControls> : props.children}
             </ThreeDContext.Provider>
