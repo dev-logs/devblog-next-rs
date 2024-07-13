@@ -1,6 +1,6 @@
 "use client";
 
-import {Fragment, Suspense, useRef} from "react";
+import {Fragment, Suspense, useEffect, useMemo, useRef, useState} from "react";
 import {Html, Scroll, useScroll} from "@react-three/drei";
 import {ThreeDCanvas} from "../components/canvas";
 import {NavigationBar} from "../components/navigation-bar";
@@ -12,22 +12,24 @@ import {FooterHtml} from "../components/footer";
 import {Reponsive, reponsiveMatch, HeightReponsive as HeightReponsive, WidthReponsive} from "../components/reponsive"
 import {TASKS} from "@/app/home/index"
 import dynamic from "next/dynamic"
+import useElementReady from "../hooks/wait-for-element"
 
 export default function HomeContent(props: any) {
-    return <Reponsive>
-      {(matches: any) => {
-        const match = reponsiveMatch(matches)
-        console.log('isLarge:', typeof WidthReponsive.LARGE)
-        console.log('isVeryLarge:', match.is(WidthReponsive.VERY_LARGE))
+  const [totalPages, setTotalPages] = useState(1)
+  useElementReady('app-footer', (footer) => {
+    const rect = footer.getBoundingClientRect()
+    const totalPages = (rect.top + rect.height) / window.innerHeight
+    setTotalPages(totalPages)
+  })
+
+  return <Reponsive>
+    {(matches: any) => {
+      const match = reponsiveMatch(matches)
         return <Fragment>
-          {match.is(WidthReponsive.SMALL) && match.is(HeightReponsive.SHORT) && <_Home {...props} totalPages={4.0} />}
-          {match.is(WidthReponsive.SMALL) && !match.is(HeightReponsive.SHORT) && <_Home {...props} totalPages={4.0} />}
-          {match.is(WidthReponsive.MEDIUM) && <_Home {...props} totalPages={4.4} />}
-          {match.is(WidthReponsive.LARGE) && <_Home {...props} totalPages={4.2} />}
-          {match.is(WidthReponsive.VERY_LARGE) && <_Home {...props} totalPages={4.3} />}
+          <_Home {...props} totalPages={totalPages}/>
         </Fragment>
       }}
-    </Reponsive>
+  </Reponsive>
 }
 
 const _Home = (props: any) => {

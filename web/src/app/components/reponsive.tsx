@@ -32,7 +32,7 @@ export const reponsiveMatch = (matches: any) => {
     width: WidthReponsive.SMALL,
     height: HeightReponsive.SHORT,
     from: ((compare: WidthReponsive) => result.width >= compare),
-    is: (compare: WidthReponsive | HeightReponsive) => (typeof compare === typeof result.width && compare === result.width)
+    is: (compare: WidthReponsive | HeightReponsive) => (typeof compare === typeof result.width && compare === result.width),
   }
 
   if (matches.veryLarge) {

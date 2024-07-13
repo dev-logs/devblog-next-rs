@@ -1,10 +1,19 @@
-import { InstagramIcon } from "../icons/instagram";
+import { useCallback, useEffect, useRef } from "react"
+import { InstagramIcon } from "../icons/instagram"
 
 export const FooterHtml = (props: any) => {
+  const ref = useRef<any>(null)
+  useEffect(() => {
+    if (ref.current) {
+      console.log(ref.current.getBoundingClientRect())
+    }
+  }, [ref, ref.current])
+
   return (
     <>
       <div
-        className={`z-20 flex flex-col h-full w-screen items-center pt-14 overflow-hidden`}
+        ref={ref}
+        className={`app-footer z-20 flex flex-col h-full w-screen items-center pt-14 overflow-hidden`}
       >
         <span className="font-head md:scale-y-[2] scale-y-[3.55] align-bottom md:pt-14 pt-8 text-[24vw] h-fit text-white uppercase">
           DEVLOG STUDIO

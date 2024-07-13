@@ -1,7 +1,7 @@
 'use client'
-import dynamic from "next/dynamic";
-import {Suspense} from "react";
-import {LoadingOverlay} from "@/app/components/loading-overlay";
+import dynamic from "next/dynamic"
+import {Suspense, useCallback} from "react"
+import {LoadingOverlay} from "@/app/components/loading-overlay"
 
 export const TOTAL_PAGES = 5
 
@@ -21,7 +21,7 @@ export default function Home(props: any) {
     const HomeContentDynamic = dynamic(() => loadHomePage)
 
     return <div>
-        <LoadingOverlay tasks={[loadHomePage, ...tasks]}/>
+      <LoadingOverlay tasks={[loadHomePage, ...tasks]}/>
         <Suspense>
             <HomeContentDynamic tasks={tasks} />
         </Suspense>
