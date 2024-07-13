@@ -21,7 +21,7 @@ interface DiscussionsProps {
 export const Discussions = ({ discussions, totalComments, post }: DiscussionsProps) => {
     return (
         <div
-            className="prose max-w-prose 2xl:prose-2xl md:prose-md prose-sm lg:prose-lg h-fit overflow-x-hidden z-20 bg-gray-500 bg-opacity-40 border border-gray-800 backdrop-blur-3xl text-white px-8 shadow rounded-xl">
+            className="prose max-w-prose 2xl:prose-2xl md:prose-md prose-sm lg:prose-lg h-fit overflow-x-hidden z-20 text-white shadow rounded-xl">
             <div className="flex justify-between items-center mb-4">
                 <div className="flex flex-row justify-center items-center">
                     <h2 className="font-semibold text-white">Discussions</h2>

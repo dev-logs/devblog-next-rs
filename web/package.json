@@ -14,6 +14,8 @@
     "@react-three/drei": "9.105.6",
     "@react-three/fiber": "8.16.6",
     "@react-three/postprocessing": "2.16.2",
+    "@rive-app/canvas-advanced": "2.7.3",
+    "parcel-bundler": "1.6.1",
     "@tailwindcss/forms": "^0.5.7",
     "@tailwindcss/typography": "^0.5.13",
     "autoprefixer": "^10.4.19",
