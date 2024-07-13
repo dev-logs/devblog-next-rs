@@ -14,5 +14,9 @@
   "license": "ISC",
   "devDependencies": {
     "nodemon": "^3.1.4"
+  },
+  "dependencies": {
+    "@rive-app/canvas": "^2.19.3",
+    "@rive-app/canvas-advanced": "^2.19.3"
   }
 }

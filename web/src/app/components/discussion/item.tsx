@@ -35,7 +35,7 @@ export const DiscussionItem = ({ discussion }: DiscussionItemProps) => {
                 <button className="btn">
                     <i className="ri-emotion-line"></i>
                 </button>
-                <div className="flex items-center ml-4">
+                <div className="flex items-center">
                     {discussion.reactions.map((reaction, index) => (
                         <button key={index} className="btn react flex items-center mr-2">
                             <img src={reaction.emoji} alt="" className="w-4 h-4" />
@@ -43,7 +43,7 @@ export const DiscussionItem = ({ discussion }: DiscussionItemProps) => {
                         </button>
                     ))}
                 </div>
-                <span className="ml-4 text-gray-50 text-sm">{discussion.timestamp}</span>
+                <span className="text-gray-50 text-sm">{discussion.timestamp}</span>
             </div>
         </div>
     );

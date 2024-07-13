@@ -81,7 +81,7 @@ function HtmlDom(props: any = {}) {
 
   return (
     <div className={"h-full w-full"}>
-      <div className="w-screen flex flex-col">
+      <div className=" flex flex-col">
         <Suspense>
           <TitleLazy post={post} />
         </Suspense>
@@ -89,8 +89,8 @@ function HtmlDom(props: any = {}) {
           <div className="lg:col-span-3 col-span-full lg:items-start items-center flex flex-row h-fit lg:sticky lg:left-5 lg:top-20 lg:justify-start justify-center">
             <TableOfContent post={post} />
           </div>
-          <div className="flex lg:justify-start flex-col lg:items-start lg:pl-16 items-center lg:col-span-6 col-span-full md:mt-8 mt-2">
-            <article className="prose 2xl:prose-2xl md:prose-md prose-sm lg:prose-lg mb-10 w-full sm:px-8 px-5 rounded-xl backdrop-blur-lg">
+          <div className="flex lg:justify-start flex-col lg:items-start cols-span-full lg:pl-16 items-center lg:col-span-6 col-span-full md:mt-8 mt-2">
+            <article className="max-w-full prose 2xl:prose-2xl md:prose-md prose-sm lg:prose-lg mb-10 sm:px-8 rounded-xl backdrop-blur-lg px-2">
               <MdxContent post={post} />
               <LikeSection/>
               <Discussions
@@ -100,8 +100,8 @@ function HtmlDom(props: any = {}) {
               />
             </article>
           </div>
-          </div>
-        <div className="w-screen h-full">
+        </div>
+        <div className="h-full">
           <Suspense>
             <FooterLazy post={post} />
           </Suspense>
@@ -112,7 +112,7 @@ function HtmlDom(props: any = {}) {
 }
 
 function LikeSection() {
-  return <div className="flex flex-row top-32 mt-10 justify-start items-start w-screen">
+  return <div className="flex flex-row top-32 mt-10 justify-start items-start">
     <div className="flex flex-row rounded-lg">
       <div className="w-[100px] h-[100px]">
         <RiveText text="0 likes" />

@@ -33,9 +33,9 @@ export const Discussions = ({ discussions, totalComments, post }: DiscussionsPro
                 <DiscussionItem key={discussion.id} discussion={discussion}/>
             ))}
             <div className="flex justify-center items-center mt-4">
-        <span className="text-gray-500">
-          <i className="ri-refresh-line mr-1"></i>Loading
-        </span>
+            <span className="text-gray-500">
+              <i className="ri-refresh-line mr-1"></i>Loading
+            </span>
             </div>
         </div>
     )
