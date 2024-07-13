@@ -5,7 +5,6 @@ import {MacOne} from '../models/macone'
 import Shaders from '../glsl'
 import {useFrame} from '@react-three/fiber'
 import {Environment, SpotLightShadow, Stage, useTexture} from '@react-three/drei'
-import gsap from "gsap";
 
 export const Tivi = (props: any) => {
     const beerMugTexture = useTexture('/images/dale-typing-pixelated-frame.jpg')
@@ -45,13 +44,22 @@ export const Tivi = (props: any) => {
         let yDir = mouseRef.current.x / window.innerWidth - 0.5
         let xDir = mouseRef.current.y / window.innerHeight - 0.5
 
-        mesh.rotation.y += 0.01 * (yDir - mesh.rotation.y) * Math.PI
-        mesh.rotation.x += 0.01 * (xDir - mesh.rotation.x) * Math.PI
+        mesh.rotation.y += 0.005 * (yDir - mesh.rotation.y) * Math.PI
+        mesh.rotation.x += 0.005 * (xDir - mesh.rotation.x) * Math.PI
 
-        mesh.rotation.x = Math.min(mesh.rotation.x, 0.1 * Math.PI)
+        if (mesh.rotation.x > 0) {
+          mesh.rotation.x = Math.min(mesh.rotation.x, 0.05 * Math.PI)
+        }
+        else {
+          mesh.rotation.x = Math.max(mesh.rotation.x, -0.01 * Math.PI)
+        }
 
-        mesh.rotation.y = Math.min(mesh.rotation.y, 0.1 * Math.PI)
-        mesh.rotation.y = Math.min(mesh.rotation.y, 0.1 * Math.PI)
+        if (mesh.rotation.y > 0) {
+          mesh.rotation.y = Math.min(mesh.rotation.y, 0.05 * Math.PI)
+        }
+        else {
+          mesh.rotation.y = Math.max(mesh.rotation.y, -0.05 * Math.PI)
+        }
 
         screenMaterial.uniforms.uTime.value = elapsedTime
     })

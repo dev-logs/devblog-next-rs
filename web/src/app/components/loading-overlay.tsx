@@ -52,8 +52,7 @@ export const LoadingOverlay = (props: any) => {
 
                 gsap.to(background, {
                     opacity: 0,
-                    duration: 3,
-                    delay: 1,
+                    duration: 1,
                     onComplete: () => updateComplete(true)
                 })
             }, 500)
