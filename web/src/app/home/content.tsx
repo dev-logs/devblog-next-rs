@@ -22,12 +22,6 @@ export default function HomeContent(props: any) {
     setTotalPages(totalPages)
   })
 
-  useEffect(() => {
-    window.addEventListener('resize', () => {
-      setTotalPages(1)
-    })
-  }, [])
-
   return <Reponsive>
     {(matches: any) => {
       const match = reponsiveMatch(matches)

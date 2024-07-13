@@ -21,10 +21,10 @@ interface DiscussionsProps {
 export const Discussions = ({ discussions, totalComments, post }: DiscussionsProps) => {
     return (
         <div
-            className="max-w-prose prose 2xl:prose-xl md:prose-lg prose-sm h-fit overflow-x-hidden z-20 bg-blue-800 bg-opacity-10 backdrop-blur-3xl text-white px-8 shadow rounded-xl">
+            className="prose max-w-prose 2xl:prose-2xl md:prose-md prose-sm lg:prose-lg h-fit overflow-x-hidden z-20 bg-gray-500 bg-opacity-40 border border-gray-800 backdrop-blur-3xl text-white px-8 shadow rounded-xl">
             <div className="flex justify-between items-center mb-4">
                 <div className="flex flex-row justify-center items-center">
-                    <h2 className="text-lg font-semibold text-white">Discussions</h2>
+                    <h2 className="font-semibold text-white">Discussions</h2>
                     <div className="ml-2 bg-gray-50 text-black text-xs px-2 py-1 rounded-full">{totalComments}</div>
                 </div>
             </div>
