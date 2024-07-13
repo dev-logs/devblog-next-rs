@@ -3,19 +3,14 @@ import gRPCClientBase from "./base"
 import {SigninRequest, SignupRequest, SignupResponse} from 'schema/dist/schema/devlog/rpc/authentication_pb'
 import {SigninMethod, SignupMethod} from 'schema/dist/schema/devlog/entities/authentication_pb'
 import {isValidEmail} from '../utils/string'
+import UserLocalStorage from '../storage/user'
 
 export default class AuthenticationService extends gRPCClientBase<AuthenticationServiceClient> {
-  constructor() {
-    super(AuthenticationServiceClient)
-  }
+  private userStorage: UserLocalStorage
 
-  async saveAccessToken(token: string | undefined) {
-    if (token) {
-      localStorage.setItem('access-token', token)
-    }
-    else {
-      throw 'Token missing'
-    }
+  constructor(userStorage: UserLocalStorage) {
+    super(AuthenticationServiceClient)
+    this.userStorage = userStorage
   }
 
   async signin(email: string, password: string) {
@@ -30,7 +25,8 @@ export default class AuthenticationService extends gRPCClientBase<Authentication
       this.client.signin(request, this.getInSecureMetadata(), async (err, data) => {
         if (err) reject(err)
 
-        await this.saveAccessToken(data?.getAccessToken()?.getContent())
+        this.userStorage.saveAccessToken(data?.getAccessToken()!)
+        this.userStorage.saveUserInfo(data?.getUser()!)
 
         resolve(data?.toObject())
       })
@@ -56,7 +52,8 @@ export default class AuthenticationService extends gRPCClientBase<Authentication
           return reject(err.message)
         }
 
-        this.saveAccessToken(data?.getAccessToken()?.getContent())
+        this.userStorage.saveAccessToken(data?.getAccessToken()!)
+        this.userStorage.saveUserInfo(data?.getUser()!)
 
         resolve(data!.toObject())
       })

@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import AuthenticationService from '../services/authentication'
 import DiscussionService from '../services/discussion'
+import UserLocalStorage from '../storage/user';
 
 /**
 * UI components don't need and can not handle network task like calling API and error handling
@@ -55,6 +56,8 @@ export function usePromise<T extends any[], R>(fn: AsyncFunction<T, R>): UseProm
   return [trigger, data, err,  ...paramSetters] as UsePromiseReturn<T, R>
 }
 
+const userLocalStorage = new UserLocalStorage()
+
 export function useService() {
   return {
     discussion: () => {
@@ -64,7 +67,7 @@ export function useService() {
       }
     },
     auth: () => {
-      const authService = useMemo(() => new AuthenticationService(), [])
+      const authService = useMemo(() => new AuthenticationService(userLocalStorage), [])
       return {
         signupByEmail: usePromise(authService.signupByEmail.bind(authService))
       }

@@ -90,7 +90,7 @@ function HtmlDom(props: any = {}) {
             <TableOfContent post={post} />
           </div>
           <div className="flex lg:justify-start flex-col lg:items-start cols-span-full lg:pl-16 items-center lg:col-span-6 col-span-full md:mt-8 mt-2">
-            <article className="max-w-full prose 2xl:prose-2xl md:prose-md prose-sm lg:prose-lg mb-10 sm:px-8 rounded-xl backdrop-blur-lg px-2">
+            <article className="max-w-full mb-10 sm:px-8 rounded-xl backdrop-blur-lg px-2">
               <MdxContent post={post} />
               <LikeSection/>
               <Discussions

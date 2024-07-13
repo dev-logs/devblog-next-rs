@@ -31,10 +31,11 @@ impl AuthenticationService for AuthenticationGrpcService {
             token_service: TokenService {},
         };
 
-        let token = service.execute(request.signin.as_ref().unwrap()).await?;
+        let result = service.execute(request.signin.as_ref().unwrap()).await?;
+
         let res = Response::new(SigninResponse {
-            access_token: Some(token),
-            user: None,
+            access_token: Some(result.token),
+            user: Some(result.user),
         });
 
         Ok(res)
@@ -47,14 +48,14 @@ impl AuthenticationService for AuthenticationGrpcService {
         let request = request.get_ref();
         let service = SignupService {
             db: DB.clone(),
-            token_service: TokenService {},
+            token_service: TokenService {}
         };
 
-        let token = service.execute(request.signup.as_ref().unwrap()).await?;
+        let result = service.execute(request.signup.as_ref().unwrap()).await?;
 
         Ok(Response::new(SignupResponse {
-            access_token: Some(token),
-            user: None,
+            access_token: Some(result.token),
+            user: Some(result.user),
         }))
     }
 }

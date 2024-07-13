@@ -1,13 +1,13 @@
-import { Post } from "contentlayer/generated";
-import { ThreeDCanvas } from "@/app/components/canvas";
-import { useEffect, useMemo, useRef } from "react";
-import CustomShaderMaterial from "three-custom-shader-material/vanilla";
-import * as THREE from "three";
-import { useTexture } from "@react-three/drei";
-import { useFrame } from "@react-three/fiber";
-import GLSL from "../glsl";
-import { EffectComposer, Noise } from "@react-three/postprocessing";
-import { BlendFunction } from "postprocessing";
+import { Post } from "contentlayer/generated"
+import { ThreeDCanvas } from "@/app/components/canvas"
+import { useMemo } from "react"
+import CustomShaderMaterial from "three-custom-shader-material/vanilla"
+import * as THREE from "three"
+import { useTexture } from "@react-three/drei"
+import { useFrame } from "@react-three/fiber"
+import GLSL from "../glsl"
+import { EffectComposer, Noise } from "@react-three/postprocessing"
+import { BlendFunction } from "postprocessing"
 
 export default function PostTitle(props: any) {
   const { post }: { post: Post } = props || {};
@@ -34,7 +34,7 @@ export default function PostTitle(props: any) {
             </span>
           </div>
           <img
-            className="object-cover h-[50vh] w-[80vw]"
+            className="object-cover max-h-[60vh] h-auto w-[90vw]"
             src={post.publicImage}
           />
         </div>
