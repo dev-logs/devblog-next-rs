@@ -1,8 +1,8 @@
 'use client'
 
-import {useEffect, useRef, useState} from "react";
-import {useProgress} from "@react-three/drei";
-import gsap from "gsap";
+import {useEffect, useRef, useState} from "react"
+import {useProgress} from "@react-three/drei"
+import gsap from "gsap"
 import noop from 'lodash/noop'
 
 export const LoadingOverlay = (props: any) => {
@@ -26,16 +26,15 @@ export const LoadingOverlay = (props: any) => {
                 updateHtmlProgress(progress.value)
             })
         }
-    }, [tasks, tasks.length]);
+    }, [tasks, tasks.length])
 
     useEffect(() => {
         let mProgress = (loaded / total) + (modelProgress * 0.01 / total)
-        console.log(mProgress)
         if (isNaN(mProgress)) mProgress = 0
 
         const finalProgress = (mProgress + htmlProgress) / 2
         updateProgress(Number(finalProgress.toFixed(2)))
-    }, [modelProgress, htmlProgress, total, loaded]);
+    }, [modelProgress, htmlProgress, total, loaded])
 
     const progressBarRef: any = useRef(null)
     const backgroundRef: any = useRef(null)
@@ -58,10 +57,11 @@ export const LoadingOverlay = (props: any) => {
                     onComplete: () => updateComplete(true)
                 })
             }, 500)
-        } else {
+        }
+        else {
             progressBar.style.transform = `scaleX(${progress})`
         }
-    }, [progress]);
+    }, [progress])
 
     if (isComplete) {
         onComplete()

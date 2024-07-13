@@ -9,7 +9,7 @@ import {BasicInteraction} from "../components/basic-interaction";
 import {RunningText} from "../components/running-text";
 import {HomeBackground} from "./background";
 import {FooterHtml} from "../components/footer";
-import {Reponsive, reponsiveMatch} from "../components/reponsive"
+import {Reponsive, reponsiveMatch, HeightReponsive as HeightReponsive, WidthReponsive} from "../components/reponsive"
 import {TASKS} from "@/app/home/index"
 import dynamic from "next/dynamic"
 
@@ -17,12 +17,14 @@ export default function HomeContent(props: any) {
     return <Reponsive>
       {(matches: any) => {
         const match = reponsiveMatch(matches)
+        console.log('isLarge:', typeof WidthReponsive.LARGE)
+        console.log('isVeryLarge:', match.is(WidthReponsive.VERY_LARGE))
         return <Fragment>
-          {match.small && matches.short && <_Home {...props} totalPages={4.0} />}
-          {match.small && !matches.short && <_Home {...props} totalPages={4.0} />}
-          {match.medium && <_Home {...props} totalPages={4.4} />}
-          {match.large && <_Home {...props} totalPages={4.2} />}
-          {match.veryLarge && <_Home {...props} totalPages={4.3} />}
+          {match.is(WidthReponsive.SMALL) && match.is(HeightReponsive.SHORT) && <_Home {...props} totalPages={4.0} />}
+          {match.is(WidthReponsive.SMALL) && !match.is(HeightReponsive.SHORT) && <_Home {...props} totalPages={4.0} />}
+          {match.is(WidthReponsive.MEDIUM) && <_Home {...props} totalPages={4.4} />}
+          {match.is(WidthReponsive.LARGE) && <_Home {...props} totalPages={4.2} />}
+          {match.is(WidthReponsive.VERY_LARGE) && <_Home {...props} totalPages={4.3} />}
         </Fragment>
       }}
     </Reponsive>

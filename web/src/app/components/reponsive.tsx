@@ -1,5 +1,20 @@
 import Media from "react-media"
 
+export enum HeightReponsive {
+  SHORT
+}
+
+export enum WidthReponsive {
+  SMALL,
+  MEDIUM,
+  LARGE,
+  VERY_LARGE
+}
+
+export function largerThan(target: WidthReponsive, compareTo: WidthReponsive) {
+  return target > compareTo;
+}
+
 export const Reponsive = (props: any) => {
     return <Media queries={{
         short: "(max-height: 680px)",
@@ -14,28 +29,27 @@ export const Reponsive = (props: any) => {
 
 export const reponsiveMatch = (matches: any) => {
   let result = {
-    small: false,
-    medium: false,
-    short: false,
-    large: false,
-    veryLarge: false,
+    width: WidthReponsive.SMALL,
+    height: HeightReponsive.SHORT,
+    from: ((compare: WidthReponsive) => result.width >= compare),
+    is: (compare: WidthReponsive | HeightReponsive) => (typeof compare === typeof result.width && compare === result.width)
   }
 
   if (matches.veryLarge) {
-    result.veryLarge = true
+    result.width = WidthReponsive.VERY_LARGE
   }
   else if (matches.large) {
-    result.large = true
+    result.width = WidthReponsive.LARGE
   }
   else if (matches.medium) {
-    result.medium = true
+    result.width = WidthReponsive.MEDIUM
   }
   else if (matches.small) {
-    result.small = true
+    result.width = WidthReponsive.SMALL
   }
 
   if (matches.short) {
-    result.short = true
+    result.height = HeightReponsive.SHORT
   }
 
   return result

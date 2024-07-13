@@ -86,7 +86,7 @@ function PostsPaging(props: any) {
           <>
             <SwiperSlide key={index} className="">
               <div className="h-full w-full items-center justify-center flex">
-                <VoteForNextTopicItem key={index} post={post} />
+                <VoteForNextTopicItem key={index} post={post}/>
               </div>
             </SwiperSlide>
           </>

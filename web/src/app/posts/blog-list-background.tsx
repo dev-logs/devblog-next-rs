@@ -1,4 +1,4 @@
-import { Reponsive, reponsiveMatch } from "@/app/components/reponsive";
+import { largerThan, Reponsive, reponsiveMatch, WidthReponsive } from "@/app/components/reponsive";
 import { Fragment } from "react";
 import { ElectricalEffect } from "@/app/components/electrical-effect";
 
@@ -11,7 +11,7 @@ export default function BlogListBackground(props: any) {
             const match = reponsiveMatch(matches)
             return (
               <Fragment>
-                {match.small && (
+                {match.is(WidthReponsive.SMALL) && (
                   <>
                     <pointLight
                       position={[1, -5, 0]}
@@ -24,7 +24,7 @@ export default function BlogListBackground(props: any) {
                     />
                   </>
                 )}
-                {match.medium && (
+                {match.from(WidthReponsive.MEDIUM) && (
                   <>
                     <pointLight
                       position={[2.2, -7, 2]}

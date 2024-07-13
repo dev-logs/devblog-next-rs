@@ -11,8 +11,6 @@ import gsap from "gsap"
 import { EffectComposer, Noise } from "@react-three/postprocessing"
 import { BlendFunction } from "postprocessing"
 import { MotionPathPlugin } from "gsap/MotionPathPlugin"
-import { debounce, throttle } from "lodash"
-import { reponsiveMatch } from "../reponsive"
 
 gsap.registerPlugin(MotionPathPlugin)
 
