@@ -1,8 +1,7 @@
 import { useService } from "../hooks/service"
 
 export const NewSletterSubscription = (props: any) => {
-    const provider = useService()
-    const [trigger, data, error, setEmail] = provider.auth().signupByEmail
+    const signupByEmail = useService().auth().signupByEmail()
 
     return <>
         <div
@@ -19,12 +18,12 @@ export const NewSletterSubscription = (props: any) => {
             <div className="relative flex md:flex-row flex-col w-full gap-4 h-16 justify-center items-center">
                 <div className="flex flex-col w-full">
                 <input
-                  onChange={(e) => setEmail(e.target.value)}
+                  onChange={(e) => signupByEmail.setEmail(e.target.value)}
                   className="w-full max-w-96 font-head text-2xl md:p-5 p-1 h-full bg-white tracking-wider text-black rounded-xl"/>
-                  {<span className="text-pink-400 p-2 font-bold text-sm absolute -bottom-10">{error}</span>}
+                  {<span className="text-pink-400 p-2 font-bold text-sm absolute -bottom-10">{signupByEmail.error}</span>}
                 </div>
                 <button
-                    onClick={trigger}
+                    onClick={signupByEmail.trigger}
                     className="md:px-4 md:py-4 font-graduate md:uppercase rounded-xl md:text-lg text-sm px-2 py-2 bg-black h-full">Subscribe
                 </button>
             </div >
