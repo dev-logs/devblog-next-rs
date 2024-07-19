@@ -1,5 +1,7 @@
-import React, { useState, FormEvent, useRef, useEffect } from 'react'
+import React, { useState, FormEvent, useRef, useEffect, useCallback } from 'react'
 import gsap from 'gsap'
+import { useService } from '@/app/hooks/service'
+import {toast, Toaster} from 'react-hot-toast'
 
 interface PopupProps {
   onClose: () => void
@@ -8,10 +10,18 @@ interface PopupProps {
 
 const AuthenticationPopup: React.FC<PopupProps> = ({ onClose, onResult }) => {
   const [isSignup, setIsSignup] = useState(false)
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [displayName, setDisplayName] = useState('')
   const elementRef = useRef<any>(null)
+  const signinByEmail = useService().auth().signinByEmail()
+  const fullSignup = useService().auth().fullySignup()
+
+  const main = isSignup ? fullSignup : signinByEmail
+
+  useEffect(() => {
+    if (main.error) {
+      toast(main.error.toString())
+      main.updateError(null)
+    }
+  }, [main, main.error])
 
   const handleSwitchMode = () => {
     setIsSignup(!isSignup)
@@ -24,15 +34,32 @@ const AuthenticationPopup: React.FC<PopupProps> = ({ onClose, onResult }) => {
     }
   }, [elementRef.current])
 
-  const handleSubmit = (e: FormEvent) => {
+  useEffect(() => {
+    if (main.data && onClose) {
+      onClose()
+    }
+  }, [main.data, onClose])
+
+  const handleSubmit = useCallback((e: FormEvent) => {
     e.preventDefault()
-    const result = { email, password, displayName: isSignup ? displayName : undefined }
-    onResult(result)
-    onClose()
-  }
+    main.trigger()
+  }, [main])
+
+  const onEmailChange = useCallback((e: any) => {
+    main.setEmailState(e.target.value)
+  }, [main])
+
+  const onDisplayNameChange = useCallback((e: any) => {
+    main.setDisplayNameState(e.target.value)
+  }, [main])
+
+  const onPasswordChage = useCallback((e: any) => {
+    main.setPasswordState(e.target.value)
+  }, [main])
 
   return (
-    <div className="font-roboto fixed top-0 left-0 w-full h-full bg-gray-900 bg-opacity-50 backdrop-filter backdrop-blur-lg z-10 flex justify-center items-center">
+    <div className="font-mono font-thin text-sm fixed top-0 left-0 w-full h-full bg-gray-900 bg-opacity-50 backdrop-filter backdrop-blur-lg z-10 flex justify-center items-center">
+      <Toaster position='bottom-right'/>
       <div ref={elementRef} className="flex flex-col bg-gray-900 border border-gray-800 bg-opacity-95 rounded-xl py-5 pb-8">
         <header className="relative">
           <button onClick={onClose} className="absolute right-0 pt-1 pr-5">
@@ -51,8 +78,8 @@ const AuthenticationPopup: React.FC<PopupProps> = ({ onClose, onResult }) => {
                 type="text"
                 placeholder='required'
                 name="displayname"
-                value={displayName}
-                onChange={(e) => setDisplayName(e.target.value)}
+                value={main.displayNameState}
+                onChange={onDisplayNameChange}
                 required
               />
             </div>
@@ -66,8 +93,8 @@ const AuthenticationPopup: React.FC<PopupProps> = ({ onClose, onResult }) => {
               type="email"
               placeholder='required'
               name="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              value={main.emailState}
+              onChange={onEmailChange}
               required
             />
           </div>
@@ -80,8 +107,8 @@ const AuthenticationPopup: React.FC<PopupProps> = ({ onClose, onResult }) => {
               type="password"
               placeholder='required'
               name="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              value={main.passwordState}
+              onChange={onPasswordChage}
               required
             />
           </div>

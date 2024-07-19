@@ -1,76 +1,134 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
-import AuthenticationService from '../services/authentication'
-import DiscussionService from '../services/discussion'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import AuthenticationService from '../services/authentication';
+import DiscussionService from '../services/discussion';
 import UserLocalStorage from '../storage/user';
+import { useCamera } from '@react-three/drei';
 
-/**
-* UI components don't need and can not handle network task like calling API and error handling
-* component should only care about how to display data, this hook provide:
-* + Factory pattern: Ui don't need to care about init services
-* + Handle async task and convert to usePromise hook
-* + Each function parameters also be converted into function,
-*   for example: service.createDiscussion(title: string, author: string) -> [trigger, setTitle, setAuthor]
-*/
-
-type AsyncFunction<T extends any[], R> = (...args: T) => Promise<R>
-
-type UsePromiseReturn<T extends any[], R> = [
-  () => Promise<void>,
-  R | null,
-  any,
-  ...{ [K in keyof T]: (value: T[K]) => void }
-];
-
-export function usePromise<T extends any[], R>(fn: AsyncFunction<T, R>): UsePromiseReturn<T, R> {
+type AsyncFunction<T extends any[], R> = (...args: T) => Promise<R>;
+type UsePromiseReturn<T extends string[], P extends any[], R> = {
+  trigger: () => Promise<void>;
+  data: R | null;
+  error: any;
+  updateError: (err: any) => void;
+  updateData: (data: R | null) => void;
+} & {
+  [K in keyof T as `set${Capitalize<T[K] & string>}`]: (value: P[K & number]) => void;
+} & {
+  [K in keyof T as `set${Capitalize<T[K] & string>}State`]: (value: P[K & number]) => void;
+} & {
+  [K in keyof T as `${T[K] & string}State`]: P[K & number];
+};
+export function usePromise<T extends string[], P extends any[], R>(
+  fn: AsyncFunction<P, R>,
+  paramNames: T
+): UsePromiseReturn<T, P, R> {
   const [err, updateErr] = useState<any>(null)
   const [data, updateData] = useState<R | null>(null)
-  const paramRefs = useRef(<(T[keyof T])[]>(fn.length > 0 ? new Array(fn.length).fill(null) : []))
+  const paramRefs = useRef<P>(fn.length > 0 ? (new Array(fn.length).fill(null) as P) : ([] as P))
+  const [paramStates, setParamStates] = useState<P>(fn.length > 0 ? (new Array(fn.length).fill(null) as P) : ([] as P))
+  const [triggered, setTriggered] = useState(false)
 
   useEffect(() => {
     if (err) {
       setTimeout(() => {
-        updateErr(null)
-      }, 6000)
+        updateErr(null);
+      }, 6000);
     }
-  }, [err])
+  }, [err, updateErr]);
 
   const paramSetters = useMemo(
     () =>
-      paramRefs.current.map((_, index) => (value: T[keyof T]) => {
-        paramRefs.current[index] = value
+      paramRefs.current.map((_, index) => (value: P[number]) => {
+        paramRefs.current[index] = value;
       }),
-    [])
+    []
+  );
 
-  const trigger = useMemo(
-    () => async () => {
-      try {
-        const result = await fn(...(paramRefs.current as T))
-        updateData(result)
-      } catch (error) {
-        updateErr(error)
-      }
-    },
-    [fn]
-  )
+  const paramStateSetters = useMemo(
+    () =>
+      paramStates.map((_, index) => (value: P[number]) => {
+        paramRefs.current[index] = value;
+        setParamStates(prevState => {
+          const newState = [...prevState] as P;
+          newState[index] = value;
+          return newState;
+        });
+      }),
+    [paramStates]
+  );
 
-  return [trigger, data, err,  ...paramSetters] as UsePromiseReturn<T, R>
+  useEffect(() => {
+   if (triggered) {
+     (async () => {
+       console.log('triggering function')
+       try {
+         const result = await fn(...paramRefs.current)
+         updateData(result)
+       } catch (error) {
+         console.log('error happen')
+         updateErr(error)
+       }
+       finally {
+         setTriggered(false)
+       }
+     })()
+   }
+  }, [triggered, updateErr, updateData])
+
+  const trigger = useCallback(() => setTriggered(true), [setTriggered])
+
+  const setters = paramSetters.reduce((acc, setter, index) => {
+    const paramName = `set${capitalize(paramNames[index])}`;
+    acc[paramName as `set${Capitalize<typeof paramNames[number]>}`] = setter as any;
+    return acc;
+  }, {} as { [K in T[number] as `set${Capitalize<K>}`]: (value: P[number]) => void });
+
+  const stateSetters = paramStateSetters.reduce((acc, setter, index) => {
+    const paramName = `set${capitalize(paramNames[index])}State`;
+    acc[paramName as `set${Capitalize<typeof paramNames[number]>}State`] = setter as any;
+    return acc;
+  }, {} as { [K in T[number] as `set${Capitalize<K>}State`]: (value: P[number]) => void });
+
+  const states = paramStates.reduce((acc, state, index) => {
+    const paramName = `${paramNames[index]}State`;
+    acc[paramName as `${typeof paramNames[number]}State`] = state;
+    return acc;
+  }, {} as { [K in T[number] as `${K}State`]: P[number] });
+
+  return {
+    trigger,
+    data,
+    updateData,
+    updateError: updateErr,
+    isLoading: triggered,
+    error: err,
+    ...setters,
+    ...stateSetters,
+    ...states,
+  } as UsePromiseReturn<T, P, R>;
 }
 
-const userLocalStorage = new UserLocalStorage()
+function capitalize<S extends string>(str: S): Capitalize<S> {
+  return (str.charAt(0).toUpperCase() + str.slice(1)) as Capitalize<S>;
+}
+
+const userLocalStorage = new UserLocalStorage();
+const discussionService = new DiscussionService()
+const authService = new AuthenticationService(userLocalStorage)
 
 export function useService() {
   return {
     discussion: () => {
-      const discussionService = useMemo(() => new DiscussionService(), [])
       return {
-        newDiscussion: usePromise(discussionService.newDiscussion.bind(discussionService))
-      }
+        newDiscussion: () => usePromise(discussionService.newDiscussion.bind(discussionService), ['content', 'title']),
+      };
     },
     auth: () => {
-      const authService = useMemo(() => new AuthenticationService(userLocalStorage), [])
       return {
-        signupByEmail: usePromise(authService.signupByEmail.bind(authService))
-      }
-    }
-  }
+        signupByEmail: () => usePromise(authService.signupByEmail.bind(authService), ['email', 'password']),
+        signinByEmail: () => usePromise(authService.signin.bind(authService), ['email', 'password']),
+        fullySignup: () => usePromise(authService.signupFullAccount.bind(authService), ['displayName', 'email', 'password']),
+      };
+    },
+  };
 }

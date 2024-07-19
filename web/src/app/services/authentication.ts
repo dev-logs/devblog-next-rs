@@ -23,12 +23,43 @@ export default class AuthenticationService extends gRPCClientBase<Authentication
       signinMethod.setByEmailPassword(byEmailPassword)
       request.setSignin(signinMethod)
       this.client.signin(request, this.getInSecureMetadata(), async (err, data) => {
-        if (err) reject(err)
+        if (err) {
+          return reject(err)
+        }
 
         this.userStorage.saveAccessToken(data?.getAccessToken()!)
         this.userStorage.saveUserInfo(data?.getUser()!)
 
         resolve(data?.toObject())
+      })
+    })
+  }
+
+  async signupFullAccount(displayName: string, email: string, password: string): Promise<SignupResponse.AsObject> {
+    return new Promise((resolve, reject) => {
+      if (!isValidEmail(email)) {
+        return reject('Invalid email format')
+      }
+
+      const request = new SignupRequest()
+      const signupMethod = new SignupMethod()
+      const byEmailPassword = new SignupMethod.EmailPassword()
+      byEmailPassword.setEmail(email)
+      byEmailPassword.setPassword(password)
+      byEmailPassword.setDisplayName(displayName)
+      signupMethod.setByEmailPassword(byEmailPassword)
+      request.setSignup(signupMethod)
+
+      this.client.signup(request, this.getInSecureMetadata(), async (err, data) => {
+        if (err) {
+          console.log(err)
+          return reject(err.message)
+        }
+
+        this.userStorage.saveAccessToken(data?.getAccessToken()!)
+        this.userStorage.saveUserInfo(data?.getUser()!)
+
+        resolve(data!.toObject())
       })
     })
   }
@@ -49,6 +80,7 @@ export default class AuthenticationService extends gRPCClientBase<Authentication
 
       this.client.signup(request, this.getInSecureMetadata(), async (err, data) => {
         if (err) {
+          console.log(err)
           return reject(err.message)
         }
 
