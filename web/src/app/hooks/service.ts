@@ -3,6 +3,7 @@ import AuthenticationService from '../services/authentication';
 import DiscussionService from '../services/discussion';
 import UserLocalStorage from '../storage/user';
 import { useCamera } from '@react-three/drei';
+import toast from 'react-hot-toast';
 
 type AsyncFunction<T extends any[], R> = (...args: T) => Promise<R>;
 type UsePromiseReturn<T extends string[], P extends any[], R> = {
@@ -30,9 +31,8 @@ export function usePromise<T extends string[], P extends any[], R>(
 
   useEffect(() => {
     if (err) {
-      setTimeout(() => {
-        updateErr(null);
-      }, 6000);
+      toast(err.toString())
+      updateErr(null)
     }
   }, [err, updateErr]);
 
@@ -121,6 +121,7 @@ export function useService() {
     discussion: () => {
       return {
         newDiscussion: () => usePromise(discussionService.newDiscussion.bind(discussionService), ['content', 'title']),
+        getDiscussions: () => usePromise(discussionService.getDiscussions.bind(discussionService), ['page', 'rowsPerPage'])
       };
     },
     auth: () => {

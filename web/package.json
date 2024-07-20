@@ -34,6 +34,7 @@
     "react": "18",
     "react-dom": "18",
     "react-hot-toast": "^2.4.1",
+    "react-infinite-scroll-hook": "^4.1.1",
     "react-media": "^1.10.0",
     "reading-time": "^1.5.0",
     "rehype-autolink-headings": "^7.1.0",

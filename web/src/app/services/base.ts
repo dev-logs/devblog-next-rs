@@ -50,10 +50,10 @@ export default class gRPCClientBase<T> {
   }
 
   getSecureMetadata() {
-    const token = localStorage.getItem('access-token')
-    if (!token) throw 'Unnable to access'
+    let tokenObj: any = JSON.parse(localStorage.getItem('access-token') || '{}')
+    if (!tokenObj || !tokenObj.content) throw 'Login is required'
     const metadata = new grpc.Metadata()
-    metadata.set('Authorization', token)
+    metadata.set('authorization', `${tokenObj.content}`)
     return metadata
   }
 

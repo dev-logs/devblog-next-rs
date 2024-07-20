@@ -19,17 +19,20 @@ export function useAuthentication() {
   const useAnnonymous = useCallback(() => {
   }, [])
 
-  const useUser = useCallback(() => {
+  const requestUser = useCallback(() => {
     const existingUser = userStorage.getUserInfo()
     if (existingUser) {
       setUser(existingUser)
+      return true
     }
     else {
       openPopup()
+      return false
     }
+
   }, [userStorage])
 
-  return {user, popupComponent, useAnnonymous, useUser}
+  return {popupComponent, useAnnonymous, user, requestUser}
 }
 
 export const useAuthenticationPopup = () => {
@@ -56,5 +59,9 @@ export const useAuthenticationPopup = () => {
       )
     : null
 
-  return { openPopup, popupComponent, result }
+  return {
+    openPopup,
+    popupComponent,
+    result
+  }
 }

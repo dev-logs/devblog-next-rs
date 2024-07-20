@@ -1,14 +1,21 @@
-import { useAuthenticationPopup } from '@/app/hooks/authentication'
+import { useAuthentication, useAuthenticationPopup } from '@/app/hooks/authentication'
 import { useService } from '@/app/hooks/service'
 import { Post } from 'contentlayer/generated'
 import React, {useCallback, useEffect} from 'react'
+import toast, { Toaster } from 'react-hot-toast'
 
 export const DiscussionInput = ({post}: {post: Post}) => {
-    const {popupComponent, openPopup} = useAuthenticationPopup()
+    const {requestUser, popupComponent} = useAuthentication()
     const newDiscussion = useService().discussion().newDiscussion()
 
     useEffect(() => {
       newDiscussion.setTitle(post.title)
+    }, [])
+
+    const sendHandler = useCallback(() => {
+      if(requestUser()) {
+        newDiscussion.trigger()
+      }
     }, [])
 
     return <div className='flex flex-col h-fit'>
@@ -25,7 +32,7 @@ export const DiscussionInput = ({post}: {post: Post}) => {
                 </div>
                 <div className="flex items-center space-x-4">
                     <button className="btn"><i className="ri-at-line"></i></button>
-                    <button onClick={() => openPopup()} className="btn primary bg-blue-500 text-white px-8 py-1 rounded-md">Send</button>
+                    <button onClick={sendHandler} className="btn primary bg-blue-500 text-white px-8 py-1 rounded-md">Send</button>
                 </div>
             </div>
         </div>

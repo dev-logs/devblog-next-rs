@@ -5,7 +5,9 @@ use schema::devlog::devblog::rpc::devblog_discussion_service_server::DevblogDisc
 use schema::devlog::devblog::rpc::{GetDiscussionsRequest, GetDiscussionsResponse, NewDiscussionRequest, NewDiscussionResponse};
 
 use crate::grpc::base::GRPCService;
-use crate::services::discussion::new_discussion::{CreateDiscussionServiceImpl, NewDiscussionParams};
+use crate::services::discussion::get_discussion::GetListDiscussionsParam;
+use crate::services::discussion::new_discussion::NewDiscussionParams;
+use crate::services::discussion::DiscussionService;
 use crate::DB;
 
 #[derive(Debug, Clone)]
@@ -22,7 +24,7 @@ impl DevblogDiscussionService for DiscussionGrpcService {
     async fn new_discussion(&self, request: Request<NewDiscussionRequest>) -> Result<Response<NewDiscussionResponse>, Status> {
         let user: &User = request.extensions().get::<User>().ok_or(Status::unauthenticated("You're not authorize"))?;
         let request = request.get_ref();
-        let service = CreateDiscussionServiceImpl { db: DB.clone() };
+        let service = DiscussionService { db: DB.clone() };
         let params = NewDiscussionParams {
             user,
             discussion: request.new_discussion.as_ref().expect("new_discussion must be defined"),
@@ -35,9 +37,16 @@ impl DevblogDiscussionService for DiscussionGrpcService {
     }
 
     async fn get_discussions(&self, request: Request<GetDiscussionsRequest>) -> Result<Response<GetDiscussionsResponse>, Status> {
+        let request = request.get_ref();
+        let service = DiscussionService { db: DB.clone() };
+        let param = GetListDiscussionsParam {
+            paging: request.paging.as_ref().unwrap().clone()
+        };
+
+        let result = service.execute(param).await?;
         Ok(Response::new(GetDiscussionsResponse {
-            discussions: vec![],
-            paging: request.get_ref().paging.clone()
+            discussions: result.discussions,
+            paging: request.paging.clone()
         }))
     }
 }

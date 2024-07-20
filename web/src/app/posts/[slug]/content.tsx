@@ -12,6 +12,7 @@ import {
   ThumbUpRiveComponent,
 } from "@/app/components/rive/rive-component";
 import { Discussions } from "@/app/components/discussion";
+import { Toaster } from "react-hot-toast";
 
 const discussions = [
   {
@@ -81,6 +82,7 @@ function HtmlDom(props: any = {}) {
 
   return (
     <div className={"h-full w-full"}>
+      <Toaster position="bottom-right"/>
       <div className=" flex flex-col">
         <Suspense>
           <TitleLazy post={post} />
