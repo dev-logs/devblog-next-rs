@@ -2,25 +2,28 @@ pub mod grpc;
 pub mod config;
 pub mod services;
 
-use core_services::{grpc::middle::{auth::AuthInterceptor, response_handler::{self, ResponseHeaderHandler}}, logger, DB};
+use core_services::{grpc::middle::{auth::AuthInterceptor, response_handler::{ResponseHeaderHandler}}, logger, s3::S3Client, DB, S3_CLIENT};
 use grpc::{authentication::AuthenticationGrpcService, base::GRPCService, discussion::DiscussionGrpcService};
-use surrealdb::{engine::remote::ws::Ws, opt::{auth::Root, capabilities::Targets}};
+use surrealdb::{engine::remote::ws::Ws, opt::{auth::Root}};
 use tonic_middleware::{InterceptorFor, MiddlewareLayer};
 use tower_http::cors::*;
 
 use config::CONFIGS;
+use core_services::config::CONFIGS as CORE_CONFIGS;
 use tonic::transport::Server;
 use log::info;
 use tonic_web::*;
-use schema::devlog::{devblog::rpc::devblog_discussion_service_server::DevblogDiscussionServiceServer, rpc::authentication_service_server::{AuthenticationService, AuthenticationServiceServer}};
+use schema::devlog::{devblog::rpc::devblog_discussion_service_server::DevblogDiscussionServiceServer, rpc::authentication_service_server::AuthenticationServiceServer};
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let namespace = String::from("devblog-api");
     logger::setup();
     info!(target: namespace.as_str(), "{:?}", *CONFIGS);
+    info!(target: namespace.as_str(), "{:?}", *CORE_CONFIGS);
 
     setup_db().await?;
+    setup_s3().await;
     setup_grpc_server().await?;
 
     Ok(())
@@ -40,6 +43,12 @@ async fn setup_db() -> Result<(), Box<dyn std::error::Error>> {
     info!(target: &ns, "Connected to SurrealDb version: {} {}", db_version, CONFIGS.surreal_db.socket_address);
 
     Ok(())
+}
+
+async fn setup_s3() {
+    S3_CLIENT.get_or_init(|| async move {
+        S3Client::new().await
+    }).await;
 }
 
 async fn setup_grpc_server() -> Result<(), Box<dyn std::error::Error>> {

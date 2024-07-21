@@ -32,12 +32,7 @@ impl <'a> Service<NewDiscussionParams<'a>, Discussion> for DiscussionService {
 
         let discussion_relation = new_discussion.relate(sender_id, post_id);
         let created_discussion: Value = self.db.query(surreal_quote!("SELECT * FROM (#relate(&discussion_relation)) FETCH out")).await?.take(0)?;
-
-        if let Value::Array(Array(result)) = created_discussion {
-            let created_discussion: Discussion = result.first().take().unwrap().to_owned().into();
-            return Ok(created_discussion);
-        }
-
-        Err(Errors::DatabaseError { message: "".to_owned(), db_name: "".to_owned() })
+        let created_discussion: Discussion = created_discussion.into();
+        return Ok(created_discussion);
     }
 }

@@ -1054,16 +1054,16 @@ dependencies = [
  "pretty_env_logger",
  "prost",
  "prost-types",
- "rand",
  "schema",
  "serde",
  "serde_derive",
  "serde_json",
- "surreal_derive_plus 1.0.13 (registry+https://github.com/rust-lang/crates.io-index)",
+ "surreal_derive_plus",
  "surreal_devl",
  "surrealdb",
  "surrealdb_id",
  "thiserror",
+ "tokio",
  "tonic",
  "tonic-build",
  "tonic-middleware",
@@ -1239,7 +1239,7 @@ dependencies = [
  "serde",
  "serde_derive",
  "serde_json",
- "surreal_derive_plus 1.0.13",
+ "surreal_derive_plus",
  "surreal_devl",
  "surrealdb",
  "surrealdb_id",
@@ -3274,7 +3274,7 @@ dependencies = [
  "serde",
  "serde_derive",
  "serde_json",
- "surreal_derive_plus 1.0.13",
+ "surreal_derive_plus",
  "surreal_devl",
  "surrealdb",
  "surrealdb_id",
@@ -3672,22 +3672,9 @@ checksum = "0d0208408ba0c3df17ed26eb06992cb1a1268d41b2c0e12e65203fbe3972cee5"
 
 [[package]]
 name = "surreal_derive_plus"
-version = "1.0.13"
-dependencies = [
- "darling",
- "proc-macro2",
- "quote",
- "surreal_devl",
- "surrealdb",
- "surrealdb_id",
- "syn 2.0.64",
-]
-
-[[package]]
-name = "surreal_derive_plus"
-version = "1.0.13"
+version = "1.0.14"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "680fbc017474dce5a431faaa057751080105d567c08e534e0c519c8cb9290443"
+checksum = "619a5b6cf6ef5df4b43e6042722963f5fd214b98bc1f3c3a910627cc25931558"
 dependencies = [
  "darling",
  "proc-macro2",
@@ -3700,21 +3687,22 @@ dependencies = [
 
 [[package]]
 name = "surreal_devl"
-version = "1.0.5"
+version = "1.0.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "affb8fa8739429a1f4b3b4bdbe7b9439eaeeefd0b08f81d6f0cdbaa8c3ac3fb8"
+checksum = "4ede18287ca2da3740084e8a1baddc57940a6fdab7045c032343bebeb4761b0e"
 dependencies = [
  "cargo_metadata",
  "serde",
+ "serde_json",
  "surrealdb",
  "surrealdb_id",
 ]
 
 [[package]]
 name = "surrealdb"
-version = "1.5.3"
+version = "1.5.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "31819be880ed2c134afc1350dc29c22b1f1d9b93715d25eac07ba65677235eed"
+checksum = "430b7d33686ece41796236416707398574da147f78c6b4e5dc9a10592907029b"
 dependencies = [
  "async-channel",
  "bincode",

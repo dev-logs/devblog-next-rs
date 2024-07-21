@@ -1,9 +1,9 @@
 use crate::DB;
 
 use super::base::GRPCService;
-use core_services::services::{
+use core_services::{s3::S3Client, services::{
     base::Service, signin::SigninService, signup::SignupService, token::TokenService,
-};
+}, S3_CLIENT};
 use schema::devlog::rpc::{
     authentication_service_server::AuthenticationService, SigninRequest, SigninResponse,
     SignupRequest, SignupResponse,
@@ -46,7 +46,9 @@ impl AuthenticationService for AuthenticationGrpcService {
         request: Request<SignupRequest>,
     ) -> Result<Response<SignupResponse>, Status> {
         let request = request.get_ref();
+        let s3 = S3Client::new().await;
         let service = SignupService {
+            s3,
             db: DB.clone(),
             token_service: TokenService {}
         };
