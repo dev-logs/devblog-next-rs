@@ -3,16 +3,8 @@ import { DiscussionItem } from "./item"
 import { DiscussionInput } from "./input"
 import { Post } from "contentlayer/generated"
 import { useService } from "@/app/hooks/service"
-import useInfiniteScroll from "react-infinite-scroll-hook"
-
-interface Discussion {
-  id: number;
-  user: string;
-  avatar: string;
-  content: string;
-  reactions: { emoji: string; count: number }[];
-  timestamp: string;
-}
+import { Discussion } from "schema/dist/schema/devlog/devblog/entities/discussion_pb"
+import { Paging } from "schema/dist/schema/devlog/rpc/paging_pb"
 
 interface DiscussionsProps {
   post: Post;
@@ -21,28 +13,48 @@ interface DiscussionsProps {
 }
 
 export const Discussions = ({ totalComments, post }: DiscussionsProps) => {
-  const getDiscussions = useService().discussion().getDiscussions();
-  const [loading, setLoading] = useState(false);
-  const [discussions, setDiscussions] = useState<Discussion[]>([]);
+  const initialPaging = new Paging()
+  initialPaging.setPage(1)
+  initialPaging.setRowsPerPage(8)
+
+  const getDiscussions = useService().discussion().getDiscussions()
+  const [discussions, setDiscussions] = useState<Discussion[]>([])
+  const [paging, setPaging] = useState({page: initialPaging})
+  const [pageList, setPageList] = useState<number[]>([])
 
   useEffect(() => {
-    if (getDiscussions.data && getDiscussions.data.length) {
-      getDiscussions.setPageState(getDiscussions.pageState + 1)
-      setDiscussions([...(getDiscussions.data as any)])
+    let newPageList: number[] = []
+    for (let i = 0; i < paging.page.getTotalPages(); i++) {
+      newPageList.push(i + 1)
     }
+
+    setPageList(newPageList)
+  }, [paging, paging.page.getTotalPages()])
+
+  useEffect(() => {
+    const newDiscussions = getDiscussions.data?.discussions || []
+    setDiscussions(newDiscussions)
+    const newPaging = getDiscussions.data?.paging || initialPaging;
+    setPaging({
+      page: newPaging
+    })
   }, [getDiscussions.data])
 
-  const onLoadMore = useCallback(() => {
-    getDiscussions.setPageState(getDiscussions.pageState || 1)
-    getDiscussions.setRowsPerPage(10)
+  useEffect(() => {
+    getDiscussions.setPage(paging.page)
     getDiscussions.trigger()
-  }, [])
+  }, [paging.page.getPage()])
 
-  const [sentryRef] = useInfiniteScroll({
-    loading,
-    hasNextPage: !getDiscussions.data || (getDiscussions.data || [] as any).length,
-    onLoadMore,
-  })
+  const onSelectedPage = useCallback((index: number) => {
+    paging.page.setPage(index)
+    setPaging({page: paging.page})
+  }, [paging])
+
+  const reload = useCallback(() => {
+    setPaging({page: initialPaging})
+    getDiscussions.setPage(initialPaging)
+    getDiscussions.trigger()
+  }, [paging, getDiscussions])
 
   return (
     <div className="prose max-w-prose pl-2 2xl:prose-xl md:prose-md prose-sm lg:prose-lg h-fit overflow-x-hidden z-20 text-white shadow rounded-xl">
@@ -54,15 +66,18 @@ export const Discussions = ({ totalComments, post }: DiscussionsProps) => {
           </div>
         </div>
       </div>
-      <DiscussionInput post={post} />
+      <DiscussionInput post={post} onSent={reload} />
       {discussions.map((discussion, index) => (
         <DiscussionItem key={index} discussion={discussion} />
       ))}
-      <div ref={sentryRef}/>
+      <div className="flex flex-row w-full h-fit p-3 gap-1 justify-center items-center">
+        {
+          pageList.map((pageItem, index) =>
+            <button key={index} onClick={() => onSelectedPage(pageItem)} aria-checked={true} className="text-white font-roboto px-2 text-sm bg-blue-800 hover:bg-blue-400 rounded-sm h-fit w-fit p-1">{pageItem}</button>
+          )
+        }
+      </div>
       <div className="flex justify-center items-center mt-4">
-        <span className="text-gray-500">
-          <i className="ri-refresh-line mr-1"></i>Loading
-        </span>
       </div>
     </div>
   );

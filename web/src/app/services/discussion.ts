@@ -11,7 +11,7 @@ export default class DiscussionService extends gRPCClientBase<DevblogDiscussionS
     super(DevblogDiscussionServiceClient)
   }
 
-  async newDiscussion(content: string, postTitle: string) {
+  async newDiscussion(content: string, postTitle: string): Promise<boolean> {
     return new Promise((resolve, reject) => {
       if (!content) {
         return reject("Empty message !!")
@@ -33,31 +33,30 @@ export default class DiscussionService extends gRPCClientBase<DevblogDiscussionS
 
       this.client.new_discussion(request, this.getSecureMetadata(), (err, data) => {
         if (err) {
-          console.log('new discussion error', err.message)
           return reject(err)
         }
 
-        return resolve(data)
+        return resolve(true)
       })
     })
   }
 
-  async getDiscussions(page: number, rowsPerPage: number)  {
+  async getDiscussions(page: Paging): Promise<{ discussions: Discussion[], paging: Paging }> {
     return new Promise((resolve, reject) => {
-      if (page < 1) return reject('The page must be positive number')
-      if (rowsPerPage < 1) return reject('The rowsPerPage must be positive number')
+      if (page.getPage() < 1) return reject('The page must be positive number')
+      if (page.getRowsPerPage() < 1) return reject('The rowsPerPage must be positive number')
 
       const request = new GetDiscussionsRequest()
-      const paging = new Paging()
-      paging.setPage(page)
-      paging.setRowsPerPage(rowsPerPage)
-      request.setPaging(paging)
+      request.setPaging(page)
 
       this.client.get_discussions(request, this.getSecureMetadata(), (err, data: GetDiscussionsResponse | null) => {
         if (err) return reject(err)
 
         const list = data!.getDiscussionsList()
-        return resolve([...list])
+        return resolve({
+          discussions: [...list.map((it) => it)],
+          paging: data!.getPaging()!
+        })
       })
     })
   }

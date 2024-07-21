@@ -2,7 +2,6 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import AuthenticationService from '../services/authentication';
 import DiscussionService from '../services/discussion';
 import UserLocalStorage from '../storage/user';
-import { useCamera } from '@react-three/drei';
 import toast from 'react-hot-toast';
 
 type AsyncFunction<T extends any[], R> = (...args: T) => Promise<R>;
@@ -10,6 +9,7 @@ type UsePromiseReturn<T extends string[], P extends any[], R> = {
   trigger: () => Promise<void>;
   data: R | null;
   error: any;
+  isLoading: boolean,
   updateError: (err: any) => void;
   updateData: (data: R | null) => void;
 } & {
@@ -28,13 +28,19 @@ export function usePromise<T extends string[], P extends any[], R>(
   const paramRefs = useRef<P>(fn.length > 0 ? (new Array(fn.length).fill(null) as P) : ([] as P))
   const [paramStates, setParamStates] = useState<P>(fn.length > 0 ? (new Array(fn.length).fill(null) as P) : ([] as P))
   const [triggered, setTriggered] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
 
   useEffect(() => {
+    setIsLoading(false)
     if (err) {
       toast(err.toString())
       updateErr(null)
     }
   }, [err, updateErr]);
+
+  useEffect(() => {
+    setIsLoading(false)
+  }, [data])
 
   const paramSetters = useMemo(
     () =>
@@ -57,25 +63,25 @@ export function usePromise<T extends string[], P extends any[], R>(
     [paramStates]
   );
 
-  useEffect(() => {
-   if (triggered) {
-     (async () => {
-       console.log('triggering function')
-       try {
-         const result = await fn(...paramRefs.current)
-         updateData(result)
-       } catch (error) {
-         console.log('error happen')
-         updateErr(error)
-       }
-       finally {
-         setTriggered(false)
-       }
-     })()
-   }
-  }, [triggered, updateErr, updateData])
+  const trigger = useMemo(() => {
+      return (async () => {
+        if (triggered) return
 
-  const trigger = useCallback(() => setTriggered(true), [setTriggered])
+        setTriggered(true)
+        setIsLoading(true)
+        try {
+          setIsLoading(true)
+          const result = await fn(...paramRefs.current)
+          updateData(result)
+        } catch (error) {
+          console.log('error happen')
+          updateErr(error)
+        }
+        finally {
+          setTriggered(false)
+        }
+      })
+  }, [triggered, setTriggered, setIsLoading, updateData, updateErr])
 
   const setters = paramSetters.reduce((acc, setter, index) => {
     const paramName = `set${capitalize(paramNames[index])}`;
@@ -100,7 +106,7 @@ export function usePromise<T extends string[], P extends any[], R>(
     data,
     updateData,
     updateError: updateErr,
-    isLoading: triggered,
+    isLoading,
     error: err,
     ...setters,
     ...stateSetters,
@@ -121,7 +127,7 @@ export function useService() {
     discussion: () => {
       return {
         newDiscussion: () => usePromise(discussionService.newDiscussion.bind(discussionService), ['content', 'title']),
-        getDiscussions: () => usePromise(discussionService.getDiscussions.bind(discussionService), ['page', 'rowsPerPage'])
+        getDiscussions: () => usePromise(discussionService.getDiscussions.bind(discussionService), ['page'])
       };
     },
     auth: () => {

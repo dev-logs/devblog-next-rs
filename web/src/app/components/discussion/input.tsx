@@ -2,9 +2,8 @@ import { useAuthentication, useAuthenticationPopup } from '@/app/hooks/authentic
 import { useService } from '@/app/hooks/service'
 import { Post } from 'contentlayer/generated'
 import React, {useCallback, useEffect} from 'react'
-import toast, { Toaster } from 'react-hot-toast'
 
-export const DiscussionInput = ({post}: {post: Post}) => {
+export const DiscussionInput = ({ post, onSent }: { post: Post, onSent: () => void}) => {
     const {requestUser, popupComponent} = useAuthentication()
     const newDiscussion = useService().discussion().newDiscussion()
 
@@ -14,9 +13,11 @@ export const DiscussionInput = ({post}: {post: Post}) => {
 
     const sendHandler = useCallback(() => {
       if(requestUser()) {
-        newDiscussion.trigger()
+        newDiscussion.trigger().then(() => {
+          onSent()
+        })
       }
-    }, [])
+    }, [onSent, newDiscussion])
 
     return <div className='flex flex-col h-fit'>
         {popupComponent}

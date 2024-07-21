@@ -46,7 +46,7 @@ impl DevblogDiscussionService for DiscussionGrpcService {
         let result = service.execute(param).await?;
         Ok(Response::new(GetDiscussionsResponse {
             discussions: result.discussions,
-            paging: request.paging.clone()
+            paging: Some(result.paging)
         }))
     }
 }
