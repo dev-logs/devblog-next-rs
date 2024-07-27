@@ -1,10 +1,10 @@
 "use client";
 
-import { allPosts } from "contentlayer/generated";
+import { allPosts, Post } from "contentlayer/generated";
 import { MdxContent } from "../mdx";
 import { TableOfContent } from "../table-of-content";
 import dynamic from "next/dynamic";
-import { Suspense } from "react";
+import { Suspense, useCallback } from "react";
 import { TASKS } from "@/app/posts/[slug]/config";
 import {
   RiveEmojiFaceLove,
@@ -13,6 +13,7 @@ import {
 } from "@/app/components/rive/rive-component";
 import { Discussions } from "@/app/components/discussion";
 import { Toaster } from "react-hot-toast";
+import { useService } from "@/app/hooks/service";
 
 const discussions = [
   {
@@ -94,10 +95,8 @@ function HtmlDom(props: any = {}) {
           <div className="flex lg:justify-start flex-col lg:items-start cols-span-full lg:pl-16 items-center lg:col-span-6 col-span-full md:mt-8 mt-2">
             <article className="max-w-full mb-10 sm:px-8 rounded-xl backdrop-blur-lg px-2">
               <MdxContent post={post} />
-              <LikeSection/>
+              <LikeSection post={post}/>
               <Discussions
-                discussions={discussions}
-                totalComments={discussions.length}
                 post={post}
               />
             </article>
@@ -113,7 +112,16 @@ function HtmlDom(props: any = {}) {
   );
 }
 
-function LikeSection() {
+function LikeSection(props: {post: Post}) {
+  const {post} = props
+
+  const likeService = useService().post().like()
+  const likeHandler = useCallback((count: number) => {
+    likeService.setCount(count)
+    likeService.setPostTitle(post.title)
+    likeService.trigger()
+  }, [post])
+
   return <div className="flex flex-row top-32 mt-10 justify-start items-start">
     <div className="flex flex-row rounded-lg">
       <div className="w-[100px] h-[100px]">
@@ -121,9 +129,8 @@ function LikeSection() {
       </div>
       <div
         className="w-[90px] h-[90px]"
-        style={{ translate: "-50% 5%" }}
-      >
-        <ThumbUpRiveComponent />
+        style={{ translate: "-50% 5%" }}>
+        <ThumbUpRiveComponent onLikeEnd={likeHandler}/>
       </div>
       <div className="flex flex-row" style={{ translate: "-30%" }}>
         <div className="w-[100px] h-[100px]">

@@ -1,8 +1,9 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import AuthenticationService from '../services/authentication';
 import DiscussionService from '../services/discussion';
 import UserLocalStorage from '../storage/user';
 import toast from 'react-hot-toast';
+import PostService from '../services/post';
 
 type AsyncFunction<T extends any[], R> = (...args: T) => Promise<R>;
 type UsePromiseReturn<T extends string[], P extends any[], R> = {
@@ -121,9 +122,15 @@ function capitalize<S extends string>(str: S): Capitalize<S> {
 const userLocalStorage = new UserLocalStorage();
 const discussionService = new DiscussionService()
 const authService = new AuthenticationService(userLocalStorage)
+const postService = new PostService()
 
 export function useService() {
   return {
+    post: () => {
+      return {
+        like: () => usePromise(postService.like.bind(postService), ['postTitle', 'count'])
+      }
+    },
     discussion: () => {
       return {
         newDiscussion: () => usePromise(discussionService.newDiscussion.bind(discussionService), ['content', 'title']),

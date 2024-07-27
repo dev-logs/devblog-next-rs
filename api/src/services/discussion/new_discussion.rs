@@ -26,7 +26,7 @@ impl <'a> Service<NewDiscussionParams<'a>, Discussion> for DiscussionService {
 
         let mut new_discussion = params.discussion.clone();
         let created_at = Datetime {
-           utc_millis_since_epoch: chrono::Utc::now().timestamp_millis() as i64
+           utc_millis_since_epoch: chrono::Utc::now().timestamp_millis() as u64
         };
 
         new_discussion.created_at = Some(created_at);

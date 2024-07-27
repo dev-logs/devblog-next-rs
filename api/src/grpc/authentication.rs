@@ -3,7 +3,7 @@ use crate::DB;
 use super::base::GRPCService;
 use core_services::{s3::S3Client, services::{
     base::Service, signin::SigninService, signup::SignupService, token::TokenService,
-}, S3_CLIENT};
+}};
 use schema::devlog::rpc::{
     authentication_service_server::AuthenticationService, SigninRequest, SigninResponse,
     SignupRequest, SignupResponse,

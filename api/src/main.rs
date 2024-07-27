@@ -3,7 +3,8 @@ pub mod config;
 pub mod services;
 
 use core_services::{grpc::middle::{auth::AuthInterceptor, response_handler::{ResponseHeaderHandler}}, logger, s3::S3Client, DB, S3_CLIENT};
-use grpc::{authentication::AuthenticationGrpcService, base::GRPCService, discussion::DiscussionGrpcService};
+use grpc::{authentication::AuthenticationGrpcService, base::GRPCService, discussion::DiscussionGrpcService, post::PostGrpcService};
+use services::post::PostService;
 use surrealdb::{engine::remote::ws::Ws, opt::{auth::Root}};
 use tonic_middleware::{InterceptorFor, MiddlewareLayer};
 use tower_http::cors::*;
@@ -13,7 +14,7 @@ use core_services::config::CONFIGS as CORE_CONFIGS;
 use tonic::transport::Server;
 use log::info;
 use tonic_web::*;
-use schema::devlog::{devblog::rpc::devblog_discussion_service_server::DevblogDiscussionServiceServer, rpc::authentication_service_server::AuthenticationServiceServer};
+use schema::devlog::{devblog::rpc::{devblog_discussion_service_server::DevblogDiscussionServiceServer, post_service_server::PostServiceServer}, rpc::authentication_service_server::AuthenticationServiceServer};
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -56,6 +57,7 @@ async fn setup_grpc_server() -> Result<(), Box<dyn std::error::Error>> {
     let addr = format!("127.0.0.1:{}", CONFIGS.grpc_server.port).parse()?;
     let discussion_service = DiscussionGrpcService::new();
     let authentication_service = AuthenticationGrpcService::new();
+    let post_service = PostGrpcService::new();
     let response_handler = ResponseHeaderHandler {};
 
     info!(target: ns, "gRPC server starting at {}", &addr);
@@ -74,6 +76,7 @@ async fn setup_grpc_server() -> Result<(), Box<dyn std::error::Error>> {
         .add_service(InterceptorFor::new(
             DevblogDiscussionServiceServer::new(discussion_service),
             AuthInterceptor::new()))
+        .add_service(InterceptorFor::new(PostServiceServer::new(post_service), AuthInterceptor::new()))
         .serve(addr)
         .await?;
 

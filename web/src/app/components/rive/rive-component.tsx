@@ -1,6 +1,6 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import RiveCanvas from '@rive-app/canvas-advanced'
-import { noop } from 'lodash'
+import { debounce, noop, throttle } from 'lodash'
 
 const RIVE_VERSION = '2.7.3'
 
@@ -50,6 +50,7 @@ type RiveComponentProps = {
   artboardName: string
   fit?: string
   alignment?: string
+  onEvent: (event: any) => void
 }
 
 type RiveRuntime = {
@@ -64,6 +65,7 @@ export const RiveComponent: React.FC<RiveComponentProps> = ({
   artboardName,
   fit = 'contain',
   alignment = 'center',
+  onEvent = noop
 }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const riveAppRef = useRef<RiveApp | null>(null)
@@ -164,7 +166,7 @@ export const RiveComponent: React.FC<RiveComponentProps> = ({
           const numFiredEvents = stateMachine.reportedEventCount()
           for (let i = 0; i < numFiredEvents; i++) {
             const event = stateMachine.reportedEventAt(i)
-            console.log(event.name)
+            onEvent(event)
           }
 
           renderer.clear()
@@ -199,13 +201,34 @@ export const RiveComponent: React.FC<RiveComponentProps> = ({
 
 export default RiveComponent
 
-export const ThumbUpRiveComponent: React.FC = () => (
-  <RiveComponent
+export const ThumbUpRiveComponent = (props: {
+  onLikeEnd: (count: number) => void
+}) => {
+  const { onLikeEnd = noop } = props || {}
+  const countRef = useRef(0)
+  const counting = useMemo(() => {
+    return debounce(() => {
+      countRef.current ++
+    }, 100)
+  }, [])
+
+  const onEvent = useCallback((e: any) => {
+    if (e.name === 'LikeEvent') {
+      counting()
+    }
+    else if (e.name === 'LikeConfirmEvent') {
+      onLikeEnd(countRef.current)
+      countRef.current = 0
+    }
+  }, [counting, onLikeEnd])
+
+  return <RiveComponent
+    onEvent={onEvent}
     rivFileUrl="/riv/rive.riv"
     state="thumb_up"
     artboardName="thumb"
   />
-)
+}
 
 export const RiveText: React.FC<{ text: string }> = ({ text }) => {
   const [riveRuntime, setRiveRuntime] = useState<RiveRuntime>({})

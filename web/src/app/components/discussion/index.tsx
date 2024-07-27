@@ -8,11 +8,9 @@ import { Paging } from "schema/dist/schema/devlog/rpc/paging_pb"
 
 interface DiscussionsProps {
   post: Post;
-  discussions: Discussion[];
-  totalComments: number;
 }
 
-export const Discussions = ({ totalComments, post }: DiscussionsProps) => {
+export const Discussions = ({ post }: DiscussionsProps) => {
   const initialPaging = new Paging()
   initialPaging.setPage(1)
   initialPaging.setRowsPerPage(8)
@@ -62,7 +60,6 @@ export const Discussions = ({ totalComments, post }: DiscussionsProps) => {
         <div className="flex flex-row justify-center items-center">
           <h2 className="font-semibold text-white">Discussions</h2>
           <div className="ml-2 bg-gray-50 text-black text-xs px-2 py-1 rounded-full">
-            {totalComments}
           </div>
         </div>
       </div>
@@ -73,7 +70,7 @@ export const Discussions = ({ totalComments, post }: DiscussionsProps) => {
       <div className="flex flex-row w-full h-fit p-3 gap-1 justify-center items-center">
         {
           pageList.map((pageItem, index) =>
-            <button key={index} onClick={() => onSelectedPage(pageItem)} aria-checked={true} className="text-white font-roboto px-2 text-sm bg-blue-800 hover:bg-blue-400 rounded-sm h-fit w-fit p-1">{pageItem}</button>
+            <button key={index} onClick={() => onSelectedPage(pageItem)} className={`${paging.page.getPage() === pageItem ? 'bg-blue-400' : 'bg-blue-800'} text-white font-roboto px-2 text-sm hover:bg-blue-400 rounded-sm h-fit w-fit p-1`}>{pageItem}</button>
           )
         }
       </div>
