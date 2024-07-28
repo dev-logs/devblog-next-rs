@@ -49,7 +49,7 @@ export default class DiscussionService extends gRPCClientBase<DevblogDiscussionS
       const request = new GetDiscussionsRequest()
       request.setPaging(page)
 
-      this.client.get_discussions(request, this.getSecureMetadata(), (err, data: GetDiscussionsResponse | null) => {
+      this.client.get_discussions(request, this.getMetadata(), (err, data: GetDiscussionsResponse | null) => {
         if (err) return reject(err)
 
         const list = data!.getDiscussionsList()

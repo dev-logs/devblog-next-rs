@@ -1,7 +1,29 @@
+import { useCallback, useEffect, useMemo } from "react"
 import { useService } from "../hooks/service"
 
 export const NewSletterSubscription = (props: any) => {
     const signupByEmail = useService().auth().signupByEmail()
+    const getCurrentUser = useService().auth().getCurrentUser()
+
+    useEffect(() => {
+      getCurrentUser.trigger()
+    }, [])
+
+    const appriciateMessage = useMemo(() => {
+      if (getCurrentUser.data) {
+        return `You subscribed under ${getCurrentUser.data.getEmail()}`
+      }
+    }, [getCurrentUser.data])
+
+    const onSubscribedClicked = useCallback(() => {
+      signupByEmail.trigger()
+    }, [signupByEmail.trigger])
+
+    useEffect(() => {
+      if (signupByEmail.data) {
+        getCurrentUser.trigger()
+      }
+    }, [signupByEmail.data, getCurrentUser.trigger])
 
     return <>
         <div
@@ -15,18 +37,21 @@ export const NewSletterSubscription = (props: any) => {
                 </div>
                 <span className="md:text-2xl text-lg mb-2 tracking-wider text-gray-50 font-head w-full text-center">We invite you to join our great adventure</span>
             </div>
+            {getCurrentUser.data && <span className='font-graduate text-xs text-gray-300 text-center'>We really appriciate your subscription, you will receive new updates from us.</span> }
             <div className="relative flex md:flex-row flex-col w-full gap-4 h-16 justify-center items-center">
                 <div className="flex flex-col w-full">
                 <input
+                  disabled={!!getCurrentUser.data}
+                  value={appriciateMessage}
                   onChange={(e) => signupByEmail.setEmail(e.target.value)}
-                  className="w-full max-w-96 font-head text-2xl md:p-5 p-1 h-full bg-white tracking-wider text-black rounded-xl"/>
+                  className="w-full disabled:bg-gray-500 disabled:border-none disabled:text-gray-300 max-w-96 font-head text-2xl md:p-5 p-1 h-full bg-white tracking-wider text-black rounded-xl"/>
                   {<span className="text-pink-400 p-2 font-bold text-sm absolute -bottom-10">{signupByEmail.error}</span>}
                 </div>
-                <button
-                    onClick={signupByEmail.trigger}
+                {!getCurrentUser.data && <button
+                    onClick={onSubscribedClicked}
                     className="md:px-4 md:py-4 font-graduate md:uppercase rounded-xl md:text-lg text-sm px-2 py-2 bg-black h-full">Subscribe
-                </button>
-            </div >
+                </button>}
+            </div>
         </div>
     </>
 }

@@ -21,7 +21,7 @@ export default class PostService extends gRPCClientBase<PostServiceClient> {
       const request = new GetPostRequest()
       request.setTitle(postTitle)
 
-      this.client.get(request, this.getSecureMetadata(), (err, data: GetPostResponse | null) => {
+      this.client.get(request, this.getMetadata(), (err, data: GetPostResponse | null) => {
         if (err) return reject(err)
 
         return resolve({
@@ -70,7 +70,7 @@ export default class PostService extends gRPCClientBase<PostServiceClient> {
       const like = new Like()
       like.setCount(count)
       request.setLike(like)
-      this.client.interact(request, (err, data) => {
+      this.client.interact(request, this.getMetadata(), (err, data) => {
         if (err) return reject(err)
 
         resolve(data?.getTotalLikeCount() || 0)
@@ -86,36 +86,11 @@ export default class PostService extends gRPCClientBase<PostServiceClient> {
       request.setId(postId)
       const vote = new Vote()
       request.setVote(vote)
-      this.client.interact(request, (err, data) => {
+      this.client.interact(request, this.getMetadata(), (err, data) => {
         if (err) return reject(err)
 
         this.postStorage.addVotedPost(postTitle)
         resolve(data?.getTotalVoteCount() || 0)
-      })
-    })
-  }
-
-  async migrateContentLayerToDb(content: ContentLayerPost): Promise<Post> {
-    return new Promise((resolve, reject) => {
-      const request = new CreatePostRequest()
-      const author = new Author()
-      author.setEmail(content.authorEmail)
-      author.setFullName(content.authorFullName)
-      author.setDisplayName(content.authorDisplayName)
-
-      const authorLink = new AuthorLink()
-      authorLink.setObject(author)
-      const post = new Post()
-      post.setTitle(content.title)
-      post.setDescription(content.description)
-      post.setAuthor(authorLink);
-      request.setPost(post)
-
-      this.client.create(request, (err, data) => {
-        if (err) return reject(err)
-
-        const createdPost = data?.getPost()!
-        return resolve(createdPost)
       })
     })
   }

@@ -13,6 +13,10 @@ export default class AuthenticationService extends gRPCClientBase<Authentication
     this.userStorage = userStorage
   }
 
+  async getCurrentUser() {
+    return this.userStorage.getUserInfo()
+  }
+
   async signin(email: string, password: string) {
     return new Promise((resolve, reject) => {
       const request = new SigninRequest()

@@ -60,4 +60,13 @@ export default class gRPCClientBase<T> {
   getInSecureMetadata() {
     return new grpc.Metadata()
   }
+
+  getMetadata() {
+    try {
+      return this.getSecureMetadata()
+    }
+    catch(ignored) {
+      return this.getInSecureMetadata()
+    }
+  }
 }

@@ -143,6 +143,7 @@ export function useService() {
     },
     auth: () => {
       return {
+        getCurrentUser: () => usePromise(authService.getCurrentUser.bind(authService), []),
         signupByEmail: () => usePromise(authService.signupByEmail.bind(authService), ['email', 'password']),
         signinByEmail: () => usePromise(authService.signin.bind(authService), ['email', 'password']),
         fullySignup: () => usePromise(authService.signupFullAccount.bind(authService), ['displayName', 'email', 'password']),
