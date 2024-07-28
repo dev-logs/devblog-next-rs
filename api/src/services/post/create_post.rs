@@ -1,10 +1,8 @@
 use core_services::{services::{base::{Resolve, Service}, errors::Errors}, Db};
 use log::{info, log};
-use schema::{devlog::{devblog::entities::{Author, AuthorId, Post}, entities::User}, surrealdb::links::{author_link, AuthorLink}};
+use schema::{devlog::{devblog::entities::{Author, AuthorId, Post}, entities::User}, misc::datetime::Datetime, surrealdb::links::{author_link, AuthorLink}};
 use surreal_derive_plus::surreal_quote;
-use surreal_devl::serialize::SurrealSerialize;
-use surrealdb::sql::Value;
-use schema::devlog::entities::Like;
+use surreal_devl::wrapper::SurrealQR;
 
 #[derive(Debug)]
 pub struct CreatePostService {
@@ -43,9 +41,11 @@ impl Service<CreatePostParams, CreatePostResult> for CreatePostService {
         };
 
         let mut new_post = params.post.clone();
-        let existing_post: Option<Post> = self.db.query(surreal_quote!("SELECT * FROM #id(&params.post)")).await?.take(0)?;
+        new_post.created_at = Some(Datetime::now());
+        let existing_post: SurrealQR = self.db.query(surreal_quote!("SELECT * FROM #id(&params.post)")).await?.take(0)?;
+        let existing_post = existing_post.object()?;
         if existing_post.is_some() {
-            return Ok(CreatePostResult { post: existing_post.unwrap()});
+            return Ok(CreatePostResult { post: existing_post.map(|it| Post::from(it)).unwrap()});
         }
 
         let author_id: AuthorId = AuthorId {
@@ -54,7 +54,8 @@ impl Service<CreatePostParams, CreatePostResult> for CreatePostService {
 
         new_post.author = Some(AuthorLink {link: Some(author_link::Link::Id(author_id))});
         let statement = surreal_quote!("CREATE #id(&new_post) #set(&new_post)");
-        let created_post: Option<Post> = self.db.query(statement).await?.take(0)?;
+        let create_post: SurrealQR = self.db.query(statement).await?.take(0)?;
+        let created_post = create_post.object()?.map(|it| Post::from(it));
         Ok(CreatePostResult {
             post: created_post.expect("The post must be created")
         })

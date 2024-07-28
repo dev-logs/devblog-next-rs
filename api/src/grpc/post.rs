@@ -3,7 +3,7 @@ use log::info;
 use schema::devlog::{devblog::rpc::{post_interaction_request, post_interaction_response::InteractionResult, post_service_server::PostService, CreatePostRequest, CreatePostResponse, GetPostRequest, GetPostResponse, PostInteractionRequest, PostInteractionResponse}, entities::{Like, User}};
 use tonic::{Request, Response, Status};
 
-use crate::services::{interaction::like::{Interaction, PostInteractionParams, PostInteractionResult, PostInteractionService}, post::get_post::{GetPostParams, GetPostService}};
+use crate::services::{post::interact::{Interaction, PostInteractionParams, PostInteractionResult, PostInteractionService}, post::get_post::{GetPostParams, GetPostService}};
 use crate::services::post::create_post::{CreatePostParams, CreatePostService};
 
 #[derive(Debug, Clone)]
@@ -63,9 +63,10 @@ impl PostService for PostGrpcService {
 
         let request = request.get_ref();
         let post_id = request.id.as_ref().expect("The post id is required").clone();
-        info!(target: "tiendnag-debug", "hello");
         let interaction = match &request.interaction {
             Some(post_interaction_request::Interaction::Like(like)) => Interaction::Like(like.clone()),
+            Some(post_interaction_request::Interaction::Vote(vote)) => Interaction::Vote,
+            Some(post_interaction_request::Interaction::View(view)) => Interaction::View,
             _ => return Err(Status::invalid_argument("Not support this interaction in post")),
         };
 
@@ -77,7 +78,9 @@ impl PostService for PostGrpcService {
 
         let result = service.execute(like_post_params).await?;
         match result {
-            PostInteractionResult::Like(count) => Ok(Response::new(PostInteractionResponse { interaction_result: Some(InteractionResult::TotalLikeCount(count)) })),
+            PostInteractionResult::Like(count)=> Ok(Response::new(PostInteractionResponse{interaction_result:Some(InteractionResult::TotalLikeCount(count))})),
+            PostInteractionResult::View(count) => Ok(Response::new(PostInteractionResponse{interaction_result:Some(InteractionResult::TotalViewCount(count))})),
+            PostInteractionResult::Vote(count) => Ok(Response::new(PostInteractionResponse{interaction_result:Some(InteractionResult::TotalVoteCount(count))})),
         }
     }
 }

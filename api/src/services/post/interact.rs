@@ -2,11 +2,10 @@ use core_services::{
     services::{base::{Resolve, Service}, errors::Errors},
     Db,
 };
-use log::info;
 use schema::{
     devlog::{
         devblog::entities::PostId,
-        entities::{Like, User},
+        entities::{Like, User, View, Vote},
     },
     misc::datetime::Datetime,
 };
@@ -22,6 +21,8 @@ pub struct PostInteractionService {
 #[derive(Debug, Clone)]
 pub enum Interaction {
     Like(Like),
+    View,
+    Vote
 }
 
 #[derive(Clone, Debug)]
@@ -33,7 +34,9 @@ pub struct PostInteractionParams {
 
 #[derive(Clone, Debug)]
 pub enum PostInteractionResult {
-    Like(i32)
+    Like(i32),
+    View(i32),
+    Vote(i32),
 }
 
 impl Service<PostInteractionParams, PostInteractionResult> for PostInteractionService {
@@ -57,6 +60,32 @@ impl Service<PostInteractionParams, PostInteractionResult> for PostInteractionSe
 
                 PostInteractionResult::Like(total_likes)
             }
+            Interaction::View => {
+                let post_view = View {
+                    created_at: Some(Datetime::now()),
+                };
+
+                let relation = post_view.relate(&params.user, &params.post_id);
+                self.db.query(surreal_quote!(r#"#relate(&relation)"#)).await?;
+
+                let result: SurrealQR = self.db.query(surreal_quote!("SELECT out, count() as total_count from #id(&params.post_id)<-view GROUP BY out")).await?.take(0)?;
+                let total_views: i32 = result.get(QlPath::Field("total_count"))?.as_i64()? as i32;
+
+                PostInteractionResult::View(total_views)
+            },
+            Interaction::Vote => {
+                let post_vote = Vote {
+                    created_at: Some(Datetime::now()),
+                };
+
+                let relation = post_vote.relate(&params.user, &params.post_id);
+                self.db.query(surreal_quote!(r#"#relate(&relation)"#)).await?;
+
+                let result: SurrealQR = self.db.query(surreal_quote!("SELECT out, count() as total_count from #id(&params.post_id)<-vote GROUP BY out")).await?.take(0)?;
+                let total_votes: i32 = result.get(QlPath::Field("total_count"))?.as_i64()? as i32;
+
+                PostInteractionResult::Vote(total_votes)
+            },
         };
 
         Ok(result)

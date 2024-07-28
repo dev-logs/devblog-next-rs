@@ -1,6 +1,7 @@
 pub mod vote_post;
 pub mod create_post;
 pub mod get_post;
+pub mod interact;
 
 use core_services::Db;
 use core_services::services::base::{Resolve, Service};

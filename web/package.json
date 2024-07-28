@@ -3,8 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "schema:compile": "yarn --cwd ../schema/grpc-web-ts schema:compile; yarn --cwd ../schema/grpc-web-ts build; cp -rf ../schema/grpc-web-ts/ ./node_modules/schema/",
-    "contentlayer:schema": "yarn --cwd ../schema/grpc-ts schema:compile; yarn --cwd ../schema/grpc-ts build; cp -rf ../schema/grpc-ts/ ./node_modules/grpc-ts/",
+    "schema:compile": "yarn --cwd ../schema/grpc-web-ts schema:compile; yarn --cwd ../schema/grpc-web-ts build; cp -rf ../schema/grpc-web-ts/dist ./node_modules/schema/",
+    "contentlayer:schema": "yarn --cwd ../schema/grpc-ts schema:compile; yarn --cwd ../schema/grpc-ts build; cp -rf ../schema/grpc-ts/dist ./node_modules/grpc-ts/",
     "preinstall": "yarn --cwd ../schema/grpc-web-ts install",
     "lint": "next lint",
     "dev": "yarn next dev"

@@ -11,6 +11,7 @@ import gsap from "gsap"
 import { EffectComposer, Noise } from "@react-three/postprocessing"
 import { BlendFunction } from "postprocessing"
 import { MotionPathPlugin } from "gsap/MotionPathPlugin"
+import { useService } from "@/app/hooks/service"
 
 gsap.registerPlugin(MotionPathPlugin)
 
@@ -60,35 +61,6 @@ export function VoteForNextTopicCards(props: {}) {
     right: 1,
   })
 
-  const postDoms = useMemo(() => {
-    return unPublishPosts.map((post, index) => {
-      let visibleState
-      switch (index) {
-        case selectedIndex.right:
-          visibleState = ItemAnimState.PrepareVisible
-          break
-        case selectedIndex.selected:
-          visibleState = ItemAnimState.Visible
-          break
-        case selectedIndex.left:
-          visibleState = ItemAnimState.PrepareNotVisible
-          break
-        default:
-          visibleState = ItemAnimState.NotVisible
-          break
-      }
-
-      return (
-        <VoteForNextTopicItem
-          key={index.toString()}
-          post={post}
-          state={visibleState}
-          title={index.toString()}
-        />
-      )
-    })
-  }, [selectedIndex, unPublishPosts, unPublishPosts.length])
-
   const onNext = useCallback(() => {
     const newIndex =
       selectedIndex.selected + 1 > unPublishPosts.length - 1
@@ -113,6 +85,36 @@ export function VoteForNextTopicCards(props: {}) {
         right: newIndex + 1 > unPublishPosts.length - 1 ? 0 : newIndex + 1,
       })
   }, [selectedIndex])
+
+  const postDoms = useMemo(() => {
+    return unPublishPosts.map((post, index) => {
+      let visibleState
+      switch (index) {
+        case selectedIndex.right:
+          visibleState = ItemAnimState.PrepareVisible
+          break
+        case selectedIndex.selected:
+          visibleState = ItemAnimState.Visible
+          break
+        case selectedIndex.left:
+          visibleState = ItemAnimState.PrepareNotVisible
+          break
+        default:
+          visibleState = ItemAnimState.NotVisible
+          break
+      }
+
+      return (
+        <VoteForNextTopicItem
+          moveNext={onNext}
+          key={index.toString()}
+          post={post}
+          state={visibleState}
+          title={index.toString()}
+        />
+      )
+    })
+  }, [selectedIndex, unPublishPosts, unPublishPosts.length, onNext, onPrev])
 
   return (
     <div className="w-full h-full flex flex-row justify-center items-center">
@@ -261,9 +263,12 @@ function VoteForNextTopicItem(props: {
   post: Post,
   state: ItemAnimState,
   title: string,
+  moveNext: () => void
 }) {
-  const { post, state, title } = props || {}
+  const { post, state, moveNext } = props || {}
   const itemRef: any = useRef(null)
+  const votePostService = useService().post().vote()
+  const isVoteService = useService().post().isVoted()
 
   const currentState = useRef<any>({state})
   const nextStyle = useMemo(() => {
@@ -326,6 +331,25 @@ function VoteForNextTopicItem(props: {
 
   }, [state])
 
+  const onVoteClick = useCallback(() => {
+    isVoteService.setPostTitle(post.title)
+    votePostService.setPostTitle(post.title)
+    votePostService.trigger()
+  }, [votePostService.trigger, votePostService.setPostTitle, post])
+
+  useEffect(() => {
+    isVoteService.setPostTitle(post.title)
+    isVoteService.trigger()
+  }, [post])
+
+  useEffect(() => {
+    if(votePostService.data && moveNext) {
+      moveNext()
+      votePostService.updateData(null)
+      isVoteService.trigger()
+    }
+  }, [moveNext, votePostService.data])
+
   useEffect(() => {
     currentState.current.state = state
     const item = itemRef.current
@@ -334,6 +358,7 @@ function VoteForNextTopicItem(props: {
     gsap.to(item, { ...nextStyle, duration: 1.6, ease: "back.inOut" })
   }, [nextStyle, itemRef.current])
 
+  console.log('isVoted', isVoteService.data)
   return (
     <>
       <div
@@ -344,8 +369,8 @@ function VoteForNextTopicItem(props: {
           <span className="font-roboto xl:text-xl md:text-lg text-sm text-white text-center truncate-text-5">
             {post.description}
           </span>
-          <button className="bg-white rounded-xl xl:px-5 xl:py-2 px-5 py-1 text-black font-roboto md:text-lg text-sm xl:text-xl">
-            Vote
+          <button disabled={votePostService.isLoading || !!isVoteService.data} onClick={onVoteClick} className="disabled:bg-gray-300 disabled:text-gray-600 hover:bg-gray-300 bg-white rounded-xl xl:px-5 xl:py-2 px-5 py-1 text-black font-roboto md:text-lg text-sm xl:text-xl">
+            { isVoteService.data ? 'Voted' : 'Vote' }
           </button>
         </div>
       </div>

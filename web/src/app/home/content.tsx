@@ -74,7 +74,7 @@ const HtmlDoms = (props: any) => {
             </ThreeDCanvas>
         </div>
         <div
-            className="absolute top-[-70vh] ml-10 gap-3 left-[-50vw] h-screen flex justify-center items-start flex-col">
+            className="absolute top-[-70vh] md:ml-10 ml-4 gap-3 left-[-50vw] h-screen flex justify-center items-start flex-col">
             <div
                 className="flex flex-row gap-2 md:w-fit lg:gap-2 w-screen h-fit justify-start items-start">
                 <span
@@ -83,11 +83,11 @@ const HtmlDoms = (props: any) => {
                     className="xl:text-2xl col-span-5 w-fit text-1xl font-graduate bg-black bg-opacity-25 p-2 text-center h-fit text-white">DEVLOG STUDIO</span>
             </div>
             <div
-                className="flex flex-row gap-2 md:w-fit lg:gap-2 w-screen h-fit justify-start items-start">
+                className="flex flex-row gap-2 xl:w-fit lg:gap-2 w-[100vw] h-fit justify-start items-start">
                 <span
-                    className="xl:text-2xl md:text-2xl col-span-2 w-fit text-1xl font-graduate bg-blue-400 bg-opacity-15 p-2 px-1 text-center h-fit text-black">THE CREATIVE</span>
+                    className="xl:text-2xl md:text-2xl col-span-2 w-fit sm:text-xl text-sm font-graduate bg-blue-400 bg-opacity-15 p-1 px-1 text-center h-fit text-black">THE CREATIVE</span>
                 <span
-                    className="xl:text-2xl text-1xl col-span-3 w-fit font-graduate bg-black bg-opacity-15 p-2 px-1 h-fit text-center text-black">SOFTWARE DEVELOPMENT</span>
+                    className="xl:text-2xl sm:text-xl text-sm col-span-3 w-fit font-graduate bg-black bg-opacity-15 p-2 px-1 h-fit text-center text-black">SOFTWARE DEVELOPMENT</span>
             </div>
         </div>
         <div className="absolute top-[50vh] left-[-50vw] mr-5 w-screen flex flex-col gap-14">

@@ -20,6 +20,10 @@ const { Author } = authorPkg
 const { AuthorLink } = authorLinkPkg
 const { Post: PostEntity } = postEntityPbPkg
 
+const url = (post: any) => {
+  return `/posts/${post.title.toLowerCase().replaceAll(' ', '-')}`
+}
+
 export const Post = defineDocumentType(() => ({
     name: "Post",
     filePathPattern: `**/*.mdx`,
@@ -38,7 +42,7 @@ export const Post = defineDocumentType(() => ({
     computedFields: {
         url: {
             type: "string",
-            resolve: (post) => `/posts/${post._raw.flattenedPath}`,
+            resolve: (post) => url(post),
         },
         publicImage: {
             type: "string",
@@ -81,7 +85,7 @@ export const Post = defineDocumentType(() => ({
               const author = new Author()
               author.setEmail(content.authorEmail)
               author.setFullName(content.authorFullName)
-              author.setDisplayName(content.authorDisplayname)
+              author.setDisplayName(content.authorDisplayName)
 
               const authorLink = new AuthorLink()
               authorLink.setObject(author)
@@ -89,7 +93,7 @@ export const Post = defineDocumentType(() => ({
               postEntity.setTitle(content.title)
               postEntity.setDescription(content.description)
               postEntity.setAuthor(authorLink);
-              postEntity.setUrl(`/posts/${content.title}`)
+              postEntity.setUrl(url(content))
               request.setPost(postEntity)
 
               const jwtGenerate = new JWTGenerator()
@@ -99,8 +103,8 @@ export const Post = defineDocumentType(() => ({
               ], { minutes: 5 }, privateKey)
               const metadata = new grpc.Metadata()
               metadata.set('authorization', accessKey.content)
-              const url = process.env.DEVLOG_DEVBLOG_API_GRPC_URL || '127.0.0.1:30001'
-              const client = new PostServiceClient(url, grpc.credentials.createInsecure() as any)
+              const connectionUrl = process.env.DEVLOG_DEVBLOG_API_GRPC_URL || '127.0.0.1:30001'
+              const client = new PostServiceClient(connectionUrl, grpc.credentials.createInsecure() as any)
               client.create(request, metadata, (err, data) => {
                 if (err) return reject(err)
 

@@ -4,6 +4,7 @@ import DiscussionService from '../services/discussion';
 import UserLocalStorage from '../storage/user';
 import toast from 'react-hot-toast';
 import PostService from '../services/post';
+import PostLocalStorage from '../storage/post';
 
 type AsyncFunction<T extends any[], R> = (...args: T) => Promise<R>;
 type UsePromiseReturn<T extends string[], P extends any[], R> = {
@@ -117,17 +118,21 @@ function capitalize<S extends string>(str: S): Capitalize<S> {
   return (str.charAt(0).toUpperCase() + str.slice(1)) as Capitalize<S>;
 }
 
-const userLocalStorage = new UserLocalStorage();
+const postLocalStorage = new PostLocalStorage()
+const userLocalStorage = new UserLocalStorage()
 const discussionService = new DiscussionService()
 const authService = new AuthenticationService(userLocalStorage)
-const postService = new PostService()
+const postService = new PostService(postLocalStorage)
 
 export function useService() {
   return {
     post: () => {
       return {
         like: () => usePromise(postService.like.bind(postService), ['postTitle', 'count']),
-        get: () => usePromise(postService.get.bind(postService), ['title'])
+        vote: () => usePromise(postService.vote.bind(postService), ['postTitle']),
+        view: () => usePromise(postService.view.bind(postService), ['postTitle']),
+        get: () => usePromise(postService.get.bind(postService), ['title']),
+        isVoted: () => usePromise(postLocalStorage.isVoted.bind(postLocalStorage), ['postTitle'])
       }
     },
     discussion: () => {

@@ -32,8 +32,9 @@ function HtmlDom(props: any = {}) {
     tasks,
   } = props;
 
-  const post = allPosts.find((post) => post._raw.flattenedPath === slug)!;
+  const post = allPosts.find((post) => post.url.includes(slug))!;
   const getPostDb = useService().post().get();
+  const viewPost = useService().post().view();
   const TitleLazy: any = dynamic(() => tasks[TASKS.POST_TITLE]);
   const FooterLazy: any = dynamic(() => tasks[TASKS.POST_FOOTER]);
 
@@ -41,6 +42,8 @@ function HtmlDom(props: any = {}) {
     if (post) {
       getPostDb.setTitle(post.title)
       getPostDb.trigger()
+      viewPost.setPostTitle(post.title)
+      viewPost.trigger()
     }
   }, [post])
 
@@ -57,11 +60,9 @@ function HtmlDom(props: any = {}) {
           </div>
           <div className="flex lg:justify-start flex-col lg:items-start cols-span-full lg:pl-16 items-center lg:col-span-6 col-span-full md:mt-8 mt-2">
             <article className="max-w-full mb-10 sm:px-8 rounded-xl backdrop-blur-lg px-2">
-              <MdxContent post={post} />
-              <LikeSection post={post} totalLikes={getPostDb.data?.totalLikes} totalViews={getPostDb.data?.totalViews} />
-              <Discussions
-                post={post}
-              />
+              <MdxContent post={post}/>
+              <LikeSection post={post} totalLikes={getPostDb.data?.totalLikes ?? 0} totalViews={viewPost.data ?? getPostDb.data?.totalViews ?? 0}/>
+              <Discussions post={post}/>
             </article>
           </div>
         </div>
@@ -88,7 +89,7 @@ function LikeSection(props: {post: Post, totalViews: number, totalLikes: number}
   return <div className="flex flex-row top-32 mt-10 justify-start items-start">
     <div className="flex flex-row rounded-lg">
       <div className="w-[100px] h-[100px]">
-        <RiveText text={`${totalLikes} likes`} />
+        <RiveText text={`${likeService.data ?? totalLikes} likes`} />
       </div>
       <div
         className="w-[90px] h-[90px]"

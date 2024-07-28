@@ -1,5 +1,4 @@
 use core_services::{services::{base::{Resolve, Service}, errors::Errors}, Db};
-use log::info;
 use schema::devlog::devblog::entities::{Post, PostId};
 use surreal_derive_plus::surreal_quote;
 use surreal_devl::wrapper::{QlPath, SurrealQR};
@@ -28,7 +27,14 @@ impl Service<GetPostParams, GetPostResonse> for GetPostService {
         };
 
         let total_likes: SurrealQR = self.db.query(surreal_quote!("SELECT out, math::sum(count) as total_likes FROM #val(&post_id)<-like GROUP BY out")).await?.take(0)?;
-        let total_likes = total_likes.get(QlPath::Field("total_likes"))?.as_i64()? as i32;
+        let total_likes = total_likes.get(QlPath::Field("total_likes"))?.as_i64().unwrap_or(0) as i32;
+
+        let total_views: SurrealQR = self.db.query(surreal_quote!("SELECT out, count() as total_views FROM #val(&post_id)<-view GROUP BY out")).await?.take(0)?;
+        let total_views= total_views.get(QlPath::Field("total_views"))?.as_i64().unwrap_or(0) as i32;
+
+        let total_votes: SurrealQR = self.db.query(surreal_quote!("SELECT out, count() as total_votes FROM #val(&post_id)<-vote GROUP BY out")).await?.take(0)?;
+        let total_votes= total_votes.get(QlPath::Field("total_votes"))?.as_i64().unwrap_or(0) as i32;
+
         let post: SurrealQR = self.db.query(surreal_quote!("SELECT * FROM #val(&post_id)")).await?.take(0)?;
         let post = post.object()?.map(|it| {
             Post::from(it)
@@ -39,7 +45,7 @@ impl Service<GetPostParams, GetPostResonse> for GetPostService {
                 GetPostResonse {
                     post,
                     total_likes,
-                    total_views: 0 // TODO
+                    total_views
                 }
             ),
             None => Err(Errors::ResourceNotFound(format!("Not found any post with id={:?}", post_id))),
