@@ -68,8 +68,6 @@ export function usePromise<T extends string[], P extends any[], R>(
       return (async () => {
         if (triggered) return
 
-        setTriggered(true)
-        setIsLoading(true)
         try {
           setIsLoading(true)
           const result = await fn(...paramRefs.current)
@@ -128,7 +126,8 @@ export function useService() {
   return {
     post: () => {
       return {
-        like: () => usePromise(postService.like.bind(postService), ['postTitle', 'count'])
+        like: () => usePromise(postService.like.bind(postService), ['postTitle', 'count']),
+        get: () => usePromise(postService.get.bind(postService), ['title'])
       }
     },
     discussion: () => {

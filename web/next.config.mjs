@@ -8,6 +8,7 @@ const env = {
 /** @type {import('next').NextConfig} */
 const nextConfig = {
     env,
+    reactStrictMode: false,
     trailingSlash: true,
     webpack: (config) => {
         config.module.rules.push({

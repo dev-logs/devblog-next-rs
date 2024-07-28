@@ -3672,9 +3672,9 @@ checksum = "0d0208408ba0c3df17ed26eb06992cb1a1268d41b2c0e12e65203fbe3972cee5"
 
 [[package]]
 name = "surreal_derive_plus"
-version = "1.0.16"
+version = "1.0.17"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "72e18f9db6de3348dac12df040e3923f2b2f7b08ae00d049c75b8217b13e9893"
+checksum = "95da539e41143debfb7a9bee4947408216b715387ed18544398c907772ca254e"
 dependencies = [
  "darling",
  "proc-macro2",

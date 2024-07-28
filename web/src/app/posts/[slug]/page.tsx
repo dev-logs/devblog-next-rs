@@ -1,12 +1,11 @@
 'use client'
-import React, {Suspense, useCallback, useMemo, useState} from "react";
+import React, {Suspense, useMemo} from "react";
 import PostPageContent from "@/app/posts/[slug]/content";
 import {LoadingOverlay} from "@/app/components/loading-overlay";
 import {getTask} from "@/app/posts/[slug]/config";
 
 export default function PostPage(props: any) {
     const tasks = useMemo(() => getTask(), [])
-    const [display, updateDisplay] = useState(false)
 
     return <div className={'h-screen'}>
         <div className={"fixed top-0 left-0 z-10 h-full"}>

@@ -1,6 +1,6 @@
 'use client'
 import dynamic from "next/dynamic"
-import {Suspense, useCallback} from "react"
+import React, {Suspense, useCallback} from "react"
 import {LoadingOverlay} from "@/app/components/loading-overlay"
 
 export const TOTAL_PAGES = 5
@@ -20,10 +20,12 @@ export default function Home(props: any) {
     const tasks = getTasks()
     const HomeContentDynamic = dynamic(() => loadHomePage)
 
-    return <div>
-      <LoadingOverlay tasks={[loadHomePage, ...tasks]}/>
-        <Suspense>
-            <HomeContentDynamic tasks={tasks} />
-        </Suspense>
-    </div>
+    return <React.StrictMode>
+        <div>
+          <LoadingOverlay tasks={[loadHomePage, ...tasks]}/>
+            <Suspense>
+                <HomeContentDynamic tasks={tasks} />
+            </Suspense>
+        </div>
+    </React.StrictMode>
 }

@@ -1,9 +1,9 @@
 use core_services::{services::base::Service, DB};
 use log::info;
-use schema::devlog::{devblog::rpc::{post_interaction_request, post_interaction_response::InteractionResult, post_service_server::PostService, CreatePostRequest, CreatePostResponse, PostInteractionRequest, PostInteractionResponse}, entities::{Like, User}};
+use schema::devlog::{devblog::rpc::{post_interaction_request, post_interaction_response::InteractionResult, post_service_server::PostService, CreatePostRequest, CreatePostResponse, GetPostRequest, GetPostResponse, PostInteractionRequest, PostInteractionResponse}, entities::{Like, User}};
 use tonic::{Request, Response, Status};
 
-use crate::services::interaction::like::{Interaction, PostInteractionParams, PostInteractionResult, PostInteractionService};
+use crate::services::{interaction::like::{Interaction, PostInteractionParams, PostInteractionResult, PostInteractionService}, post::get_post::{GetPostParams, GetPostService}};
 use crate::services::post::create_post::{CreatePostParams, CreatePostService};
 
 #[derive(Debug, Clone)]
@@ -17,6 +17,24 @@ impl PostGrpcService {
 
 #[tonic::async_trait]
 impl PostService for PostGrpcService {
+    async fn get(&self, request: Request<GetPostRequest>) -> Result<Response<GetPostResponse>, tonic::Status> {
+        let request = request.get_ref();
+        let service = GetPostService {
+            db: DB.clone()
+        };
+
+        let params = GetPostParams {
+            title: request.title.clone()
+        };
+
+        let result = service.execute(params).await?;
+        Ok(Response::new(GetPostResponse {
+            total_likes: result.total_likes,
+            total_views: result.total_views,
+            post: Some(result.post)
+        }))
+    }
+
     async fn create(&self, request: Request<CreatePostRequest>) -> Result<Response<CreatePostResponse>, tonic::Status> {
         let user: &User = request.extensions().get::<User>().ok_or(Status::unauthenticated("You're not authorize"))?;
 

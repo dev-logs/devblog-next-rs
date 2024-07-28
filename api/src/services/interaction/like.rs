@@ -49,10 +49,10 @@ impl Service<PostInteractionParams, PostInteractionResult> for PostInteractionSe
                     created_at: Some(Datetime::now()),
                 };
 
-                let relation = post_like.relate(params.user, params.post_id);
+                let relation = post_like.relate(&params.user, &params.post_id);
                 self.db.query(surreal_quote!(r#"#relate(&relation)"#)).await?;
 
-                let result: SurrealQR = self.db.query("SELECT out as post, math::sum(count) as total_count from #val(&params.post_id)<-like GROUP BY post").await?.take(0)?;
+                let result: SurrealQR = self.db.query(surreal_quote!("SELECT out, math::sum(count) as total_count from #id(&params.post_id)<-like GROUP BY out")).await?.take(0)?;
                 let total_likes: i32 = result.get(QlPath::Field("total_count"))?.as_i64()? as i32;
 
                 PostInteractionResult::Like(total_likes)

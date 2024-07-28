@@ -220,7 +220,7 @@ export const ThumbUpRiveComponent = (props: {
       onLikeEnd(countRef.current)
       countRef.current = 0
     }
-  }, [counting, onLikeEnd])
+  }, [])
 
   return <RiveComponent
     onEvent={onEvent}

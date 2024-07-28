@@ -1,10 +1,11 @@
 "use client";
 
 import { allPosts, Post } from "contentlayer/generated";
+import { Post as PostEntity } from 'schema/dist/schema/devlog/devblog/entities/post_pb'
 import { MdxContent } from "../mdx";
 import { TableOfContent } from "../table-of-content";
 import dynamic from "next/dynamic";
-import { Suspense, useCallback } from "react";
+import { Suspense, useCallback, useEffect } from "react";
 import { TASKS } from "@/app/posts/[slug]/config";
 import {
   RiveEmojiFaceLove,
@@ -14,52 +15,6 @@ import {
 import { Discussions } from "@/app/components/discussion";
 import { Toaster } from "react-hot-toast";
 import { useService } from "@/app/hooks/service";
-
-const discussions = [
-  {
-    id: 1,
-    user: "Floyd Miles",
-    avatar: "https://randomuser.me/api/portraits/men/86.jpg",
-    content:
-      "Actually, now that I try out the links on my message, above, none of them take me to the secure site. Only my shortcut on my desktop, which I created years ago.",
-    reactions: [],
-    timestamp: "6 hours ago",
-  },
-  {
-    id: 2,
-    user: "Jane Cooper",
-    avatar: "https://randomuser.me/api/portraits/women/65.jpg",
-    content:
-      "I have also faced similar issues. The links do not redirect properly.",
-    reactions: [],
-    timestamp: "2 hours ago",
-  },
-  {
-    id: 3,
-    user: "Albert Flores",
-    avatar: "https://randomuser.me/api/portraits/men/45.jpg",
-    content:
-      "Before installing this plugin please put back again your WordPress and site URL back to http.",
-    reactions: [],
-    timestamp: "1 hour ago",
-  },
-  {
-    id: 4,
-    user: "Bessie Cooper",
-    avatar: "https://randomuser.me/api/portraits/women/74.jpg",
-    content: "Hi @Albert Flores. Thanks for your reply.",
-    reactions: [],
-    timestamp: "18 minutes ago",
-  },
-  {
-    id: 5,
-    user: "Cody Fisher",
-    avatar: "https://randomuser.me/api/portraits/men/11.jpg",
-    content: "Is anyone else experiencing problems with the site?",
-    reactions: [],
-    timestamp: "10 minutes ago",
-  },
-];
 
 export default function PostPageContent(props: any) {
   return (
@@ -78,8 +33,16 @@ function HtmlDom(props: any = {}) {
   } = props;
 
   const post = allPosts.find((post) => post._raw.flattenedPath === slug)!;
+  const getPostDb = useService().post().get();
   const TitleLazy: any = dynamic(() => tasks[TASKS.POST_TITLE]);
   const FooterLazy: any = dynamic(() => tasks[TASKS.POST_FOOTER]);
+
+  useEffect(() => {
+    if (post) {
+      getPostDb.setTitle(post.title)
+      getPostDb.trigger()
+    }
+  }, [post])
 
   return (
     <div className={"h-full w-full"}>
@@ -95,7 +58,7 @@ function HtmlDom(props: any = {}) {
           <div className="flex lg:justify-start flex-col lg:items-start cols-span-full lg:pl-16 items-center lg:col-span-6 col-span-full md:mt-8 mt-2">
             <article className="max-w-full mb-10 sm:px-8 rounded-xl backdrop-blur-lg px-2">
               <MdxContent post={post} />
-              <LikeSection post={post}/>
+              <LikeSection post={post} totalLikes={getPostDb.data?.totalLikes} totalViews={getPostDb.data?.totalViews} />
               <Discussions
                 post={post}
               />
@@ -112,8 +75,8 @@ function HtmlDom(props: any = {}) {
   );
 }
 
-function LikeSection(props: {post: Post}) {
-  const {post} = props
+function LikeSection(props: {post: Post, totalViews: number, totalLikes: number}) {
+  const {post, totalLikes, totalViews} = props
 
   const likeService = useService().post().like()
   const likeHandler = useCallback((count: number) => {
@@ -125,7 +88,7 @@ function LikeSection(props: {post: Post}) {
   return <div className="flex flex-row top-32 mt-10 justify-start items-start">
     <div className="flex flex-row rounded-lg">
       <div className="w-[100px] h-[100px]">
-        <RiveText text="0 likes" />
+        <RiveText text={`${totalLikes} likes`} />
       </div>
       <div
         className="w-[90px] h-[90px]"
@@ -134,7 +97,7 @@ function LikeSection(props: {post: Post}) {
       </div>
       <div className="flex flex-row" style={{ translate: "-30%" }}>
         <div className="w-[100px] h-[100px]">
-          <RiveText text="0 views" />
+          <RiveText text={`${totalViews} views`} />
         </div>
         <div
           className="w-[60px] h-[60px]"
