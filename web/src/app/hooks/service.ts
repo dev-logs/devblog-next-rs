@@ -78,6 +78,7 @@ export function usePromise<T extends string[], P extends any[], R>(
           updateErr(error)
         }
         finally {
+          setIsLoading(false)
           setTriggered(false)
         }
       })
@@ -147,6 +148,7 @@ export function useService() {
         signupByEmail: () => usePromise(authService.signupByEmail.bind(authService), ['email', 'password']),
         signinByEmail: () => usePromise(authService.signin.bind(authService), ['email', 'password']),
         fullySignup: () => usePromise(authService.signupFullAccount.bind(authService), ['displayName', 'email', 'password']),
+        signout: () => usePromise(authService.signout.bind(authService), [])
       };
     },
   };

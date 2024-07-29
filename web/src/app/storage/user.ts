@@ -34,4 +34,8 @@ export default class UserLocalStorage {
       return token
     }
   }
+
+  removeAll() {
+    localStorage.clear()
+  }
 }

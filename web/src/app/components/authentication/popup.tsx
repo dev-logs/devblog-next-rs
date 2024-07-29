@@ -2,10 +2,11 @@ import React, { useState, FormEvent, useRef, useEffect, useCallback } from 'reac
 import gsap from 'gsap'
 import { useService } from '@/app/hooks/service'
 import {toast, Toaster} from 'react-hot-toast'
+import { User } from 'schema/dist/schema/devlog/entities/user_pb'
 
 interface PopupProps {
   onClose: () => void
-  onResult: (result: { email: string, password: string, displayName?: string }) => void
+  onResult: (result: User) => void
 }
 
 const AuthenticationPopup: React.FC<PopupProps> = ({ onClose, onResult }) => {
@@ -36,6 +37,7 @@ const AuthenticationPopup: React.FC<PopupProps> = ({ onClose, onResult }) => {
 
   useEffect(() => {
     if (main.data && onClose) {
+      onResult(main.data!)
       onClose()
     }
   }, [main.data, onClose])
@@ -46,16 +48,16 @@ const AuthenticationPopup: React.FC<PopupProps> = ({ onClose, onResult }) => {
   }, [main])
 
   const onEmailChange = useCallback((e: any) => {
-    main.setEmailState(e.target.value)
-  }, [main])
+    main.setEmailState(e.target.value.trim())
+  }, [main, main.setEmailState])
 
   const onDisplayNameChange = useCallback((e: any) => {
-    main.setDisplayNameState(e.target.value)
-  }, [main])
+    main.setDisplayNameState(e.target.value.trim())
+  }, [main, main.setDisplayNameState])
 
   const onPasswordChage = useCallback((e: any) => {
-    main.setPasswordState(e.target.value)
-  }, [main])
+    main.setPasswordState(e.target.value.trim())
+  }, [main, main.setPasswordState])
 
   return (
     <div className="font-mono font-thin text-sm fixed top-0 left-0 w-full h-full bg-gray-900 bg-opacity-50 backdrop-filter backdrop-blur-lg z-10 flex justify-center items-center">
@@ -67,7 +69,7 @@ const AuthenticationPopup: React.FC<PopupProps> = ({ onClose, onResult }) => {
           </button>
           <img className="w-10 mx-auto mb-5" src="/images/devlogs-ic.png" alt="Logo" />
         </header>
-        <form onSubmit={handleSubmit} className="pt-5 px-10">
+        <form autoComplete='off' onSubmit={handleSubmit} className="pt-5 px-10">
           {isSignup && (
             <div>
               <label className="block mb-2 text-white text-sm" htmlFor="displayname">
@@ -76,9 +78,10 @@ const AuthenticationPopup: React.FC<PopupProps> = ({ onClose, onResult }) => {
               <input
                 className="w-full rounded-sm overflow-clip p-2 mb-4 text-indigo-700 focus:border-b-2 focus:border-indigo-500 outline-none focus:bg-gray-300"
                 type="text"
+                autoComplete='off'
                 placeholder='required'
                 name="displayname"
-                value={main.displayNameState}
+                value={main.displayNameState || ''}
                 onChange={onDisplayNameChange}
                 required
               />
@@ -91,8 +94,10 @@ const AuthenticationPopup: React.FC<PopupProps> = ({ onClose, onResult }) => {
             <input
               className="w-full p-2 mb-4 text-indigo-700 rounded-sm focus:border-b-2 focus:border-indigo-500 outline-none focus:bg-gray-300"
               type="email"
+              autoComplete='off'
               placeholder='required'
               name="email"
+              onLoad={onEmailChange}
               value={main.emailState}
               onChange={onEmailChange}
               required
@@ -104,6 +109,7 @@ const AuthenticationPopup: React.FC<PopupProps> = ({ onClose, onResult }) => {
             </label>
             <input
               className="w-full p-2 mb-4 text-indigo-700 rounded-sm focus:border-b-2 focus:border-indigo-500 focus:bg-gray-300"
+              autoComplete='off'
               type="password"
               placeholder='required'
               name="password"

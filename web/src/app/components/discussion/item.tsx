@@ -6,24 +6,18 @@ interface DiscussionItemProps {
 }
 
 export const DiscussionItem = ({ discussion }: DiscussionItemProps) => {
+    const user = discussion?.getUser()?.getObject()!;
     return (
-        <div className="py-4">
-            <div className="flex justify-between items-center">
-                <div className="flex items-center">
-                    {/* <h5 className="ml-2 font-semibold">{discussion.getUser().getUser().name}</h5> */}
-                </div>
-                <button className="btn dropdown">
-                    <i className="ri-more-line"></i>
-                </button>
+        <div className="py-7 font-roboto">
+            <div className="flex flex-row items-center h-12 gap-2">
+              <img src={user.getAvatarObject()?.getDownloadUrl()} className='w-10 h-10 rounded-full'/>
+              <h5 className="ml-2 font-roboto font-semibold xl:text-xl text-lg">{user.getName() || 'No name'}</h5>
             </div>
-            <div className="mt-2 text-gray-300">
+            <div className="text-gray-300 xl:text-lg text-sm">
                 <p>{discussion.getContent()}</p>
             </div>
-            <div className="flex items-center mt-2">
-                <button className="btn">
-                    <i className="ri-emotion-line"></i>
-                </button>
-                <span className="text-gray-50 text-sm">{discussion.getCreatedAt()?.toString()}</span>
+            <div className="flex items-center mt-1">
+                <span className="text-gray-50 text-sm">{new Date().toString()}</span>
             </div>
         </div>
     );

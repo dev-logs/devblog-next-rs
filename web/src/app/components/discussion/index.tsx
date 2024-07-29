@@ -59,8 +59,6 @@ export const Discussions = ({ post }: DiscussionsProps) => {
       <div className="flex justify-between items-center mb-4">
         <div className="flex flex-row justify-center items-center">
           <h2 className="font-semibold text-white">Discussions</h2>
-          <div className="ml-2 bg-gray-50 text-black text-xs px-2 py-1 rounded-full">
-          </div>
         </div>
       </div>
       <DiscussionInput post={post} onSent={reload} />

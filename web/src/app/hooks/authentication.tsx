@@ -30,14 +30,14 @@ export function useAuthentication() {
       return false
     }
 
-  }, [userStorage])
+  }, [userStorage, result])
 
   return {popupComponent, useAnnonymous, user, requestUser}
 }
 
 export const useAuthenticationPopup = () => {
   const [isOpen, setIsOpen] = useState(false)
-  const [result, setResult] = useState<{ email: string; password: string; displayName?: string } | null>(null)
+  const [result, setResult] = useState<User | null>(null)
 
   const openPopup = () => {
     setIsOpen(true)
@@ -47,7 +47,7 @@ export const useAuthenticationPopup = () => {
     setIsOpen(false)
   }
 
-  const handleResult = (data: { email: string; password: string; displayName?: string }) => {
+  const handleResult = (data: User) => {
     setResult(data)
   }
 

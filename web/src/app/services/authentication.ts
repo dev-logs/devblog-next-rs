@@ -4,6 +4,7 @@ import {SigninRequest, SignupRequest, SignupResponse} from 'schema/dist/schema/d
 import {SigninMethod, SignupMethod} from 'schema/dist/schema/devlog/entities/authentication_pb'
 import {isValidEmail} from '../utils/string'
 import UserLocalStorage from '../storage/user'
+import { User } from 'schema/dist/schema/devlog/entities/user_pb'
 
 export default class AuthenticationService extends gRPCClientBase<AuthenticationServiceClient> {
   private userStorage: UserLocalStorage
@@ -17,7 +18,7 @@ export default class AuthenticationService extends gRPCClientBase<Authentication
     return this.userStorage.getUserInfo()
   }
 
-  async signin(email: string, password: string) {
+  async signin(email: string, password: string): Promise<User> {
     return new Promise((resolve, reject) => {
       const request = new SigninRequest()
       const signinMethod = new SigninMethod()
@@ -34,14 +35,20 @@ export default class AuthenticationService extends gRPCClientBase<Authentication
         this.userStorage.saveAccessToken(data?.getAccessToken()!)
         this.userStorage.saveUserInfo(data?.getUser()!)
 
-        resolve(data?.toObject())
+        resolve(data!.getUser()!)
       })
     })
   }
 
-  async signupFullAccount(displayName: string, email: string, password: string): Promise<SignupResponse.AsObject> {
+  async signout(): Promise<boolean> {
+    this.userStorage.removeAll()
+    return true
+  }
+
+  async signupFullAccount(displayName: string, email: string, password: string): Promise<User> {
     return new Promise((resolve, reject) => {
-      if (!isValidEmail(email)) {
+      console.log(displayName, email, password)
+      if (!email || !isValidEmail(email)) {
         return reject('Invalid email format')
       }
 
@@ -63,12 +70,12 @@ export default class AuthenticationService extends gRPCClientBase<Authentication
         this.userStorage.saveAccessToken(data?.getAccessToken()!)
         this.userStorage.saveUserInfo(data?.getUser()!)
 
-        resolve(data!.toObject())
+        resolve(data!.getUser()!)
       })
     })
   }
 
-  async signupByEmail(email: string): Promise<SignupResponse.AsObject> {
+  async signupByEmail(email: string): Promise<User> {
     return new Promise((resolve, reject) => {
       if (!isValidEmail(email)) {
         console.log(email)
@@ -91,7 +98,7 @@ export default class AuthenticationService extends gRPCClientBase<Authentication
         this.userStorage.saveAccessToken(data?.getAccessToken()!)
         this.userStorage.saveUserInfo(data?.getUser()!)
 
-        resolve(data!.toObject())
+        resolve(data!.getUser()!)
       })
     })
   }
