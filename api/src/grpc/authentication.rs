@@ -28,6 +28,7 @@ impl AuthenticationService for AuthenticationGrpcService {
         let request = request.get_ref();
         let service = SigninService {
             db: DB.clone(),
+            s3: S3Client::new().await,
             token_service: TokenService {},
         };
 

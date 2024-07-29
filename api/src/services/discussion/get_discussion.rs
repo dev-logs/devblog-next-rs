@@ -1,9 +1,9 @@
-use core_services::services::{base::{Resolve, Service}};
-use log::info;
-use schema::devlog::{devblog::entities::Discussion, rpc::Paging};
+use std::time::Duration;
+
+use core_services::services::base::{Resolve, Service};
+use schema::{devlog::{devblog::entities::Discussion, rpc::Paging}, surrealdb::links::user_link};
 use surreal_derive_plus::surreal_quote;
 use surreal_devl::wrapper::SurrealQR;
-use surrealdb::sql::{Array, Value};
 use core_services::services::errors::Errors;
 use super::DiscussionService;
 
@@ -35,7 +35,7 @@ impl Service<GetListDiscussionsParam, GetListDiscussionsResult> for DiscussionSe
             total_pages += 1;
         }
 
-        let result: SurrealQR = self.db.query(surreal_quote!("SELECT * FROM discussion ORDER BY created_at DESC START #start LIMIT #limit")).await?.take(0)?;
+        let result: SurrealQR = self.db.query(surreal_quote!("SELECT *, in AS user FROM discussion ORDER BY created_at DESC START #start LIMIT #limit FETCH user")).await?.take(0)?;
         let result = result.array()?;
         if None == result.as_ref() {
             return Ok(GetListDiscussionsResult {discussions: vec![], paging: Paging {
@@ -46,7 +46,16 @@ impl Service<GetListDiscussionsParam, GetListDiscussionsResult> for DiscussionSe
         }
 
         let result = result.unwrap().0;
-        let result = result.into_iter().map(|it| Discussion::from(it)).collect::<Vec<Discussion>>();
+        let mut result = result.into_iter().map(|it| Discussion::from(it)).collect::<Vec<Discussion>>();
+
+        for discussion_item in &mut result {
+            let link = discussion_item.user.as_mut().unwrap().link.as_mut().unwrap();
+            if let user_link::Link::Object(user) = link {
+                if let Some(ref mut avatar) = &mut user.avatar_object {
+                    self.s3.sign_object(avatar, Duration::from_secs(60 * 60 * 10)).await?;
+                }
+            }
+        }
 
         return Ok(GetListDiscussionsResult {
             discussions: result,

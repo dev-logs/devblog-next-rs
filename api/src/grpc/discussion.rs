@@ -1,4 +1,6 @@
+use core_services::s3::S3Client;
 use core_services::services::base::Service;
+use core_services::S3_CLIENT;
 use schema::devlog::entities::User;
 use tonic::{Result, Request, Response, Status};
 use schema::devlog::devblog::rpc::devblog_discussion_service_server::DevblogDiscussionService;
@@ -24,7 +26,12 @@ impl DevblogDiscussionService for DiscussionGrpcService {
     async fn new_discussion(&self, request: Request<NewDiscussionRequest>) -> Result<Response<NewDiscussionResponse>, Status> {
         let user: &User = request.extensions().get::<User>().ok_or(Status::unauthenticated("You're not authorize"))?;
         let request = request.get_ref();
-        let service = DiscussionService { db: DB.clone() };
+        let s3 = S3Client::new().await;
+        let service = DiscussionService {
+            db: DB.clone(),
+            s3
+        };
+
         let params = NewDiscussionParams {
             user,
             discussion: request.new_discussion.as_ref().expect("new_discussion must be defined"),
@@ -38,7 +45,7 @@ impl DevblogDiscussionService for DiscussionGrpcService {
 
     async fn get_discussions(&self, request: Request<GetDiscussionsRequest>) -> Result<Response<GetDiscussionsResponse>, Status> {
         let request = request.get_ref();
-        let service = DiscussionService { db: DB.clone() };
+        let service = DiscussionService {db:DB.clone(), s3: S3Client::new().await };
         let param = GetListDiscussionsParam {
             paging: request.paging.as_ref().unwrap().clone()
         };

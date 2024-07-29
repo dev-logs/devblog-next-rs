@@ -4,7 +4,6 @@ pub mod services;
 
 use core_services::{grpc::middle::{auth::AuthInterceptor, response_handler::{ResponseHeaderHandler}}, logger, s3::S3Client, DB, S3_CLIENT};
 use grpc::{authentication::AuthenticationGrpcService, base::GRPCService, discussion::DiscussionGrpcService, post::PostGrpcService};
-use services::post::PostService;
 use surrealdb::{engine::remote::ws::Ws, opt::{auth::Root}};
 use tonic_middleware::{InterceptorFor, MiddlewareLayer};
 use tower_http::cors::*;
