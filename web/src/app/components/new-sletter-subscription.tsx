@@ -11,7 +11,7 @@ export const NewSletterSubscription = (props: any) => {
 
     const appriciateMessage = useMemo(() => {
       if (getCurrentUser.data) {
-        return `You subscribed under ${getCurrentUser.data.getEmail()}`
+        return `Subscribed as ${getCurrentUser.data.getEmail()}`
       }
     }, [getCurrentUser.data])
 
@@ -39,13 +39,14 @@ export const NewSletterSubscription = (props: any) => {
             </div>
             {getCurrentUser.data && <span className='font-graduate text-xs text-gray-300 text-center'>We really appriciate your subscription, you will receive new updates from us.</span> }
             <div className="relative flex md:flex-row flex-col w-full gap-4 h-16 justify-center items-center">
-                <div className="flex flex-col w-full">
-                <input
-                  disabled={!!getCurrentUser.data}
-                  value={appriciateMessage}
-                  onChange={(e) => signupByEmail.setEmail(e.target.value)}
-                  className="w-full disabled:bg-gray-500 disabled:border-none disabled:text-gray-300 max-w-96 font-head text-2xl md:p-5 p-1 h-full bg-white tracking-wider text-black rounded-xl"/>
-                  {<span className="text-pink-400 p-2 font-bold text-sm absolute -bottom-10">{signupByEmail.error}</span>}
+                <div className="flex flex-row w-full">
+                  <input
+                    disabled={!!getCurrentUser.data}
+                    value={appriciateMessage}
+                    onChange={(e) => signupByEmail.setEmail(e.target.value)}
+                    className="w-full disabled:bg-gray-500 disabled:border-none disabled:text-gray-300 max-w-96 font-head text-2xl md:py-5 text-center p-1 h-full bg-white tracking-wider text-black rounded-xl">
+                  </input>
+                  <button onClick={() => {}} className="min-w-fit text-xs font-Alfa ml-2 text-blue-500 underline">Don't count me</button>
                 </div>
                 {!getCurrentUser.data && <button
                     onClick={onSubscribedClicked}

@@ -52,7 +52,7 @@ impl Service<GetListDiscussionsParam, GetListDiscussionsResult> for DiscussionSe
             let link = discussion_item.user.as_mut().unwrap().link.as_mut().unwrap();
             if let user_link::Link::Object(user) = link {
                 if let Some(ref mut avatar) = &mut user.avatar_object {
-                    self.s3.sign_object(avatar, Duration::from_secs(60 * 60 * 10)).await?;
+                    self.s3.use_cdn(avatar).await?;
                 }
             }
         }

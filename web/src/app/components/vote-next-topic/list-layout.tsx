@@ -24,14 +24,14 @@ export function VoteForNextTopic(props: {}) {
 
   return (
     <>
-      <div className="h-full py-10 px-10 rounded-xl overflow-clip">
+      <div className="h-full py-7 px-10 rounded-xl overflow-clip">
         <div className="w-full h-full relative">
           <div className="absolute top-0 left-0 h-full w-full z-10 rounded-xl overflow-clip">
             <ThreeDCanvas>
               <Background />
             </ThreeDCanvas>
           </div>
-          <div className="absolute flex flex-col top-0 left-0 h-full w-full z-20 p-10">
+          <div className="absolute flex flex-col top-0 left-0 h-full w-full z-20">
             <span className="font-Alfa text-3xl text-white">
               Vote for our next topic
             </span>

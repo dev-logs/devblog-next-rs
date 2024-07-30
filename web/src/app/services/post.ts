@@ -86,10 +86,10 @@ export default class PostService extends gRPCClientBase<PostServiceClient> {
       request.setId(postId)
       const vote = new Vote()
       request.setVote(vote)
-      this.client.interact(request, this.getMetadata(), (err, data) => {
+      this.client.interact(request, this.getMetadata(), async (err, data) => {
         if (err) return reject(err)
 
-        this.postStorage.addVotedPost(postTitle)
+        await this.postStorage.addVotedPost(postTitle)
         resolve(data?.getTotalVoteCount() || 0)
       })
     })

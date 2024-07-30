@@ -5,7 +5,7 @@ export default class PostLocalStorage {
 
   async addVotedPost(title: string) {
     let array: string[] = JSON.parse(localStorage.getItem('votedPosts') || '[]')
-    array = array.filter((it: string) => it.trim() === title)
+    array = array.filter((it: string) => it.trim() !== title)
     const newArray = [...array, title]
     localStorage.setItem('votedPosts', JSON.stringify(newArray))
     return newArray
@@ -18,6 +18,8 @@ export default class PostLocalStorage {
 
   async isVoted(title: string) {
     const votedPosts = await this.getVotedPosts()
-    return !!votedPosts.find((it: string) => it === title)
+    const isVoted = !!votedPosts.find((it: string) => it === title)
+    console.log('is voted', title, isVoted)
+    return isVoted
   }
 }
