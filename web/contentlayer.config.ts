@@ -95,9 +95,10 @@ export const Post = defineDocumentType(() => ({
 
               const jwtGenerate = new JWTGenerator()
               const accessKey = jwtGenerate.generateJWT([
-                  ['email', 'system@devlog.studio.com'],
+                  ['email', 'system@devlog.studio'],
                   ['name', 'system'],
               ],
+
               {minutes: 5}, privateKey)
 
               const connectionUrl = process.env.DEVLOG_DEVBLOG_API_GRPC_URL || 'http://127.0.0.1:30001'
