@@ -36,6 +36,7 @@ impl PostService for PostGrpcService {
     }
 
     async fn create(&self, request: Request<CreatePostRequest>) -> Result<Response<CreatePostResponse>, tonic::Status> {
+        info!(target: "tiendang-debug", "creating new post");
         let user: &User = request.extensions().get::<User>().ok_or(Status::unauthenticated("You're not authorize"))?;
 
         let service = CreatePostService {

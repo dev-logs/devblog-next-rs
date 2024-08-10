@@ -1,7 +1,7 @@
 "use client";
 
 import { allPosts, Post } from "contentlayer/generated";
-import { Post as PostEntity } from 'schema/dist/schema/devlog/devblog/entities/post_pb'
+import { Post as PostEntity } from '@devlog/schema-ts'
 import { MdxContent } from "../mdx";
 import { TableOfContent } from "../table-of-content";
 import dynamic from "next/dynamic";

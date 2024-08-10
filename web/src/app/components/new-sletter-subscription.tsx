@@ -11,7 +11,7 @@ export const NewSletterSubscription = (props: any) => {
 
     const appriciateMessage = useMemo(() => {
       if (getCurrentUser.data) {
-        return `Subscribed as ${getCurrentUser.data.getEmail()}`
+        return `Subscribed as ${getCurrentUser.data.email}`
       }
     }, [getCurrentUser.data])
 

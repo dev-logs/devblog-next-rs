@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react"
 import UserLocalStorage from "../storage/user"
-import { User } from "schema/dist/schema/devlog/entities/user_pb"
+import { User } from "@devlog/schema-ts"
 import ReactDOM from 'react-dom'
 import AuthenticationPopup from "../components/authentication/popup"
 

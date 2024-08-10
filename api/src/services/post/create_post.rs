@@ -22,6 +22,7 @@ pub struct CreatePostParams {
 
 impl Service<CreatePostParams, CreatePostResult> for CreatePostService {
     async fn execute(self, params: CreatePostParams) -> Resolve<CreatePostResult> {
+        info!(target: "tiendang-debug", "Creating post");
         if params.user.name != String::from("system") {
             return Err(Errors::UnAuthorized("Only system is allowed".to_owned()));
         }

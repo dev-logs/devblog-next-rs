@@ -50,7 +50,7 @@ type RiveComponentProps = {
   artboardName: string
   fit?: string
   alignment?: string
-  onEvent: (event: any) => void
+  onEvent?: (event: any) => void
 }
 
 type RiveRuntime = {

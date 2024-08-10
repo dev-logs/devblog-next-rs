@@ -3,8 +3,7 @@ import { DiscussionItem } from "./item"
 import { DiscussionInput } from "./input"
 import { Post } from "contentlayer/generated"
 import { useService } from "@/app/hooks/service"
-import { Discussion } from "schema/dist/schema/devlog/devblog/entities/discussion_pb"
-import { Paging } from "schema/dist/schema/devlog/rpc/paging_pb"
+import {Paging, Discussion} from "@devlog/schema-ts"
 
 interface DiscussionsProps {
   post: Post;
@@ -12,8 +11,8 @@ interface DiscussionsProps {
 
 export const Discussions = ({ post }: DiscussionsProps) => {
   const initialPaging = new Paging()
-  initialPaging.setPage(1)
-  initialPaging.setRowsPerPage(8)
+  initialPaging.page = 1
+  initialPaging.rowsPerPage = 8
 
   const getDiscussions = useService().discussion().getDiscussions()
   const [discussions, setDiscussions] = useState<Discussion[]>([])
@@ -22,12 +21,12 @@ export const Discussions = ({ post }: DiscussionsProps) => {
 
   useEffect(() => {
     let newPageList: number[] = []
-    for (let i = 0; i < paging.page.getTotalPages(); i++) {
+    for (let i = 0; i < paging.page.totalPages; i++) {
       newPageList.push(i + 1)
     }
 
     setPageList(newPageList)
-  }, [paging, paging.page.getTotalPages()])
+  }, [paging, paging.page.totalPages])
 
   useEffect(() => {
     const newDiscussions = getDiscussions.data?.discussions || []
@@ -41,10 +40,10 @@ export const Discussions = ({ post }: DiscussionsProps) => {
   useEffect(() => {
     getDiscussions.setPage(paging.page)
     getDiscussions.trigger()
-  }, [paging.page.getPage()])
+  }, [paging.page.page])
 
   const onSelectedPage = useCallback((index: number) => {
-    paging.page.setPage(index)
+    paging.page.page = index
     setPaging({page: paging.page})
   }, [paging])
 
@@ -68,7 +67,7 @@ export const Discussions = ({ post }: DiscussionsProps) => {
       <div className="flex flex-row w-full h-fit p-3 gap-1 justify-center items-center">
         {
           pageList.map((pageItem, index) =>
-            <button key={index} onClick={() => onSelectedPage(pageItem)} className={`${paging.page.getPage() === pageItem ? 'bg-blue-400' : 'bg-blue-800'} text-white font-roboto px-2 text-sm hover:bg-blue-400 rounded-sm h-fit w-fit p-1`}>{pageItem}</button>
+            <button key={index} onClick={() => onSelectedPage(pageItem)} className={`${paging.page.page === pageItem ? 'bg-blue-400' : 'bg-blue-800'} text-white font-roboto px-2 text-sm hover:bg-blue-400 rounded-sm h-fit w-fit p-1`}>{pageItem}</button>
           )
         }
       </div>

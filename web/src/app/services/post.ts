@@ -1,14 +1,17 @@
-import { PostServiceClient } from "schema/dist/schema/devlog/devblog/rpc/post_pb_service";
-import gRPCClientBase from "./base";
-import { PostInteractionRequest, CreatePostRequest, CreatePostResponse, GetPostRequest, GetPostResponse } from "schema/dist/schema/devlog/devblog/rpc/post_pb";
-import { PostId, Post } from "schema/dist/schema/devlog/devblog/entities/post_pb";
-import { Like, View, Vote } from "schema/dist/schema/devlog/entities/interaction_pb";
-import { Post as ContentLayerPost } from "contentlayer/generated";
-import { Author } from "schema/dist/schema/devlog/devblog/entities/author_pb";
-import { AuthorLink } from "schema/dist/schema/surrealdb/links/author_pb";
-import PostLocalStorage from "../storage/post";
+import {
+  PostId,
+  Like,
+  View,
+  Vote,
+  PostService as PostServiceClient,
+  PostInteractionRequest,
+  GetPostRequest,
+  Post, GetPostResponse
+} from "@devlog/schema-ts"
+import gRPCClientBase from "./base"
+import PostLocalStorage from "../storage/post"
 
-export default class PostService extends gRPCClientBase<PostServiceClient> {
+export default class PostService extends gRPCClientBase<typeof PostServiceClient> {
   postStorage: PostLocalStorage
 
   constructor(postStorage: PostLocalStorage) {
@@ -16,26 +19,22 @@ export default class PostService extends gRPCClientBase<PostServiceClient> {
     this.postStorage = postStorage
   }
 
-  async get(postTitle: string): Promise<{post: Post, totalLikes: number, totalViews: number}> {
-    return new Promise((resolve, reject) => {
-      const request = new GetPostRequest()
-      request.setTitle(postTitle)
+  async get(postTitle: string): Promise<{ post: Post, totalLikes: number, totalViews: number }> {
+    const request = new GetPostRequest()
+    request.title = postTitle
 
-      this.client.get(request, this.getMetadata(), (err, data: GetPostResponse | null) => {
-        if (err) return reject(err)
+    const response = await this.client.get(request, { headers: this.getHeader() }) as GetPostResponse
 
-        return resolve({
-          post: data!.getPost()!,
-          totalLikes: data!.getTotalLikes(),
-          totalViews: data!.getTotalViews()
-        })
-      })
-    })
+    return {
+      post: response.post!,
+      totalLikes: response.totalLikes,
+      totalViews: response.totalViews
+    }
   }
 
   async view(postTitle: string): Promise<number> {
     return new Promise((resolve, reject) => {
-      setTimeout(() => {
+      setTimeout(async () => {
         const postTitleWords = postTitle.toLowerCase().split(' ')
         const url = window.location.href.toLowerCase()
         const isInTheSameWebsite = postTitleWords.every(word => url.includes(word))
@@ -43,18 +42,13 @@ export default class PostService extends gRPCClientBase<PostServiceClient> {
         if (isInTheSameWebsite) {
           const request = new PostInteractionRequest()
           const postId = new PostId()
-          postId.setTitle(postTitle)
-          request.setId(postId)
-          const view = new View()
-          request.setView(view)
+          postId.title = postTitle
+          request.id = postId
+          request.interaction = {value: new View(), case: 'view'}
 
-          this.client.interact(request, (err, data) => {
-            if (err) return reject(err)
-
-            resolve(data?.getTotalViewCount() || 0)
-          })
-        }
-        else {
+          const response = await this.client.interact(request)
+          resolve(response.interactionResult.value || 0)
+        } else {
           resolve(0)
         }
       }, 10000)
@@ -62,36 +56,28 @@ export default class PostService extends gRPCClientBase<PostServiceClient> {
   }
 
   async like(postTitle: string, count: number): Promise<number> {
-    return new Promise((resolve, reject) => {
-      const request = new PostInteractionRequest()
-      const postId = new PostId()
-      postId.setTitle(postTitle);
-      request.setId(postId)
-      const like = new Like()
-      like.setCount(count)
-      request.setLike(like)
-      this.client.interact(request, this.getMetadata(), (err, data) => {
-        if (err) return reject(err)
+    const request = new PostInteractionRequest()
+    const postId = new PostId()
+    postId.title = postTitle
+    request.id = postId
 
-        resolve(data?.getTotalLikeCount() || 0)
-      })
-    })
+    const like = new Like()
+    like.count = count
+    request.interaction = {value: like, case: 'like'}
+
+    const response = await this.client.interact(request, { headers: this.getHeader() })
+    return response.interactionResult.value || 0
   }
 
   async vote(postTitle: string): Promise<number> {
-    return new Promise((resolve, reject) => {
-      const request = new PostInteractionRequest()
-      const postId = new PostId()
-      postId.setTitle(postTitle);
-      request.setId(postId)
-      const vote = new Vote()
-      request.setVote(vote)
-      this.client.interact(request, this.getMetadata(), async (err, data) => {
-        if (err) return reject(err)
+    const request = new PostInteractionRequest()
+    const postId = new PostId()
+    postId.title = postTitle
+    request.id = postId
+    request.interaction = {value: new Vote(), case: 'vote'}
 
-        await this.postStorage.addVotedPost(postTitle)
-        resolve(data?.getTotalVoteCount() || 0)
-      })
-    })
+    const response = await this.client.interact(request, { headers: this.getHeader() })
+    await this.postStorage.addVotedPost(postTitle)
+    return response.interactionResult.value || 0
   }
 }

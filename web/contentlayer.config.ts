@@ -1,24 +1,21 @@
-// contentlayer.config.ts
-import * as postPbServicePkg from "grpc-ts/dist/schema/devlog/devblog/rpc/post_grpc_pb.js"
-import postPbPkg from "grpc-ts/dist/schema/devlog/devblog/rpc/post_pb.js"
-import postEntityPbPkg from "grpc-ts/dist/schema/devlog/devblog/entities/post_pb.js"
-import authorPkg from "grpc-ts/dist/schema/devlog/devblog/entities/author_pb.js"
-import authorLinkPkg from "grpc-ts/dist/schema/surrealdb/links/author_pb.js"
-import {defineDocumentType, makeSource} from "contentlayer/source-files"
 import readingTime from "reading-time"
 import rehypeAutolinkHeadings from "rehype-autolink-headings"
 import rehypePrettyCode from "rehype-pretty-code"
 import rehypeSlug from "rehype-slug"
 import remarkGfm from "remark-gfm"
-import GithubSlugger from 'github-slugger'
-import { JWTGenerator } from "./build-time/jwt"
-import * as grpc from '@grpc/grpc-js'
-
-const { PostServiceClient } = postPbServicePkg
-const { CreatePostRequest  } = postPbPkg
-const { Author } = authorPkg
-const { AuthorLink } = authorLinkPkg
-const { Post: PostEntity } = postEntityPbPkg
+import {
+    AuthorLink,
+    Author,
+    CreatePostRequest,
+    CreatePostResponse,
+    Post as PostEntity,
+    PostService
+} from "@devlog/schema-ts";
+import {createConnectTransport} from "@connectrpc/connect-node";
+import {createPromiseClient} from "@connectrpc/connect";
+import GithubSlugger from "github-slugger";
+import {JWTGenerator} from "./build-time/jwt";
+import { defineDocumentType, makeSource } from "contentlayer/source-files"
 
 const url = (post: any) => {
   return `/posts/${post.title.toLowerCase().replaceAll(' ', '-')}`
@@ -42,24 +39,25 @@ export const Post = defineDocumentType(() => ({
     computedFields: {
         url: {
             type: "string",
-            resolve: (post) => url(post),
+            resolve: (post: any) => url(post),
         },
         publicImage: {
             type: "string",
-            resolve: (post) => post.image.filePath.replace("../public", ""),
+            resolve: (post: any) => post.image.filePath.replace("../public", ""),
         },
         readingTime: {
             type: "json",
-            resolve: (doc) => readingTime(doc.body.raw),
+            resolve: (doc: any) => readingTime(doc.body.raw),
         },
         toc: {
             type: "json",
             required: true,
-            resolve: async (doc) => {
+            resolve: async (doc: any) => {
+                //@ts-ignore
                 const regulrExp = /\n(?<flag>#{1,6})\s+(?<content>.+)/g;
                 const slugger = new GithubSlugger();
                 const headings = Array.from(doc.body.raw.matchAll(regulrExp)).map(
-                    ({groups}) => {
+                    ({groups}: any) => {
                         const flag = groups?.flag;
                         const content = groups?.content;
 
@@ -78,39 +76,39 @@ export const Post = defineDocumentType(() => ({
         entity: {
           type: "json",
           required: true,
-          resolve: async (content) => {
-            return new Promise((resolve, reject) => {
+          resolve: async (content: any) => {
               const privateKey = process.env.DEVLOGS_ACCESS_TOKEN_PRIVATE_KEY || 'this_is_unsafe_keythis_is_unsafe_keythis_is_unsafe_key'
               const request = new CreatePostRequest()
               const author = new Author()
-              author.setEmail(content.authorEmail)
-              author.setFullName(content.authorFullName)
-              author.setDisplayName(content.authorDisplayName)
+              author.email = content.authorEmail
+              author.fullName = content.authorFullName
+              author.displayName = content.authorDisplayName
 
               const authorLink = new AuthorLink()
-              authorLink.setObject(author)
+              authorLink.link = {value: author, case: 'object'}
               const postEntity = new PostEntity()
-              postEntity.setTitle(content.title)
-              postEntity.setDescription(content.description)
-              postEntity.setAuthor(authorLink);
-              postEntity.setUrl(url(content))
-              request.setPost(postEntity)
+              postEntity.title = content.title
+              postEntity.description = content.description
+              postEntity.author = authorLink
+              postEntity.url = url(content)
+              request.post = postEntity
 
               const jwtGenerate = new JWTGenerator()
               const accessKey = jwtGenerate.generateJWT([
-                ['email', 'system@devlog.studio.com'],
-                ['name', 'system'],
-              ], { minutes: 5 }, privateKey)
-              const metadata = new grpc.Metadata()
-              metadata.set('authorization', accessKey.content)
-              const connectionUrl = process.env.DEVLOG_DEVBLOG_API_GRPC_URL || '127.0.0.1:30001'
-              const client = new PostServiceClient(connectionUrl, grpc.credentials.createInsecure() as any)
-              client.create(request, metadata, (err, data) => {
-                if (err) return reject(err)
+                  ['email', 'system@devlog.studio.com'],
+                  ['name', 'system'],
+              ],
+              {minutes: 5}, privateKey)
 
-                resolve(data?.getPost())
+              const connectionUrl = process.env.DEVLOG_DEVBLOG_API_GRPC_URL || 'http://127.0.0.1:30001'
+              const connectTransport = createConnectTransport({
+                  baseUrl: connectionUrl,
+                  httpVersion: '2'
               })
-            })
+
+              const client = createPromiseClient(PostService, connectTransport)
+              const response = await client.create(request, {headers: [['authorization', accessKey.content]]}) as CreatePostResponse
+              console.log('creating', response)
           }
         }
     },
@@ -128,6 +126,7 @@ export default makeSource({
         rehypePlugins: [
             rehypeSlug,
             [rehypeAutolinkHeadings, {behavior: "append"}],
+            //@ts-ignore
             [rehypePrettyCode, codeOptions],
         ],
     },

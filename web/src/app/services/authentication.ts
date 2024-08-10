@@ -1,105 +1,95 @@
-import {AuthenticationServiceClient, AuthenticationService as AuthenticationServiceSchema} from 'schema/dist/schema/devlog/rpc/authentication_pb_service'
 import gRPCClientBase from "./base"
-import {SigninRequest, SignupRequest, SignupResponse} from 'schema/dist/schema/devlog/rpc/authentication_pb'
-import {SigninMethod, SignupMethod} from 'schema/dist/schema/devlog/entities/authentication_pb'
 import {isValidEmail} from '../utils/string'
 import UserLocalStorage from '../storage/user'
-import { User } from 'schema/dist/schema/devlog/entities/user_pb'
+import {
+    SignInMethod_EmailPassword,
+    SignInMethod,
+    SigninRequest,
+    SigninResponse,
+    SignUpMethod_EmailPassword,
+    SignUpMethod_Email,
+    SignUpMethod,
+    SignupRequest,
+    SignupResponse,
+    User
+} from "@devlog/schema-ts";
+import {AuthenticationService as AuthenticationClient} from "@devlog/schema-ts";
 
-export default class AuthenticationService extends gRPCClientBase<AuthenticationServiceClient> {
-  private userStorage: UserLocalStorage
+export default class AuthenticationService extends gRPCClientBase<typeof AuthenticationClient> {
+    private userStorage: UserLocalStorage
 
-  constructor(userStorage: UserLocalStorage) {
-    super(AuthenticationServiceClient)
-    this.userStorage = userStorage
-  }
+    constructor(userStorage: UserLocalStorage) {
+        super(AuthenticationClient)
+        this.userStorage = userStorage
+    }
 
-  async getCurrentUser() {
-    return this.userStorage.getUserInfo()
-  }
+    async getCurrentUser() {
+        return this.userStorage.getUserInfo()
+    }
 
-  async signin(email: string, password: string): Promise<User> {
-    return new Promise((resolve, reject) => {
-      const request = new SigninRequest()
-      const signinMethod = new SigninMethod()
-      const byEmailPassword = new SigninMethod.EmailPassword()
-      byEmailPassword.setEmail(email)
-      byEmailPassword.setPassword(password)
-      signinMethod.setByEmailPassword(byEmailPassword)
-      request.setSignin(signinMethod)
-      this.client.signin(request, this.getInSecureMetadata(), async (err, data) => {
-        if (err) {
-          return reject(err)
+    async signin(email: string, password: string): Promise<User> {
+        const request = new SigninRequest()
+        const signInMethod = new SignInMethod()
+        const byEmailPassword = new SignInMethod_EmailPassword()
+        byEmailPassword.email = email
+        byEmailPassword.password = password
+        signInMethod.method = {
+            value: byEmailPassword,
+            case: 'byEmailPassword'
         }
 
-        this.userStorage.saveAccessToken(data?.getAccessToken()!)
-        this.userStorage.saveUserInfo(data?.getUser()!)
+        request.signin = signInMethod
+        const response = await this.client.signin(request, {headers: this.getHeader()}) as SigninResponse
+        this.userStorage.saveAccessToken(response?.accessToken!)
+        this.userStorage.saveUserInfo(response?.user!)
 
-        resolve(data!.getUser()!)
-      })
-    })
-  }
+        return response!.user!
+    }
 
-  async signout(): Promise<boolean> {
-    this.userStorage.removeAll()
-    return true
-  }
+    async signout(): Promise<boolean> {
+        this.userStorage.removeAll()
+        return true
+    }
 
-  async signupFullAccount(displayName: string, email: string, password: string): Promise<User> {
-    return new Promise((resolve, reject) => {
-      console.log(displayName, email, password)
-      if (!email || !isValidEmail(email)) {
-        return reject('Invalid email format')
-      }
-
-      const request = new SignupRequest()
-      const signupMethod = new SignupMethod()
-      const byEmailPassword = new SignupMethod.EmailPassword()
-      byEmailPassword.setEmail(email)
-      byEmailPassword.setPassword(password)
-      byEmailPassword.setDisplayName(displayName)
-      signupMethod.setByEmailPassword(byEmailPassword)
-      request.setSignup(signupMethod)
-
-      this.client.signup(request, this.getInSecureMetadata(), async (err, data) => {
-        if (err) {
-          console.log(err)
-          return reject(err.message)
+    async signupFullAccount(displayName: string, email: string, password: string): Promise<User> {
+        console.log(displayName, email, password)
+        if (!email || !isValidEmail(email)) {
+            throw 'Invalid email format'
         }
 
-        this.userStorage.saveAccessToken(data?.getAccessToken()!)
-        this.userStorage.saveUserInfo(data?.getUser()!)
+        const request = new SignupRequest()
+        const signupMethod = new SignUpMethod()
+        const byEmailPassword = new SignUpMethod_EmailPassword()
+        byEmailPassword.email = email
+        byEmailPassword.password = password
+        byEmailPassword.displayName = displayName
+        signupMethod.Method = {value: byEmailPassword, case: 'byEmailPassword'}
+        request.signup = signupMethod
 
-        resolve(data!.getUser()!)
-      })
-    })
-  }
+        const response = await this.client.signup(request) as SignupResponse
+        this.userStorage.saveAccessToken(response?.accessToken!)
+        this.userStorage.saveUserInfo(response?.user!)
 
-  async signupByEmail(email: string): Promise<User> {
-    return new Promise((resolve, reject) => {
-      if (!isValidEmail(email)) {
-        console.log(email)
-        return reject('Invalid email format')
-      }
+        return response.user!
+    }
 
-      const request = new SignupRequest()
-      const signupMethod = new SignupMethod()
-      const byEmail = new SignupMethod.Email()
-      byEmail.setEmail(email)
-      signupMethod.setByEmail(byEmail)
-      request.setSignup(signupMethod)
-
-      this.client.signup(request, this.getInSecureMetadata(), async (err, data) => {
-        if (err) {
-          console.log(err)
-          return reject(err.message)
+    async signupByEmail(email: string): Promise<User> {
+        if (!isValidEmail(email)) {
+            throw 'Invalid email format'
         }
 
-        this.userStorage.saveAccessToken(data?.getAccessToken()!)
-        this.userStorage.saveUserInfo(data?.getUser()!)
+        const request = new SignupRequest()
+        const signupMethod = new SignUpMethod()
+        const byEmail = new SignUpMethod_Email()
+        byEmail.email = email
 
-        resolve(data!.getUser()!)
-      })
-    })
-  }
+        signupMethod.Method = { value: byEmail, case: 'byEmail' }
+        request.signup = signupMethod
+
+        const response = await this.client.signup(request) as SignupResponse
+        this.userStorage.saveAccessToken(response?.accessToken!)
+        this.userStorage.saveUserInfo(response?.user!)
+
+        return response!.user!
+    }
 }

@@ -1,11 +1,11 @@
-import { Token } from "schema/dist/schema/devlog/entities/token_pb"
-import { User } from "schema/dist/schema/devlog/entities/user_pb"
+import {Token, User} from "@devlog/schema-ts"
+import {Tokenizer} from "parse5";
 
 export default class UserLocalStorage {
   constructor() {}
 
   saveUserInfo(user: User) {
-    localStorage.setItem('user', JSON.stringify(user.toObject()))
+    localStorage.setItem('user', JSON.stringify(user))
   }
 
   getUserInfo(): User | undefined {
@@ -13,15 +13,15 @@ export default class UserLocalStorage {
     if (userData) {
       const object = JSON.parse(userData)
       const user = new User()
-      user.setName(object.name)
-      user.setEmail(object.email)
-      user.setPassword(object.setPassword)
+      user.name = object.name
+      user.email = object.email
+      user.password = object.password
       return user
     }
   }
 
   saveAccessToken(accessToken: Token) {
-    localStorage.setItem('access-token', JSON.stringify(accessToken.toObject()))
+    localStorage.setItem('access-token', JSON.stringify(accessToken))
   }
 
   getAccessToken(): Token | undefined {
@@ -29,8 +29,8 @@ export default class UserLocalStorage {
     if (tokenData) {
       const object = JSON.parse(tokenData)
       const token = new Token()
-      token.setContent(object.content)
-      token.setExpiredAt(object.expiredAt)
+      token.content = object.content
+      token.expiredAt = object.expiredAt
       return token
     }
   }

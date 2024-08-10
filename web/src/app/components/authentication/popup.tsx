@@ -2,7 +2,7 @@ import React, { useState, FormEvent, useRef, useEffect, useCallback } from 'reac
 import gsap from 'gsap'
 import { useService } from '@/app/hooks/service'
 import {toast, Toaster} from 'react-hot-toast'
-import { User } from 'schema/dist/schema/devlog/entities/user_pb'
+import { User } from '@devlog/schema-ts'
 
 interface PopupProps {
   onClose: () => void
