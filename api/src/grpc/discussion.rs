@@ -45,7 +45,6 @@ impl DevblogDiscussionService for DiscussionGrpcService {
     }
 
     async fn get_discussions(&self, request: Request<GetDiscussionsRequest>) -> Result<Response<GetDiscussionsResponse>, Status> {
-        info!(target: "tiendang-debug", "get_discussions");
         let request = request.get_ref();
         let service = DiscussionService {db:DB.clone(), s3: S3Client::new().await };
         let param = GetListDiscussionsParam {

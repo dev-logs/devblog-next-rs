@@ -3,11 +3,12 @@ import { useService } from "../hooks/service"
 
 export const NewSletterSubscription = (props: any) => {
     const signupByEmail = useService().auth().signupByEmail()
+    const signout = useService().auth().signout()
     const getCurrentUser = useService().auth().getCurrentUser()
 
     useEffect(() => {
       getCurrentUser.trigger()
-    }, [])
+    }, [signout.data])
 
     const appriciateMessage = useMemo(() => {
       if (getCurrentUser.data) {
@@ -44,9 +45,11 @@ export const NewSletterSubscription = (props: any) => {
                     disabled={!!getCurrentUser.data}
                     value={appriciateMessage}
                     onChange={(e) => signupByEmail.setEmail(e.target.value)}
-                    className="w-full disabled:bg-gray-500 disabled:border-none disabled:text-gray-300 max-w-96 font-head text-2xl md:py-5 text-center p-1 h-full bg-white tracking-wider text-black rounded-xl">
+                    className="w-full disabled:bg-gray-900 disabled:bg-opacity-20 disabled:border-none disabled:text-gray-300 font-head text-2xl md:py-3 text-center h-full bg-white tracking-wider text-black rounded-xl">
                   </input>
-                  <button onClick={() => {}} className="min-w-fit text-xs font-Alfa ml-2 text-blue-500 underline">Don't count me</button>
+                  {getCurrentUser.data &&
+                    <button onClick={signout.trigger} className="min-w-fit text-xs font-Alfa ml-2 text-blue-500 underline">Sign out</button>
+                  }
                 </div>
                 {!getCurrentUser.data && <button
                     onClick={onSubscribedClicked}
