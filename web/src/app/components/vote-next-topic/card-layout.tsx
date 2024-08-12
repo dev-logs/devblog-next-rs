@@ -151,13 +151,6 @@ function Background(props: {}) {
 
   return (
     <>
-      <EffectComposer enableNormalPass={false} resolutionScale={1}>
-        <Noise
-          opacity={0.7}
-          premultiply
-          blendFunction={BlendFunction.OVERLAY}
-        />
-      </EffectComposer>
       <mesh material={material} scale-x={40} scale-y={10}>
         <planeGeometry args={[1, 1, 1, 1]} />
       </mesh>
