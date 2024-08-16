@@ -29,3 +29,24 @@ export const ClassicPostItemContainer = (props: PostItemProps) => {
         </div>
     </div>
 }
+
+export const CompactPostItemContainer = (props: PostItemProps) => {
+    const {post} = props
+    const date = new Date(post.publishedDate || new Date())
+    return <div className="col-span-1">
+        <div
+          className="flex px-5 flex-row rounded-xl py-5 min-w-[300px] w-full items-center max-w-[900px] gap-5">
+          <div className="flex flex-col items-center justify-center gap-2">
+            <span className="font-bold text-4xl">{date.getDate()}</span>
+            <span>{date.getMonth()}/{date.getFullYear()}</span>
+          </div>
+          <div className="flex flex-col h-full justify-start ml-5 gap-5">
+            <img src={post.publicImage} className="w-[100vw] h-[100px] md:h-[250px] md:mb-2 object-cover rouned-xl overflow-clip"/>
+            <div className="flex flex-col md:gap-2 flex-1">
+              <span className="font-roboto md:font-bold uppercase text-white font-bold text-sm md:text-2xl">{post.title}</span>
+              <span className="font-roboto text-white text-sm md:text-xl">{post.description}</span>
+            </div>
+          </div>
+        </div>
+    </div>
+}

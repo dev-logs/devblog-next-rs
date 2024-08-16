@@ -34,7 +34,7 @@ export const ElectricalEffect = (props: ElectricalEffectProps) => {
 
     return <>
         <EffectComposer enableNormalPass={false} resolutionScale={1}>
-            <Bloom intensity={0.3} luminanceThreshold={1.1} mipmapBlur/>
+            <Bloom intensity={0.2} luminanceThreshold={1.1} mipmapBlur/>
         </EffectComposer>
         <Reponsive>{
         (matches: any) => {

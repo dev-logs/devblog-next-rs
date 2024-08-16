@@ -1,15 +1,17 @@
 import { allPosts } from "contentlayer/generated";
-import { ClassicPostItemContainer } from "./post-item";
+import { ClassicPostItemContainer, CompactPostItemContainer } from "./post-item";
 
 export const BlogList = (props: any) => {
   return (
     <>
       <div className="relative flex flex-col h-full w-full">
         <BlogListTitle />
-        <div className="mt-2 md:mt-20 mx-2 md:mx-10 bg-zinc-900 md:gap-5 p-2 md:p-10 grid md:grid-cols-2 xl:grid-cols-3 gap-2 grid-cols-1 rounded-2xl bg-opacity-60 h-min z-10">
+        <div className="flex flex-row w-full justify-center h-fit">
+        <div className="mt-2 md:mt-20 mx-2 md:mx-10 bg-zinc-900 md:gap-5 p-2 md:p-10 flex flex-col w-full justify-center items-center rounded-2xl bg-opacity-90 h-min z-10 gap-7">
           {allPosts.map((post, index) => (
-            <ClassicPostItemContainer key={index} post={post as any} />
+            <CompactPostItemContainer key={index} post={post as any} />
           ))}
+        </div>
         </div>
       </div>
     </>

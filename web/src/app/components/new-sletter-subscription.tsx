@@ -28,7 +28,7 @@ export const NewSletterSubscription = (props: any) => {
 
     return <>
         <div
-            className="flex flex-col w-full md:gap-6 gap-2 rounded-xl justify-center items-center md:py-10 md:px-8 py-1 px-2">
+            className="flex flex-col w-full md:gap-6 gap-2 rounded-xl justify-center items-center sm:py-2 md:py-10 md:px-8 py-1 px-2">
             <div className="flex flex-col md:gap-4 gap-2 w-full justify-center items-center">
                 <div className="relative w-full md:h-14 h-[20px] my-2">
                     <span
@@ -36,9 +36,12 @@ export const NewSletterSubscription = (props: any) => {
                     <span
                         className="absolute top-0 w-full text-center left-0 skew-y-1 scale-[0.98] font-head xl:text-6xl sm:text-4xl text-3xl text-white">Subscribe to our new sletter</span>
                 </div>
-                <span className="md:text-2xl text-lg mb-2 tracking-wider text-gray-50 font-head w-full text-center">We invite you to join our great adventure</span>
+                {
+                  !getCurrentUser.data &&
+                    <span className="md:text-2xl text-lg mb-2 tracking-wider text-gray-50 font-head w-full text-center">We invite you to join our great adventure</span>
+                }
             </div>
-            {getCurrentUser.data && <span className='font-graduate text-xs text-gray-300 text-center'>We really appriciate your subscription, you will receive new updates from us.</span> }
+            {getCurrentUser.data && <span className='font-graduate md:text-md text-xs text-gray-300 text-center'>We really appriciate your subscription, you will receive new updates from us.</span> }
             <div className="relative flex md:flex-row flex-col w-full gap-4 h-16 justify-center items-center">
                 <div className="flex flex-row w-full">
                   <input
@@ -48,8 +51,7 @@ export const NewSletterSubscription = (props: any) => {
                     className="w-full disabled:bg-gray-900 disabled:bg-opacity-20 disabled:border-none disabled:text-gray-300 font-head text-2xl md:py-3 text-center h-full bg-white tracking-wider text-black rounded-xl">
                   </input>
                   {getCurrentUser.data &&
-                    <button onClick={signout.trigger} className="min-w-fit text-xs font-Alfa ml-2 text-blue-500 underline">Sign out</button>
-                  }
+                    <button onClick={signout.trigger} className="min-w-fit text-xs font-Alfa ml-2 text-blue-500 underline">Sign out</button>}
                 </div>
                 {!getCurrentUser.data && <button
                     onClick={onSubscribedClicked}
