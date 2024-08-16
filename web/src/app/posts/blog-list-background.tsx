@@ -13,6 +13,11 @@ export default function BlogListBackground(props: any) {
               <Fragment>
                 {match.is(WidthReponsive.SMALL) && (
                   <>
+                    <pointLight
+                      position={[1, -5, 0]}
+                      args={["white", 50, 1]}
+                      intensity={8}
+                    />
                     <ElectricalEffect
                       position={[1, -5.9, 0]}
                       scale={[0.2, 0.18, 0.2]}
@@ -21,7 +26,12 @@ export default function BlogListBackground(props: any) {
                 )}
                 {match.from(WidthReponsive.MEDIUM) && (
                   <>
-                    <ElectricalEffect position={[3.8, -9.5, 0]} scale={0.6} />
+                    <pointLight
+                      position={[2.2, -7, 2]}
+                      args={["white", 50, 1]}
+                      intensity={100}
+                    />
+                    <ElectricalEffect position={[3.5, -9.5, 0]} scale={10.65}/>
                   </>
                 )}
               </Fragment>
