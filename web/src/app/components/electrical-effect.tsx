@@ -121,14 +121,13 @@ export const ElectricalEffect = (props: ElectricalEffectProps) => {
         bulb.rotation.x = Math.sin(elapsed * 1.2) * 0.02
         bulb.rotation.z = Math.cos(elapsed * 1.1) * 0.02
 
-        let distance = mousePosVec3.distanceTo(bulbPosition)
-        if (distance < 0.4) {
-        }
-        else {
-          distance = 1.0
+        const targetPos = new THREE.Vector3(bulbPosition.x / (viewport.width), (bulbPosition.y + viewport.height) / (viewport.height), 0)
+        let distance = mousePosVec3.distanceTo(targetPos)
+        if (distance > 0.3) {
+          distance = 1
         }
 
-        filamentMaterial.emissiveIntensity = Math.max(((0.4 - distance) * 700), 100)
+        filamentMaterial.emissiveIntensity = Math.max(((0.5 - distance) * 800), 200)
       }
     })
 
