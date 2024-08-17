@@ -1,11 +1,12 @@
-import {Fragment, useMemo} from 'react'
+import {Fragment, useEffect, useMemo, useRef} from 'react'
 import Shaders from '../glsl'
 import * as THREE from 'three'
 import CustomShaderMaterial from 'three-custom-shader-material/vanilla'
-import {Environment, Stage, TransformControls, useGLTF, useTexture} from '@react-three/drei'
+import {Center, Environment, Stage, TransformControls, useGLTF, useTexture} from '@react-three/drei'
 import {Bloom, EffectComposer} from '@react-three/postprocessing'
-import {Reponsive, reponsiveMatch, WidthReponsive} from './reponsive'
+import {HeightReponsive, Reponsive, reponsiveMatch, WidthReponsive} from './reponsive'
 import { useFrame, useThree } from '@react-three/fiber'
+import { useThreeDContext } from '../contexts'
 
 interface ElectricalEffectProps {
     position: any,
@@ -15,7 +16,7 @@ interface ElectricalEffectProps {
 export const ElectricalEffect = (props: ElectricalEffectProps) => {
     const woodTexture = useTexture('/3d-models/bloom/wood.jpg')
     woodTexture.colorSpace = THREE.SRGBColorSpace
-    const [geometry, wireGeometry, bulb]: any = useMemo(() => {
+    const [geometry, wireGeometry, bulb, filamentMaterial]: any = useMemo(() => {
         const wireGeometry = useGLTF('/3d-models/bloom/bulb.glb')
 
         const metalMaterial = new THREE.MeshStandardMaterial({
@@ -90,16 +91,44 @@ export const ElectricalEffect = (props: ElectricalEffectProps) => {
         })
 
         const geometry = new THREE.PlaneGeometry(5, 1, 25, 25)
-        return [geometry, wireGeometry, topGroup]
+        return [geometry, wireGeometry, topGroup, filamentMaterial]
     }, [])
+
+    const {viewport, camera} = useThree()
+    const bulbPosition: THREE.Vector3 = useMemo(() => {
+      const bulbElement = document.querySelector('.bulb-position')
+      const position = bulbElement?.getBoundingClientRect()
+
+      const newPosition = coordinate2dTo3d(position!, camera)
+      return newPosition
+    }, [camera])
+
+    const mouseRef: any = useRef({x: 0, y: 0})
+    useEffect(() => {
+        window.addEventListener('mousemove', (e) => {
+            mouseRef.current.x = e.x / window.innerWidth - 0.5
+            mouseRef.current.y =  e.y / window.innerHeight - 0.5
+        })
+    }, []);
 
     useFrame((tick) => {
       const clock = tick.clock
       const elapsed = clock.getElapsedTime()
       if (bulb) {
+        const mousePos = mouseRef.current
+        const mousePosVec3 = new THREE.Vector3(mousePos.x, mousePos.y, 0)
         bulb.rotation.y = elapsed * 0.5
-        bulb.rotation.x = Math.sin(elapsed * 0.4) * 0.1
-        bulb.rotation.z = Math.cos(elapsed * 0.4) * 0.1
+        bulb.rotation.x = Math.sin(elapsed * 1.2) * 0.02
+        bulb.rotation.z = Math.cos(elapsed * 1.1) * 0.02
+
+        let distance = mousePosVec3.distanceTo(bulbPosition)
+        if (distance < 0.4) {
+        }
+        else {
+          distance = 1.0
+        }
+
+        filamentMaterial.emissiveIntensity = Math.max(((0.4 - distance) * 700), 100)
       }
     })
 
@@ -107,9 +136,56 @@ export const ElectricalEffect = (props: ElectricalEffectProps) => {
       <EffectComposer enableNormalPass={false} resolutionScale={1}>
         <Bloom intensity={0.1} luminanceThreshold={0.2} mipmapBlur/>
       </EffectComposer>
-      <primitive object={wireGeometry.scene} rotation-x={0.05} position={[2, -7.8, 0]} scale={20}/>
+      <Reponsive>
+        {(matches: any) => {
+          const match = reponsiveMatch(matches)
+          return <Fragment>
+            {
+              match.is(WidthReponsive.SMALL) &&
+                <primitive object={wireGeometry.scene} rotation-y={0.5} position={bulbPosition} scale={7}/>
+            }
+            {
+              match.is(WidthReponsive.MEDIUM) &&
+                <primitive object={wireGeometry.scene} rotation-y={1} position={bulbPosition} scale={8.5}/>
+            }
+            {
+              match.is(WidthReponsive.LARGE) &&
+              <primitive object={wireGeometry.scene} position={bulbPosition} scale={17}/>
+            }
+            {
+              match.is(WidthReponsive.VERY_LARGE) &&
+                <primitive object={wireGeometry.scene} rotation-x={0.15} rotation-z={0.18} position={bulbPosition} scale={19}/>
+            }
+            {
+                match.is(WidthReponsive.XX_LARGE) &&
+                  <primitive object={wireGeometry.scene} rotation-x={0.15} rotation-z={0.18} position={bulbPosition} scale={20}/>
+            }
+          </Fragment>
+        }}
+      </Reponsive>
     </>
 }
+
+function coordinate2dTo3d(coordinate: {x: number, y: number}, camera: any) {
+  var vec = new THREE.Vector3(); // create once and reuse
+  var pos = new THREE.Vector3(); // create once and reuse
+
+  vec.set(
+    ( coordinate.x / window.innerWidth ) * 2 - 1,
+    - ( coordinate.y / window.innerHeight ) * 2 + 1,
+    0.5,
+  );
+
+  vec.unproject( camera );
+
+  vec.sub( camera.position ).normalize();
+
+  var distance = - camera.position.z / vec.z;
+
+  pos.copy( camera.position ).add( vec.multiplyScalar( distance ) );
+  return pos
+}
+
 
 useTexture.preload('/3d-models/bloom/wood.jpg')
 useGLTF.preload('/3d-models/bloom/bulb.glb')

@@ -31,7 +31,7 @@ export const BlogListTitle = (props: any) => {
             knowledge during our journey
           </span>
         </div>
-        <div className="flex flex-row items-start md:mt-52">
+        <div className="flex flex-row items-start md:mt-52 w-[95%]">
           <div className="h-full -rotate-90 md:w-28 w-16 mt-16 overflow-visible flex flex-col justify-start items-center ml-[-15px]">
             <div className="border-b-4 pb-1 border-yellow-500 md:w-[330px] w-[120px]">
               <h2 className="font-head text-2xl md:text-7xl px-2">
@@ -39,7 +39,7 @@ export const BlogListTitle = (props: any) => {
               </h2>
             </div>
           </div>
-          <div className="flex flex-col md:gap-5 gap-2 md:h-64 h-32 items-start mt-10">
+          <div className="flex flex-col md:gap-5 gap-2 md:h-64 h-32 items-start mt-10 min-w-fit">
             <span className="font-head text-xl md:text-5xl">System design</span>
             <span className="font-head text-xl md:text-5xl">
               Mobile development
@@ -47,6 +47,9 @@ export const BlogListTitle = (props: any) => {
             <span className="font-head text-xl md:text-5xl">
               Web development
             </span>
+          </div>
+          <div className="flex flex-row w-full justify-end md:h-[250px] h-[150px] items-end">
+            <div className="bulb-position h-[50px] w-[50px] md:mb-20 mb-5 xl:mr-64 md:mr-28 mr-5"/>
           </div>
         </div>
       </div>

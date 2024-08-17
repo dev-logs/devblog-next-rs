@@ -2,7 +2,7 @@ import {Fragment, useMemo, useRef} from "react";
 import Stats from "stats.js";
 import {useFrame} from "@react-three/fiber";
 import {Scroll, useScroll} from "@react-three/drei";
-import {Reponsive} from "@/app/components/reponsive";
+import {Reponsive, reponsiveMatch, WidthReponsive} from "@/app/components/reponsive";
 import {LowVertexModel} from "@/app/models/low-vertex";
 import * as THREE from "three";
 import {Tivi} from "@/app/components/tivi";
@@ -43,9 +43,10 @@ export default function Header3d(props: any) {
     return (
         <>
             <Reponsive>
-                {(matches: any) => (
-                    <Fragment>
-                        {matches.small && <>
+                {(matches: any) => {
+                    const match = reponsiveMatch(matches)
+                    return <Fragment>
+                        {match.is(WidthReponsive.SMALL) && <>
                             <LowVertexModel
                                 ref={airplaneRef}
                                 material={
@@ -67,7 +68,7 @@ export default function Header3d(props: any) {
                                     scale={1.5}/>
                             </Scroll>
                         </>}
-                        {matches.medium && <>
+                        {match.from(WidthReponsive.MEDIUM) && <>
                             <LowVertexModel
                                 ref={airplaneRef}
                                 material={
@@ -77,22 +78,22 @@ export default function Header3d(props: any) {
                                     })
                                 }
                                 name="paper-airplane"
-                                scale={2.4}
+                                scale={2.2}
                                 position={[2, -2, 2.3]}
                             />
                             <Scroll>
                                 <Tivi
-                                    scale={8}
+                                    scale={7}
                                     position={[0, -2, 1]}/>
                                 <Ribbon
                                     rotation-x={Math.PI * -0.02}
                                     position={[0, -2.2, -0.1]}
-                                    scale={3}/>
+                                    scale={2}/>
                             </Scroll>
                         </>
                         }
                     </Fragment>
-                )}
+                }}
             </Reponsive>
         </>
     );
