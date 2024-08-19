@@ -52,7 +52,6 @@ export default class AuthenticationService extends gRPCClientBase<typeof Authent
     }
 
     async signupFullAccount(displayName: string, email: string, password: string): Promise<User> {
-        console.log(displayName, email, password)
         if (!email || !isValidEmail(email)) {
             throw 'Invalid email format'
         }

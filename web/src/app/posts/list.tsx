@@ -1,14 +1,16 @@
 import { allPosts } from "contentlayer/generated";
-import { ClassicPostItemContainer, CompactPostItemContainer } from "./post-item";
+import { CompactPostItemContainer } from "./post-item";
+import { orderBy } from "lodash";
 
 export const BlogList = (props: any) => {
+  const posts = orderBy(allPosts, ['publishedDate'], ['desc']).filter((post) => post.isPublished)
   return (
     <>
       <div className="relative flex flex-col h-full w-full">
         <BlogListTitle />
         <div className="flex flex-row w-full justify-center h-fit">
         <div className="mt-2 md:mt-20 mx-2 md:mx-10 bg-zinc-900 md:gap-5 p-2 md:p-10 flex flex-col w-full justify-center items-center rounded-2xl bg-opacity-90 h-min z-10 gap-7">
-          {allPosts.map((post, index) => (
+          {posts.map((post, index) => (
             <CompactPostItemContainer key={index} post={post as any} />
           ))}
         </div>

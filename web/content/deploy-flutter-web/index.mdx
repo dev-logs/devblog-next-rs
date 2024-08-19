@@ -1,6 +1,6 @@
 ---
 title: How to deploy Flutter Web with Github Action
-publishedDate: 2024-06-10
+publishedDate: 2024-08-24
 image: "../../public/images/image4.jpg"
 isPublished: true
 description: "Flutter is a very good option to develop Desktop app, Mobile app and even Web, this blog is a good choice"
@@ -15,208 +15,240 @@ keywords:
   - Docker
 ---
 
-Until now, trying to style an article, document, or blog post with Tailwind has been a tedious task that required a keen eye for typography and a lot of complex custom CSS.
+[Flutter Web](https://flutter.dev/multi-platform/web) brings the power of Flutter's declarative approach to web development, enabling developers to construct high-quality web applications. This open-source framework utilizes the Dart programming language, offering a seamless transition for developers familiar with Flutter for mobile development.
 
-By default, Tailwind removes all of the default browser styling from paragraphs, headings, lists and more. This ends up being really useful for building application UIs because you spend less time undoing user-agent styles, but when you _really are_ just trying to style some content that came from a rich-text editor in a CMS or a markdown file, it can be surprising and unintuitive.
+In this post, we'll walk you through the step-by-step process of deploying your Flutter Web projects using [Docker](https://www.docker.com/) and [GitHub Actions](https://github.com/features/actions).
 
-We get lots of complaints about it actually, with people regularly asking us things like:
+## Prerequisites
 
-> Why is Tailwind removing the default styles on my `h1` elements? How do I disable this? What do you mean I lose all the other base styles too?
-> We hear you, but we're not convinced that simply disabling our base styles is what you really want. You don't want to have to remove annoying margins every time you use a `p` element in a piece of your dashboard UI. And I doubt you really want your blog posts to use the user-agent styles either — you want them to look _awesome_, not awful.
+Before you start, ensure you have the following:
 
-The `@tailwindcss/typography` plugin is our attempt to give you what you _actually_ want, without any of the downsides of doing something stupid like disabling our base styles.
+- **Docker** installed on your local machine. We will need to test our script in the local environment before deploying.
+- A **Docker Hub** account, as we will deploy our images to Docker Hub. You can register [here](https://hub.docker.com/signup).
 
-It adds a new `prose` class that you can slap on any block of vanilla HTML content and turn it into a beautiful, well-formatted document:
+## Setting Up a Cloud Server
 
-```html {1-3,4} title="index.html" caption="This is index.html file" showLineNumbers /will/
-<article className="prose">
-  <h1>Garlic bread with cheese: What the science tells us</h1>
-  <p>
-    For years parents have espoused the health benefits of eating garlic bread
-    with cheese to their children, with the food earning such an iconic status
-    in our culture that kids will often dress up as warm, cheesy loaf for
-    Halloween.
-  </p>
-  <p>
-    But a recent study shows that the celebrated appetizer may be linked to a
-    series of rabies cases springing up around the country.
-  </p>
-</article>
+If you don't already have a cloud server, you can set one up. In this tutorial, we'll use Digital Ocean for cloud hosting, but feel free to use your preferred cloud provider like AWS, GCP, etc.
+
+### Step 1: Set Up Digital Ocean
+
+You can get a new Digital Ocean account [here](https://try.digitalocean.com/freetrialoffer/). Digital Ocean offers $200 USD in credits for your first signup.
+
+After registering successfully, on the dashboard, click the **Create Droplet** button. A droplet is a virtual computer with a public IP address that is hosted by Digital Ocean.
+
+![Create Droplet Menu](/images/document/digital-ocean-create-menu.png)
+
+### Step 2: Configure Your Droplet
+
+Here are my recommended configurations:
+
+- **Region:** Singapore (Choose the region closest to your location)
+- **Image:** Ubuntu (Ubuntu is a common Linux distribution)
+- **Size:** Choose the cheapest option (1 CPU, 1GB RAM, $6/month)
+- **Authentication Method:** SSH (Set up SSH for remote access)
+
+![Create Droplet Screen](/images/document/digital-ocean-create-droplet.png)
+
+## Creating a New Flutter Web Project
+
+To create your first Flutter web project, use the following command:
+
+```bash
+flutter create simple_web --platform web
 ```
 
-For more information about how to use the plugin and the features it includes, [read the documentation](https://github.com/tailwindcss/typography/blob/master/README.md).
+Navigate to your project directory and run:
 
----
+```bash
+cd simple_web
+flutter run -d chrome
+```
 
-## What to expect from here on out
+You should now see your web app running on Chrome.
 
-What follows from here is just a bunch of absolute nonsense I've written to dogfood the plugin itself. It includes every sensible typographic element I could think of, like **bold text**, unordered lists, ordered lists, code blocks, block quotes, _and even italics_. `<h3>This is inline code</h3>{:html}`
+## Deploying the Flutter Web Project
 
-It's important to cover all of these use cases for a few reasons:
+Before we start, let's discuss how to deploy our Flutter Web project.
 
-1.  We want everything to look good out of the box.
-2.  Really just the first reason, that's the whole point of the plugin.
-3.  Here's a third pretend reason though a list with three items looks more realistic than a list with two items.
+If you trigger the build process using this command:
 
-Now we're going to try out another header style.
+```bash
+flutter build web --release
+```
 
-### Typography should be easy
+You will see a `build/web/index.html` file in the output directory. This directory contains the contents of your webpage, with `index.html` as the entry point.
 
-So that's a header for you — with any luck if we've done our job correctly that will look pretty reasonable.
+![Flutter Web Directory](/images/document/flutter-web-directory.png)
 
-Something a wise person once told me about typography is:
+### Step 1: Setting Up Nginx
 
-> Typography is pretty important if you don't want your stuff to look like trash. Make it good then it won't be bad.
+Copy and paste the following configuration into your directory:
 
-It's probably important that images look okay here by default as well:
+```nginx
+api {
+    listen 80;
 
-<Image
-  src="/blogs/c-d-x-PDX_a_82obo-unsplash.jpg"
-  width="718"
-  height="404"
-  alt="Image"
-  sizes="100vw"
-/>
-
-Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old.
-
-Now I'm going to show you an example of an unordered list to make sure that looks good, too:
-
-- So here is the first item in this list.
-- In this example we're keeping the items short.
-- Later, we'll use longer, more complex list items.
-
-And that's the end of this section.
-
-## What if we stack headings?
-
-### We should make sure that looks good, too.
-
-Sometimes you have headings directly underneath each other. In those cases you often have to undo the top margin on the second heading because it usually looks better for the headings to be closer together than a paragraph followed by a heading should be.
-
-### When a heading comes after a paragraph …
-
-When a heading comes after a paragraph, we need a bit more space, like I already mentioned above. Now let's see what a more complex list would look like.
-
-- **I often do this thing where list items have headings.**
-
-  For some reason I think this looks cool which is unfortunate because it's pretty annoying to get the styles right.
-
-  I often have two or three paragraphs in these list items, too, so the hard part is getting the spacing between the paragraphs, list item heading, and separate list items to all make sense. Pretty tough honestly, you could make a strong argument that you just shouldn't write this way.
-
-- **Since this is a list, I need at least two items.**
-
-  I explained what I'm doing already in the previous list item, but a list wouldn't be a list if it only had one item, and we really want this to look realistic. That's why I've added this second list item so I actually have something to look at when writing the styles.
-
-- **It's not a bad idea to add a third item either.**
-
-  I think it probably would've been fine to just use two items but three is definitely not worse, and since I seem to be having no trouble making up arbitrary things to type, I might as well include it.
-
-After this sort of list I usually have a closing statement or paragraph, because it kinda looks weird jumping right to a heading.
-
-## Code should look okay by default.
-
-I think most people are going to use [highlight.js](https://highlightjs.org/) or [Prism](https://prismjs.com/) or something if they want to style their code blocks but it wouldn't hurt to make them look _okay_ out of the box, even with no syntax highlighting.
-
-Here's what a default `tailwind.config.js` file looks like at the time of writing:
-
-```js
-module.exports = {
-  purge: [],
-  theme: {
-    extend: {},
-  },
-  variants: {},
-  plugins: [],
+    location / {
+        root /app;
+        index index.html;
+    }
 }
 ```
 
-Hopefully that looks good enough to you.
+### Step 2: Writing a Dockerfile
 
-### What about nested lists?
+If you're not familiar with Docker, you can learn more [here](https://docs.docker.com/get-started/overview).
 
-Nested lists basically always look bad which is why editors like Medium don't even let you do it, but I guess since some of you goofballs are going to do it we have to carry the burden of at least making it work.
+Now, in your project directory, create a file called `Dockerfile`.
 
-1.  **Nested lists are rarely a good idea.**
-    - You might feel like you are being really "organized" or something but you are just creating a gross shape on the screen that is hard to read.
-    - Nested navigation in UIs is a bad idea too, keep things as flat as possible.
-    - Nesting tons of folders in your source code is also not helpful.
-2.  **Since we need to have more items, here's another one.**
-    - I'm not sure if we'll bother styling more than two levels deep.
-    - Two is already too much, three is guaranteed to be a bad idea.
-    - If you nest four levels deep you belong in prison.
-3.  **Two items isn't really a list, three is good though.**
-    - Again please don't nest lists if you want people to actually read your content.
-    - Nobody wants to look at this.
-    - I'm upset that we even have to bother styling this.
+![Dockerfile in Project](/images/document/dockerfile-in-project.png)
 
-The most annoying thing about lists in Markdown is that `<li>` elements aren't given a child `<p>` tag unless there are multiple paragraphs in the list item. That means I have to worry about styling that annoying situation too.
+Here's a breakdown of the Dockerfile instructions:
 
-- **For example, here's another nested list.**
+- **Build Step:** Set up the Flutter SDK and build the Flutter web project.
+- **Run Step:** Install Nginx, copy the build output, and start Nginx.
 
-  But this time with a second paragraph.
+### Dockerfile Example
 
-  - These list items won't have `<p>` tags
-  - Because they are only one line each
+```bash
+FROM ubuntu:16.04 as builder
+USER root
 
-- **But in this second top-level list item, they will.**
+# Install Flutter build-time dependencies
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends git wget unzip libglu1-mesa lib32stdc++6 ca-certificates curl tar \
+    xz-utils clang cmake ninja-build pkg-config libgtk-3-dev && \
+    rm -rf /var/lib/apt/lists/*
 
-  This is especially annoying because of the spacing on this paragraph.
+WORKDIR /
 
-  - As you can see here, because I've added a second line, this list item now has a `<p>` tag.
+# Download and install Flutter SDK
+RUN curl https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/flutter_linux_3.13.8-stable.tar.xz -o flutter-sdk.tar.xz
+RUN tar xf flutter-sdk.tar.xz && rm flutter-sdk.tar.xz
 
-    This is the second line I'm talking about by the way.
+ENV PATH="$PATH:/flutter/bin"
 
-  - Finally here's another list item so it's more like a list.
+RUN flutter config --no-analytics --enable-web && \
+    flutter precache && \
+    flutter doctor && \
+    rm -rf .pub_cache
 
-- A closing list item, but with no nested list, because why not?
+RUN dart pub global activate protoc_plugin
+ENV PATH="$PATH":"/root/.pub-cache/bin/"
 
-And finally a sentence to close off this section.
+WORKDIR /src
+COPY . .
 
-## There are other elements we need to style
+RUN flutter build web --release
 
-I almost forgot to mention links, like [this link to the Tailwind CSS website](https://tailwindcss.com). We almost made them blue but that's so yesterday, so we went with dark gray, feels edgier.
+FROM ubuntu:16.04 as runner
+USER root
+WORKDIR /app
 
-We even included table styles, check it out:
+RUN apt-get update && \
+    apt-get install -y \
+    curl unzip nginx && \
+    rm -rf /var/lib/apt/lists/*
 
-| Wrestler                | Origin       | Finisher           |
-| ----------------------- | ------------ | ------------------ |
-| Bret "The Hitman" Hart  | Calgary, AB  | Sharpshooter       |
-| Stone Cold Steve Austin | Austin, TX   | Stone Cold Stunner |
-| Randy Savage            | Sarasota, FL | Elbow Drop         |
-| Vader                   | Boulder, CO  | Vader Bomb         |
-| Razor Ramon             | Chuluota, FL | Razor's Edge       |
+COPY --from=builder /src/build/web .
+COPY nginx.conf /etc/nginx/sites-available/default
+RUN service nginx stop
 
-We also need to make sure inline code looks good, like if I wanted to talk about `<span>` elements or tell you the good news about `@tailwindcss/typography`.
+ENTRYPOINT ["/bin/bash", "-c", "echo 'Start nginx...'; nginx -g 'daemon off;'"]
+```
 
-### Sometimes I even use `code` in headings
+### Step 3: Testing on Your Local Machine
 
-Even though it's probably a bad idea, and historically I've had a hard time making it look good. This _"wrap the code blocks in backticks"_ trick works pretty well though really.
+In your project directory, build the Docker image:
 
-Another thing I've done in the past is put a `code` tag inside of a link, like if I wanted to tell you about the [`tailwindcss/docs`](https://github.com/tailwindcss/docs) repository. I don't love that there is an underline below the backticks but it is absolutely not worth the madness it would require to avoid it.
+```bash
+docker build -t simple_web .
+```
 
-#### We haven't used an `h4` yet
+Once the build process is complete, run the Docker container:
 
-But now we have. Please don't use `h5` or `h6` in your content, Medium only supports two heading levels for a reason, you animals. I honestly considered using a `before` pseudo-element to scream at you if you use an `h5` or `h6`.
+```bash
+docker run -p 3000:80 --name simple_web_container simple_web:latest
+```
 
-We don't style them at all out of the box because `h4` elements are already so small that they are the same size as the body copy. What are we supposed to do with an `h5`, make it _smaller_ than the body copy? No thanks.
+Visit [localhost:3000](http://localhost:3000) to see your web app.
 
-### We still need to think about stacked headings though.
+## Configuring GitHub Actions for Continuous Deployment
 
-#### Let's make sure we don't screw that up with `h4` elements, either.
+GitHub Actions allows us to automate the build and deployment process.
 
-Phew, with any luck we have styled the headings above this text and they look pretty good.
+### Step 1: Allow GitHub Actions to Perform SSH
 
-Let's add a closing paragraph here so things end with a decently sized block of text. I can't explain why I want things to end that way but I have to assume it's because I think things will look weird or unbalanced if there is a heading too close to the end of the document.
+To enable GitHub Actions to connect to your cloud server via SSH, generate an SSH key on your server:
 
-What I've written here is probably long enough, but adding this final sentence can't hurt.
+```bash
+ssh-keygen
+```
 
-## GitHub Flavored Markdown
+Next, retrieve your private key:
 
-I've also added support for GitHub Flavored Mardown using `remark-gfm`.
+```bash
+cat ~/.ssh/id_rsa
+```
 
-With `remark-gfm`, we get a few extra features in our markdown. Example: autolink literals.
+Copy the output, then open your GitHub repository settings, and navigate to **Secrets and Variables**.
 
-A link like www.example.com or https://example.com would automatically be converted into an `a` tag.
+![GitHub Secrets](/images/document/github_secret.png)
 
-This works for email links too: contact@example.com.
+Create a new repository secret and enter the following information:
+
+- **SSH_PRIVATE_KEY:** Your private SSH key
+- **SSH_HOST:** The public IP address of your cloud server
+- **DOCKER_REGISTRY_USERNAME:** Your Docker Hub username
+- **DOCKER_REGISTRY_PASSWORD:** Your Docker Hub password
+
+![GitHub New Secret](/images/document/github_action_new_secret.png)
+
+### Step 2: Creating the GitHub Workflow
+
+In your project directory, create a `.github/workflows/ci.yaml` file.
+
+![CI Folder](/images/document/ci-folder.png)
+
+Here's an example `ci.yaml` file:
+
+```yaml
+on:
+  push:
+    branches:
+      - 'main'
+
+env:
+  IMAGE_NAME: ${{ secrets.DOCKER_REGISTRY_USERNAME }}/simple_web
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Docker login
+        run: echo ${{ secrets.DOCKER_REGISTRY_PASSWORD }} | docker login -u ${{ secrets.DOCKER_REGISTRY_USERNAME }} --password-stdin
+      - name: Build Docker image
+        run: docker build -t ${{ env.IMAGE_NAME }} .
+      - name: Publish Docker image
+        run: |
+          docker push ${{ env.IMAGE_NAME }}
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Deploy
+        run: |
+          install -m 600 -D /dev/null ~/.ssh/id_rsa
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          ssh-keyscan -H "${{ secrets.SSH_HOST }}" > ~/.ssh/known_hosts
+          ssh -tt root@${{ secrets.SSH_HOST }} "docker pull ${{ env.IMAGE_NAME }}:latest && docker rm -f simple_web && docker run -d --rm --name simple_web -p 3000:80 ${{ env.IMAGE_NAME }}:latest"
+      - name: Cleanup
+        run: rm -rf ~/.ssh
+```
+
+## Final Thoughts
+
+Thank you for reading! I hope this guide helps you deploy your Flutter Web projects with Docker and GitHub Actions. Stay tuned for more tutorials on optimizing your web deployment with CDN integration.

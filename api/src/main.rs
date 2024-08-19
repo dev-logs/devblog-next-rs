@@ -2,9 +2,9 @@ pub mod grpc;
 pub mod config;
 pub mod services;
 
-use core_services::{grpc::middle::{auth::AuthInterceptor, response_handler::{ResponseHeaderHandler}}, logger, s3::S3Client, DB, S3_CLIENT};
+use core_services::{grpc::middle::{auth::AuthInterceptor, response_handler::ResponseHeaderHandler}, logger, s3::S3Client, DB, S3_CLIENT};
 use grpc::{authentication::AuthenticationGrpcService, base::GRPCService, discussion::DiscussionGrpcService, post::PostGrpcService};
-use surrealdb::{engine::remote::ws::Ws, opt::{auth::Root}};
+use surrealdb::{engine::remote::ws::Ws, opt::auth::Root};
 use tonic_middleware::{InterceptorFor, MiddlewareLayer};
 use tower_http::cors::*;
 
@@ -75,7 +75,9 @@ async fn setup_grpc_server() -> Result<(), Box<dyn std::error::Error>> {
         .add_service(InterceptorFor::new(
             DevblogDiscussionServiceServer::new(discussion_service),
             AuthInterceptor::new()))
-        .add_service(InterceptorFor::new(PostServiceServer::new(post_service), AuthInterceptor::new()))
+        .add_service(InterceptorFor::new(
+            PostServiceServer::new(post_service),
+            AuthInterceptor::new()))
         .serve(addr)
         .await?;
 

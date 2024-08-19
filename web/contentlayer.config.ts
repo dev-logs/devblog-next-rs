@@ -11,7 +11,7 @@ import {
     Post as PostEntity,
     PostService
 } from "@devlog/schema-ts";
-import {createConnectTransport} from "@connectrpc/connect-node";
+import {createGrpcTransport} from "@connectrpc/connect-node";
 import {createPromiseClient} from "@connectrpc/connect";
 import GithubSlugger from "github-slugger";
 import {JWTGenerator} from "./build-time/jwt";
@@ -102,14 +102,14 @@ export const Post = defineDocumentType(() => ({
               {minutes: 5}, privateKey)
 
               const connectionUrl = process.env.DEVLOG_DEVBLOG_API_GRPC_URL || 'http://127.0.0.1:30001'
-              const connectTransport = createConnectTransport({
+              const connectTransport = createGrpcTransport({
                   baseUrl: connectionUrl,
                   httpVersion: '2'
               })
 
               const client = createPromiseClient(PostService, connectTransport)
               const response = await client.create(request, {headers: [['authorization', accessKey.content]]}) as CreatePostResponse
-              console.log('creating', response)
+              console.log(`Migrated post ${content.title}`, response)
           }
         }
     },

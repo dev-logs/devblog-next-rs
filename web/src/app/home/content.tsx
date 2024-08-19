@@ -13,6 +13,7 @@ import {Reponsive, reponsiveMatch, HeightReponsive as HeightReponsive, WidthRepo
 import {TASKS} from "@/app/home/index"
 import dynamic from "next/dynamic"
 import useElementReady from "../hooks/wait-for-element"
+import { Toaster } from "react-hot-toast";
 
 export default function HomeContent(props: any) {
   const [totalPages, setTotalPages] = useState(1)
@@ -41,6 +42,7 @@ const _Home = (props: any) => {
     return (
         <>
             <div className="flex flex-col bg-black">
+                <Toaster position="bottom-right"/>
                 <div className="flex w-screen h-screen z-0">
                     <ThreeDCanvas
                         gl={{alpha: true, antialias: false}}

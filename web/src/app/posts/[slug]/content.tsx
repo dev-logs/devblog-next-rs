@@ -54,12 +54,12 @@ function HtmlDom(props: any = {}) {
         <Suspense>
           <TitleLazy post={post} />
         </Suspense>
-        <div className="grid grid-cols-12 w-full lg:pb-56 pb-14 backdrop-blur-3xl">
+        <div className="grid grid-cols-12 w-full backdrop-blur-3xl">
           <div className="lg:col-span-3 col-span-full lg:items-start items-center flex flex-row h-fit lg:sticky lg:left-5 lg:top-20 lg:justify-start justify-center">
             <TableOfContent post={post} />
           </div>
           <div className="flex lg:justify-start flex-col lg:items-start cols-span-full lg:pl-16 items-center lg:col-span-6 col-span-full md:mt-8 mt-2">
-            <article className="max-w-full mb-10 sm:px-8 rounded-xl backdrop-blur-lg px-2">
+            <article className="max-w-full sm:px-8 rounded-xl backdrop-blur-lg px-2">
               <MdxContent post={post}/>
               <LikeSection post={post} totalLikes={getPostDb.data?.totalLikes ?? 0} totalViews={viewPost.data ?? getPostDb.data?.totalViews ?? 0}/>
               <Discussions post={post}/>

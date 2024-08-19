@@ -73,9 +73,9 @@ export function usePromise<T extends string[], P extends any[], R>(
           setIsLoading(true)
           const result = await fn(...paramRefs.current)
           updateData(result)
-        } catch (error) {
-          console.log('error happen')
-          updateErr(error)
+        } catch (error: any) {
+          console.log('error happen', error.toString())
+          updateErr(error.toString())
         }
         finally {
           setIsLoading(false)

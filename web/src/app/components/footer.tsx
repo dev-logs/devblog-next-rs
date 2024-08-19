@@ -13,27 +13,26 @@ export const FooterHtml = (props: any) => {
     <>
       <div
         ref={ref}
-        className={`app-footer z-20 flex flex-col h-full w-screen items-center pt-14 overflow-hidden`}
-      >
-        <span className="font-head md:scale-y-[2] scale-y-[3.55] align-bottom md:pt-14 pt-8 text-[24vw] h-fit text-white uppercase">
+        className={`app-footer font-roboto z-20 flex flex-col md:h-full h-[50vh] w-screen items-center md:pt-14 pt-8`}>
+        <span className="font-head md:scale-y-[2] scale-y-[3.55] align-bottom md:pt-14 pt-1 text-[24vw] h-fit text-white uppercase">
           DEVLOG STUDIO
         </span>
         <div className="flex lg:flex-row flex-col lg:gap-5 w-full lg:justify-between justify-center items-center h-fit mt-[8vh] lg:px-16 bg-white z-20 py-5 gap-2">
-          <div className="flex flex-row items-center md:gap-5 gap-1 md:text-xl justify-between h-5">
+          <div className="flex flex-row items-center md:gap-5 gap-1 md:text-xl justify-between md:h-5 h-2">
             <a
-              href="devlogstudio@gmail.com"
-              className="font-mono md:text-xl text-gray-900 text-sm">
-              devlogstudio@gmail.com
+              href="team@devlog.studio"
+              className="font-roboto md:text-xl text-gray-900 text-sm">
+              team@devlog.studio
             </a>
-            <span className="text-gray-900 font-roboto flex-1">or</span>
+            <span className="text-gray-600 font-roboto flex-1">or</span>
             <a
               href={"https://www.instagram.com/dev_logs/?hl=en"}
-              className="font-mono flex md:text-xl text-sm text-gray-900 flex-row gap-1 justify-between items-center">
+              className="font-roboto flex md:text-xl text-sm text-gray-900 flex-row gap-1 justify-between items-center">
               <InstagramIcon width={18} fill="gray-900"/>
               Instagram
             </a>
           </div>
-          <span className="font-mono text-gray-900 md:text-lg text-sm">
+          <span className="font-roboto text-gray-900 md:text-lg text-sm text-center">
             Devlog Studio - All rights reserved - ©2024
           </span>
         </div>

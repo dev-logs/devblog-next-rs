@@ -8,8 +8,6 @@ import CustomShaderMaterial from "three-custom-shader-material/vanilla"
 import { useFrame } from "@react-three/fiber"
 import { Line, useTexture } from "@react-three/drei"
 import gsap from "gsap"
-import { EffectComposer, Noise } from "@react-three/postprocessing"
-import { BlendFunction } from "postprocessing"
 import { MotionPathPlugin } from "gsap/MotionPathPlugin"
 import { useService } from "@/app/hooks/service"
 
@@ -51,7 +49,6 @@ export function VoteForNextTopic(props: {}) {
 
 export function VoteForNextTopicCards(props: {}) {
   const unPublishPosts = allPosts.filter((post) => !post.isPublished)
-  unPublishPosts.push(...unPublishPosts, ...unPublishPosts)
 
   if (!unPublishPosts.length) return <></>
 
@@ -66,11 +63,13 @@ export function VoteForNextTopicCards(props: {}) {
       selectedIndex.selected + 1 > unPublishPosts.length - 1
         ? 0
         : selectedIndex.selected + 1
+
     updateSelectedIndex({
       selected: newIndex,
       left: newIndex - 1 < 0 ? unPublishPosts.length - 1 : newIndex - 1,
       right: newIndex + 1 > unPublishPosts.length - 1 ? 0 : newIndex + 1,
     })
+
   }, [selectedIndex])
 
   const onPrev = useCallback(() => {
@@ -351,15 +350,14 @@ function VoteForNextTopicItem(props: {
     gsap.to(item, { ...nextStyle, duration: 1.6, ease: "back.inOut" })
   }, [nextStyle, itemRef.current])
 
-  console.log('isVoted', isVoteService.data)
   return (
     <>
       <div
         ref={itemRef}
         className="absolute flex flex-col bg-gray-950 border-gray-300 bg-opacity-70 backdrop-blur-2xl shadow-2xl md:border-2 border md:rounded-2xl rounded-lg overflow-clip h-full md:max-h-[400px] max-h-[300px] xl:max-h-[500px] sm:w-[250px] w-[130px] xl:w-[300px]">
-        <div className="absolute bottom-0 left-0 flex flex-col w-full h-full z-20 shadow-sm shadow-white lg:gap-10 md:gap-5 gap-2 justify-center md:py-10 md:px-5 py-2 px-3 items-center">
-          <span className="font-roboto xl:text-2xl md:text-xl text-sm md:font-bold font-semibold text-white text-center">{`${post.title}`}</span>
-          <span className="font-roboto xl:text-xl md:text-lg text-sm text-white text-center truncate-text-5">
+        <div className="absolute bottom-0 left-0 flex flex-col w-full h-full z-20 shadow-sm shadow-white lg:gap-10 md:gap-5 gap-1 justify-center md:py-10 md:px-5 py-1 px-2 items-center">
+          <span className="font-roboto xl:text-xl md:text-lg text-sm md:font-bold font-semibold text-white text-center">{`${post.title}`}</span>
+          <span className="font-roboto md:text-sm text-xs text-white text-center truncate-text-5">
             {post.description}
           </span>
           <button disabled={votePostService.isLoading || !!isVoteService.data} onClick={onVoteClick} className="disabled:bg-gray-300 disabled:text-gray-600 hover:bg-gray-300 bg-white rounded-xl xl:px-5 xl:py-2 px-5 py-1 text-black font-roboto md:text-lg text-sm xl:text-xl">
