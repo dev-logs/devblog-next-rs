@@ -50,6 +50,7 @@ export const CompactPostItemContainer = (props: PostItemProps) => {
             <div className="flex flex-col md:gap-2 flex-1">
               <span className="font-roboto md:font-bold uppercase text-white font-bold text-sm md:text-2xl">{post.title}</span>
               <span className="font-roboto text-white text-sm md:text-xl">{post.description}</span>
+              <span className="mt-4 text-gray-300">{post.readingTime.text}</span>
             </div>
           </div>
         </div>

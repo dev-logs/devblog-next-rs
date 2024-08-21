@@ -33,7 +33,7 @@ export const LoadingOverlay = (props: any) => {
         if (isNaN(mProgress)) mProgress = 0
 
         const finalProgress = (mProgress + htmlProgress) / 2
-        updateProgress(Number(finalProgress.toFixed(2)))
+        updateProgress(Math.min(Number(finalProgress.toFixed(2)), 1))
     }, [modelProgress, htmlProgress, total, loaded])
 
     const progressBarRef: any = useRef(null)
@@ -85,7 +85,7 @@ export const LoadingOverlay = (props: any) => {
                     transformOrigin: 'top left'
                 }}
             />
-            {progress}
+            {(progress * 100)}%
         </div>
     </>
 }

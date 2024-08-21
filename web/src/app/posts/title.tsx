@@ -25,18 +25,18 @@ export default function PostTitle(props: any) {
           />
         </div>
         <div className="relative h-full overflow-hidden w-full flex flex-col items-center z-10 pt-20 xl:px-20 md:px-10 px-5 justify-end bg-black bg-opacity-10 backdrop-blur-sm">
-          <div className="flex-1 lg:mb-20 mb-10 flex flex-col items-center w-full gap-10 justify-center">
+          <div className="flex-1 lg:mb-20 mb-10 flex flex-col items-center w-full sm:gap-10 gap-2 justify-center absolute top-20 md:top-28">
+            <span className="xl:text-6xl md:text-5xl text-xl xl:max-w-[40vw] max-w-[70vw] text-center font-Alfa">
+              {post.title}
+            </span>
             <span className="text-sm lg:text-xl font-mono capitalize text-pink-700 underline underline-offset-1 font-bold">
               #{post.keywords}
             </span>
-            <span className="xl:text-6xl md:text-4xl text-xl xl:max-w-[40vw] max-w-[70vw] text-center font-Alfa">
-              {post.title}
-            </span>
+            <img
+              className="object-cover max-h-[50vh] h-auto w-[90vw]"
+             src={post.publicImage}
+           />
           </div>
-          <img
-            className="object-cover max-h-[60vh] h-auto w-[90vw]"
-            src={post.publicImage}
-          />
         </div>
       </div>
     </div>

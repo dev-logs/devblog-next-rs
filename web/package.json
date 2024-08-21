@@ -27,6 +27,7 @@
     "intersection-observer": "^0.12.2",
     "leva": "0.9.35",
     "lodash": "4.17.21",
+    "moment": "^2.30.1",
     "next": "^14.2.3",
     "next-contentlayer": "^0.3.4",
     "next-sitemap": "^4.2.3",

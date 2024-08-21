@@ -58,8 +58,8 @@ function HtmlDom(props: any = {}) {
           <div className="lg:col-span-3 col-span-full lg:items-start items-center flex flex-row h-fit lg:sticky lg:left-5 lg:top-20 lg:justify-start justify-center">
             <TableOfContent post={post} />
           </div>
-          <div className="flex lg:justify-start flex-col lg:items-start cols-span-full lg:pl-16 items-center lg:col-span-6 col-span-full md:mt-8 mt-2">
-            <article className="max-w-full sm:px-8 rounded-xl backdrop-blur-lg px-2">
+          <div className="flex lg:justify-start flex-col cols-span-full lg:pl-16 items-center lg:col-span-6 col-span-full md:mt-8 mt-2">
+            <article className="max-w-full px-5 sm:px-8 rounded-xl backdrop-blur-lg">
               <MdxContent post={post}/>
               <LikeSection post={post} totalLikes={getPostDb.data?.totalLikes ?? 0} totalViews={viewPost.data ?? getPostDb.data?.totalViews ?? 0}/>
               <Discussions post={post}/>

@@ -19,7 +19,7 @@ export const Tivi = (props: any) => {
             uniforms: {
                 uTime: {value: 0},
                 uPicture: {value: beerMugTexture},
-                uFrameCount: {value: 4}
+                uFrameCount: {value: 3}
             }
         })
 

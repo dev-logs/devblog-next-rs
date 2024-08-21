@@ -12,7 +12,7 @@ export const MdxContent = (props: any) => {
     const MDXContent = useMDXComponent(post.body.code)
 
     return (
-        <div className='font-in prose 2xl:prose-2xl md:prose-md prose-sm lg:prose-lg
+        <div className='font-in prose md:prose-md prose-sm lg:prose-lg
     prose-blockquote:bg-accent/20
     prose-blockquote:p-2
     prose-blockquote:px-6

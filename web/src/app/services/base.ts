@@ -14,7 +14,6 @@ export default class gRPCClientBase<T extends ServiceType> {
   }
 
   getSecureHeader(): HeadersInit {
-
     let tokenObj: any = JSON.parse(localStorage.getItem('access-token') || '{}')
     if (!tokenObj || !tokenObj.content) throw 'Login is required'
     return [
