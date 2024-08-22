@@ -25,7 +25,7 @@ interface InstancesProps extends GroupProps {
 }
 
 export function LowVertexModelProvider({children, ...props}: InstancesProps) {
-    const {scene} = useGLTF('/3d-models/low-vertex/geometries.glb')
+    const {scene} = useGLTF(`${process.env.PATH_PREFIX}/3d-models/low-vertex/geometries.glb`)
 
     const instances = useMemo(() => scene.children.reduce((obj: any, curr) => {
         obj[curr.name] = curr

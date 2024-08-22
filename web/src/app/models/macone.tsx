@@ -8,8 +8,8 @@ import Shaders from "@/app/glsl";
 export const MacOne = forwardRef((props: any, ref) => {
     const {screenMaterial, bodyMaterial} = props || {}
 
-    const model = useGLTF('/3d-models/macone/geometries2.glb')
-    const helloWorldLCD = useTexture('/images/hello-world-lcd.jpg')
+    const model = useGLTF(`${process.env.PATH_PREFIX}${process.env.PATH_PREFIX}/3d-models/macone/geometries2.glb`)
+    const helloWorldLCD = useTexture(`${process.env.PATH_PREFIX}/images/hello-world-lcd.jpg`)
     helloWorldLCD.colorSpace = THREE.SRGBColorSpace
     helloWorldLCD.wrapS = THREE.RepeatWrapping
     helloWorldLCD.wrapT = THREE.RepeatWrapping
@@ -90,5 +90,5 @@ export const MacOne = forwardRef((props: any, ref) => {
     </>
 })
 
-useGLTF.preload('/3d-models/macone/geometries2.glb')
-useTexture.preload('/images/hello-world-lcd.jpg')
+useGLTF.preload(`${process.env.PATH_PREFIX}/3d-models/macone/geometries2.glb`)
+useTexture.preload(`${process.env.PATH_PREFIX}/images/hello-world-lcd.jpg`)

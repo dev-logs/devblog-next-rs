@@ -1,12 +1,9 @@
 import {Fragment, useEffect, useMemo, useRef} from 'react'
-import Shaders from '../glsl'
 import * as THREE from 'three'
-import CustomShaderMaterial from 'three-custom-shader-material/vanilla'
-import {Center, Environment, Stage, TransformControls, useGLTF, useTexture} from '@react-three/drei'
+import {useGLTF, useTexture} from '@react-three/drei'
 import {Bloom, EffectComposer} from '@react-three/postprocessing'
-import {HeightReponsive, Reponsive, reponsiveMatch, WidthReponsive} from './reponsive'
+import {Reponsive, reponsiveMatch, WidthReponsive} from './reponsive'
 import { useFrame, useThree } from '@react-three/fiber'
-import { useThreeDContext } from '../contexts'
 
 interface ElectricalEffectProps {
     position: any,
@@ -14,10 +11,10 @@ interface ElectricalEffectProps {
 }
 
 export const ElectricalEffect = (props: ElectricalEffectProps) => {
-    const woodTexture = useTexture('/3d-models/bloom/wood.jpg')
+    const woodTexture = useTexture(`${process.env.PATH_PREFIX}/3d-models/bloom/wood.jpg`)
     woodTexture.colorSpace = THREE.SRGBColorSpace
     const [geometry, wireGeometry, bulb, filamentMaterial]: any = useMemo(() => {
-        const wireGeometry = useGLTF('/3d-models/bloom/bulb.glb')
+        const wireGeometry = useGLTF(`${process.env.PATH_PREFIX}/3d-models/bloom/bulb.glb`)
 
         const metalMaterial = new THREE.MeshStandardMaterial({
           metalness: 0.9,
@@ -84,9 +81,6 @@ export const ElectricalEffect = (props: ElectricalEffectProps) => {
           }
           else if (child.name === 'rele') {
             child.material = filamentMaterial
-          }
-          else {
-            console.log('found redundant', child)
           }
         })
 
@@ -167,12 +161,14 @@ export const ElectricalEffect = (props: ElectricalEffectProps) => {
 }
 
 function coordinate2dTo3d(coordinate: {x: number, y: number}, camera: any) {
+  if (!coordinate) return new THREE.Vector3()
+
   var vec = new THREE.Vector3(); // create once and reuse
   var pos = new THREE.Vector3(); // create once and reuse
 
   vec.set(
-    ( coordinate.x / window.innerWidth ) * 2 - 1,
-    - ( coordinate.y / window.innerHeight ) * 2 + 1,
+    (coordinate.x / window.innerWidth) * 2 - 1,
+    - (coordinate.y / window.innerHeight) * 2 + 1,
     0.5,
   );
 
@@ -187,5 +183,5 @@ function coordinate2dTo3d(coordinate: {x: number, y: number}, camera: any) {
 }
 
 
-useTexture.preload('/3d-models/bloom/wood.jpg')
-useGLTF.preload('/3d-models/bloom/bulb.glb')
+useTexture.preload(`${process.env.PATH_PREFIX}/3d-models/bloom/wood.jpg`)
+useGLTF.preload(`${process.env.PATH_PREFIX}/3d-models/bloom/bulb.glb`)

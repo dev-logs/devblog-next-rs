@@ -1,5 +1,3 @@
-"use client";
-
 import {Fragment, Suspense, useEffect, useMemo, useRef, useState} from "react";
 import {Html, Scroll, useScroll} from "@react-three/drei";
 import {ThreeDCanvas} from "../components/canvas";
