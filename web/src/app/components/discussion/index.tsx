@@ -1,3 +1,4 @@
+'use client'
 import React, { useCallback, useEffect, useState } from "react"
 import { DiscussionItem } from "./item"
 import { DiscussionInput } from "./input"
@@ -35,6 +36,7 @@ export const Discussions = ({ post }: DiscussionsProps) => {
   }, [paging, paging.page.totalPages])
 
   useEffect(() => {
+    console.log(getDiscussions.data)
     const newDiscussions = getDiscussions.data?.discussions || []
     setDiscussions(newDiscussions)
     const newPaging = getDiscussions.data?.paging || initialPaging;
@@ -76,8 +78,6 @@ export const Discussions = ({ post }: DiscussionsProps) => {
             <button key={index} onClick={() => onSelectedPage(pageItem)} className={`${paging.page.page === pageItem ? 'bg-blue-400' : 'bg-blue-800'} text-white font-roboto px-2 text-sm hover:bg-blue-400 rounded-sm h-fit w-fit p-1`}>{pageItem}</button>
           )
         }
-      </div>
-      <div className="flex justify-center items-center mt-4">
       </div>
     </div>
   );

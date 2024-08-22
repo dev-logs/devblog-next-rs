@@ -41,6 +41,11 @@ export const Post = defineDocumentType(() => ({
             type: "string",
             resolve: (post: any) => url(post),
         },
+        slug: {
+          type: "string",
+          required: true,
+          resolve: (post: any) => post.title.toLowerCase().replaceAll(' ', '-')
+        },
         publicImage: {
             type: "string",
             resolve: (post: any) => post.image.filePath.replace("../public", ""),

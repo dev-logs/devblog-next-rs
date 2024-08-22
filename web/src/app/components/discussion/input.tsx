@@ -1,3 +1,4 @@
+'use client'
 import { useAuthentication } from '@/app/hooks/authentication'
 import { useService } from '@/app/hooks/service'
 import { Post } from 'contentlayer/generated'

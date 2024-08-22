@@ -1,20 +1,11 @@
-"use client";
-
-import { allPosts, Post } from "contentlayer/generated";
-import { Post as PostEntity } from '@devlog/schema-ts'
+import { allPosts } from "contentlayer/generated";
 import { MdxContent } from "../mdx";
 import { TableOfContent } from "../table-of-content";
 import dynamic from "next/dynamic";
-import { Suspense, useCallback, useEffect } from "react";
-import { TASKS } from "@/app/posts/[slug]/config";
-import {
-  RiveEmojiFaceLove,
-  RiveText,
-  ThumbUpRiveComponent,
-} from "@/app/components/rive/rive-component";
-import { Discussions } from "@/app/components/discussion";
+import { Suspense } from "react";
+import { tasks, TASKS } from "@/app/posts/[slug]/config";
 import { Toaster } from "react-hot-toast";
-import { useService } from "@/app/hooks/service";
+import { PostInteraction } from "./client";
 
 export default function PostPageContent(props: any) {
   return (
@@ -29,24 +20,12 @@ export default function PostPageContent(props: any) {
 function HtmlDom(props: any = {}) {
   const {
     params: { slug },
-    tasks,
   } = props;
 
-  const post = allPosts.find((post) => post.url.includes(slug))!;
-  const getPostDb = useService().post().get();
-  const viewPost = useService().post().view();
-  const TitleLazy: any = dynamic(() => tasks[TASKS.POST_TITLE]);
-  const FooterLazy: any = dynamic(() => tasks[TASKS.POST_FOOTER]);
-
-  useEffect(() => {
-    if (post) {
-      getPostDb.setTitle(post.title)
-      getPostDb.trigger()
-      viewPost.setPostTitle(post.title)
-      viewPost.trigger()
-    }
-  }, [post])
-
+  const post = allPosts.find((post) => post.slug === slug)!;
+  const TitleLazy: any = dynamic(() => (tasks as any)[TASKS.POST_TITLE]);
+  const FooterLazy: any = dynamic(() => (tasks as any)[TASKS.POST_FOOTER]);
+ 
   return (
     <div className={"h-full w-full"}>
       <Toaster position="bottom-right"/>
@@ -61,8 +40,7 @@ function HtmlDom(props: any = {}) {
           <div className="flex lg:justify-start flex-col cols-span-full lg:pl-16 items-center lg:col-span-6 col-span-full md:mt-8 mt-2">
             <article className="max-w-full px-5 sm:px-8 rounded-xl backdrop-blur-lg">
               <MdxContent post={post}/>
-              <LikeSection post={post} totalLikes={getPostDb.data?.totalLikes ?? 0} totalViews={viewPost.data ?? getPostDb.data?.totalViews ?? 0}/>
-              <Discussions post={post}/>
+              <PostInteraction post={post}/>
             </article>
           </div>
         </div>
@@ -76,36 +54,3 @@ function HtmlDom(props: any = {}) {
   );
 }
 
-function LikeSection(props: {post: Post, totalViews: number, totalLikes: number}) {
-  const {post, totalLikes, totalViews} = props
-
-  const likeService = useService().post().like()
-  const likeHandler = useCallback((count: number) => {
-    likeService.setCount(count)
-    likeService.setPostTitle(post.title)
-    likeService.trigger()
-  }, [post])
-
-  return <div className="flex flex-row top-32 mt-10 justify-start items-start">
-    <div className="flex flex-row rounded-lg">
-      <div className="w-[100px] h-[100px]">
-        <RiveText text={`${likeService.data ?? totalLikes} likes`} />
-      </div>
-      <div
-        className="w-[90px] h-[90px]"
-        style={{ translate: "-50% 5%" }}>
-        <ThumbUpRiveComponent onLikeEnd={likeHandler}/>
-      </div>
-      <div className="flex flex-row" style={{ translate: "-30%" }}>
-        <div className="w-[100px] h-[100px]">
-          <RiveText text={`${totalViews} views`} />
-        </div>
-        <div
-          className="w-[60px] h-[60px]"
-          style={{ translate: "-30% 30%" }}>
-          <RiveEmojiFaceLove />
-        </div>
-      </div>
-    </div>
-  </div>
-}

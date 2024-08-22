@@ -38,7 +38,7 @@ impl Service<GetListDiscussionsParam, GetListDiscussionsResult> for DiscussionSe
         let result: SurrealQR = self.db.query(
             surreal_quote!(r##"
                 SELECT *, in AS user 
-                FROM #id(&params.post_id)<-discussions 
+                FROM #id(&params.post_id)<-discussion 
                 ORDER BY created_at 
                 DESC START #start 
                 LIMIT #limit 

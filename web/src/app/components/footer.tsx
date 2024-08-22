@@ -13,7 +13,7 @@ export const FooterHtml = (props: any) => {
     <>
       <div
         ref={ref}
-        className={`app-footer font-roboto z-20 flex flex-col md:h-full h-[50vh] w-screen items-center md:pt-14 pt-8`}>
+        className={`app-footer font-roboto z-20 flex flex-col md:h-[80vh] h-[60vh] w-screen items-center justify-center md:pt-14 pt-8 overflow-hidden`}>
         <span className="font-head md:scale-y-[2] scale-y-[3.55] align-bottom md:pt-14 pt-1 text-[24vw] h-fit text-white uppercase">
           DEVLOG STUDIO
         </span>

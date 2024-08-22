@@ -1,3 +1,4 @@
+'use client'
 import { ThreeDCanvas } from "@/app/components/canvas";
 import { PostBackground } from "@/app/posts/background";
 import { FooterHtml } from "@/app/components/footer";

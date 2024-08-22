@@ -1,18 +1,21 @@
-'use client'
-import React, {Suspense, useMemo} from "react";
+import React from "react";
 import PostPageContent from "@/app/posts/[slug]/content";
-import {LoadingOverlay} from "@/app/components/loading-overlay";
-import {getTask} from "@/app/posts/[slug]/config";
+import { allPosts } from "contentlayer/generated";
+import { PostDetailLoading } from "./client";
+
+export async function generateStaticParams() {
+  return allPosts.map((post) => {
+    return {
+      slug: post.slug
+    }
+  })
+}
 
 export default function PostPage(props: any) {
-    const tasks = useMemo(() => getTask(), [])
-
     return <div className={'h-screen'}>
-        <div className={"fixed top-0 left-0 z-10 h-full"}>
-            <LoadingOverlay tasks={tasks}/>
-        </div>
+        <PostDetailLoading/>
         <div className={`absolute top-0 left-0 z-0`}>
-            <PostPageContent {...props} tasks={tasks}/>
+            <PostPageContent {...props}/>
         </div>
     </div>
 }

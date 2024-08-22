@@ -1,13 +1,4 @@
 import { Post } from "contentlayer/generated"
-import { ThreeDCanvas } from "@/app/components/canvas"
-import { useMemo } from "react"
-import CustomShaderMaterial from "three-custom-shader-material/vanilla"
-import * as THREE from "three"
-import { useTexture } from "@react-three/drei"
-import { useFrame } from "@react-three/fiber"
-import GLSL from "../glsl"
-import { EffectComposer, Noise } from "@react-three/postprocessing"
-import { BlendFunction } from "postprocessing"
 
 export default function PostTitle(props: any) {
   const { post }: { post: Post } = props || {};
@@ -34,7 +25,7 @@ export default function PostTitle(props: any) {
             </span>
             <img
               className="object-cover max-h-[50vh] h-auto w-[90vw]"
-             src={post.publicImage}
+              src={post.publicImage}
            />
           </div>
         </div>
@@ -43,59 +34,3 @@ export default function PostTitle(props: any) {
   );
 }
 
-const HtmlDOM = (props: any) => {
-  const { post } = props || {};
-
-  return (
-    <div className="w-fit h-screen flex flex-row pt-14">
-      <div className="z-0 w-[70vw] h-[30vh] flex flex-col -rotate-90 gap-4 items-center">
-        <span className="lg:text-7xl md:text-4xl overflow-visible text-3xl font-bold font-graduate text-gray-200">
-          DEVLOGS STUDIO
-        </span>
-      </div>
-      <div className="flex flex-col w-full h-full justify-start items-center z-10 px-3">
-        <span className="lg:text-7xl md:text-4xl 2xl:max-w-[70vw] lg:px-20 px-10 text-3xl text-center font-bold font-graduate text-gray-200"></span>
-      </div>
-    </div>
-  );
-};
-
-function Background(props: {}) {
-  const perlinSampler = useTexture("/images/perlin.png");
-  const [material] = useMemo(() => {
-    const material = new CustomShaderMaterial({
-      baseMaterial: THREE.MeshBasicMaterial,
-      fragmentShader: GLSL.PerlinBackgroundFragmentShader,
-      vertexShader: GLSL.PerlinBackgroundVertexShader,
-      transparent: true,
-      uniforms: {
-        uTime: { value: 0 },
-        uNoiseSampler: { value: perlinSampler },
-        uColor1: { value: new THREE.Color("#E1AFD1") },
-        uColor2: { value: new THREE.Color("#AD88C6") },
-      },
-    });
-
-    return [material];
-  }, []);
-
-  useFrame((tick) => {
-    const elapsed = tick.clock.getElapsedTime();
-    material.uniforms.uTime.value = elapsed;
-  });
-
-  return (
-    <>
-      <EffectComposer enableNormalPass={false} resolutionScale={1}>
-        <Noise
-          opacity={0.7}
-          premultiply
-          blendFunction={BlendFunction.OVERLAY}
-        />
-      </EffectComposer>
-      <mesh material={material} scale-x={40} scale-y={10}>
-        <planeGeometry args={[1, 1, 1, 1]} />
-      </mesh>
-    </>
-  );
-}

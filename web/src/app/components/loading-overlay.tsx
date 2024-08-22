@@ -1,6 +1,6 @@
 'use client'
 
-import {useEffect, useRef, useState} from "react"
+import {useEffect, useMemo, useRef, useState} from "react"
 import {useProgress} from "@react-three/drei"
 import gsap from "gsap"
 import noop from 'lodash/noop'
@@ -13,7 +13,7 @@ export const LoadingOverlay = (props: any) => {
 
     const [progress, updateProgress] = useState(0)
     const [htmlProgress, updateHtmlProgress] = useState(0)
-    const {active, progress: modelProgress, errors, item, loaded, total} = useProgress()
+    const {progress: modelProgress, loaded, total} = useProgress()
 
     const [isComplete, updateComplete] = useState(false)
 
