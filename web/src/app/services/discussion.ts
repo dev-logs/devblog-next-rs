@@ -37,12 +37,15 @@ export default class DiscussionService extends gRPCClientBase<typeof DevblogDisc
     return true
   }
 
-  async getDiscussions(page: Paging): Promise<{ discussions: Discussion[], paging: Paging }> {
+  async getDiscussions(page: Paging, title: string): Promise<{ discussions: Discussion[], paging: Paging }> {
     if (page.page < 1) throw 'The page must be a positive number'
     if (page.rowsPerPage < 1) throw 'The rowsPerPage must be a positive number'
 
     const request = new GetDiscussionsRequest()
     request.paging = page
+    request.postId = new PostId({
+      title
+    })
 
     const response = await this.client.get_discussions(request, { headers: this.getHeader() }) as GetDiscussionsResponse
 

@@ -1,15 +1,15 @@
-use std::time::Duration;
-
 use core_services::services::base::{Resolve, Service};
-use schema::{devlog::{devblog::entities::Discussion, rpc::Paging}, surrealdb::links::user_link};
+use schema::{devlog::{devblog::entities::{Discussion, PostId}, entities::User, rpc::Paging}, surrealdb::links::user_link};
 use surreal_derive_plus::surreal_quote;
 use surreal_devl::wrapper::SurrealQR;
 use core_services::services::errors::Errors;
+use surrealdb::opt::RecordId;
 use super::DiscussionService;
 
 #[derive(Debug, Clone)]
 pub struct GetListDiscussionsParam {
-    pub paging: Paging
+    pub paging: Paging,
+    pub post_id: PostId
 }
 
 #[derive(Debug, Clone)]
@@ -35,7 +35,15 @@ impl Service<GetListDiscussionsParam, GetListDiscussionsResult> for DiscussionSe
             total_pages += 1;
         }
 
-        let result: SurrealQR = self.db.query(surreal_quote!("SELECT *, in AS user FROM discussion ORDER BY created_at DESC START #start LIMIT #limit FETCH user")).await?.take(0)?;
+        let result: SurrealQR = self.db.query(
+            surreal_quote!(r##"
+                SELECT *, in AS user 
+                FROM #id(&params.post_id)<-discussions 
+                ORDER BY created_at 
+                DESC START #start 
+                LIMIT #limit 
+                FETCH user"##)
+            ).await?.take(0)?;
         let result = result.array()?;
         if None == result.as_ref() {
             return Ok(GetListDiscussionsResult {discussions: vec![], paging: Paging {

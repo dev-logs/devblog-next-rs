@@ -20,6 +20,12 @@ export const Discussions = ({ post }: DiscussionsProps) => {
   const [pageList, setPageList] = useState<number[]>([])
 
   useEffect(() => {
+    if (post) {
+      getDiscussions.setTitle(post.title)
+    }
+  }, [post])
+
+  useEffect(() => {
     let newPageList: number[] = []
     for (let i = 0; i < paging.page.totalPages; i++) {
       newPageList.push(i + 1)

@@ -1,4 +1,4 @@
-import { useAuthentication, useAuthenticationPopup } from '@/app/hooks/authentication'
+import { useAuthentication } from '@/app/hooks/authentication'
 import { useService } from '@/app/hooks/service'
 import { Post } from 'contentlayer/generated'
 import React, {useCallback, useEffect} from 'react'
@@ -45,7 +45,7 @@ export const DiscussionInput = ({ post, onSent }: { post: Post, onSent: () => vo
         }
         <div className="bg-black border border-blue-500 rounded-b-md rounded-tr-md p-2 mb-4 font-roboto">
             <textarea
-              value={newDiscussion.contentState}
+              value={newDiscussion.contentState || ''}
               onChange={(e) => {newDiscussion.setContentState(e.target.value)}}
               className="w-full h-fit font-roboto focus:border-none border-none mb-2 outline-none bg-transparent bg-opacity-0">
             </textarea>

@@ -1,10 +1,10 @@
 import * as THREE from 'three'
-import {useCallback, useEffect, useMemo, useRef, useState} from 'react'
+import {useEffect, useMemo, useRef} from 'react'
 import CustomShaderMaterial from 'three-custom-shader-material/vanilla'
 import {MacOne} from '../models/macone'
 import Shaders from '../glsl'
 import {useFrame} from '@react-three/fiber'
-import {Environment, SpotLightShadow, Stage, useTexture} from '@react-three/drei'
+import {Environment, useTexture} from '@react-three/drei'
 
 export const Tivi = (props: any) => {
     const beerMugTexture = useTexture('/images/dale-typing-pixelated-frame.jpg')
@@ -78,3 +78,4 @@ export const Tivi = (props: any) => {
 }
 
 useTexture.preload('/images/dale-typing-pixelated-frame.jpg')
+

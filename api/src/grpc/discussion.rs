@@ -48,7 +48,8 @@ impl DevblogDiscussionService for DiscussionGrpcService {
         let request = request.get_ref();
         let service = DiscussionService {db:DB.clone(), s3: S3Client::new().await };
         let param = GetListDiscussionsParam {
-            paging: request.paging.as_ref().unwrap().clone()
+            paging: request.paging.as_ref().unwrap().clone(),
+            post_id: request.post_id.clone().unwrap()
         };
 
         let result = service.execute(param).await?;

@@ -139,7 +139,7 @@ export function useService() {
     discussion: () => {
       return {
         newDiscussion: () => usePromise(discussionService.newDiscussion.bind(discussionService), ['content', 'title']),
-        getDiscussions: () => usePromise(discussionService.getDiscussions.bind(discussionService), ['page'])
+        getDiscussions: () => usePromise(discussionService.getDiscussions.bind(discussionService), ['page', 'title'])
       };
     },
     auth: () => {
