@@ -1,22 +1,12 @@
 use core_services::services::base::{Resolve, Service};
-use schema::{devlog::{devblog::entities::{Discussion, PostId}, entities::User, rpc::Paging}, surrealdb::links::user_link};
+use schema::{
+    devlog::{devblog::entities::Discussion, rpc::Paging},
+    surrealdb::links::user_link
+};
 use surreal_derive_plus::surreal_quote;
 use surreal_devl::wrapper::SurrealQR;
 use core_services::services::errors::Errors;
-use surrealdb::opt::RecordId;
-use super::DiscussionService;
-
-#[derive(Debug, Clone)]
-pub struct GetListDiscussionsParam {
-    pub paging: Paging,
-    pub post_id: PostId
-}
-
-#[derive(Debug, Clone)]
-pub struct GetListDiscussionsResult {
-    pub discussions: Vec<Discussion>,
-    pub paging: Paging
-}
+use super::{DiscussionService, GetListDiscussionsParam, GetListDiscussionsResult};
 
 impl Service<GetListDiscussionsParam, GetListDiscussionsResult> for DiscussionService {
     async fn execute(self, params: GetListDiscussionsParam) -> Resolve<GetListDiscussionsResult> {
@@ -75,3 +65,4 @@ impl Service<GetListDiscussionsParam, GetListDiscussionsResult> for DiscussionSe
         );
     }
 }
+

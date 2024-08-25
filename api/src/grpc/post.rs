@@ -1,25 +1,37 @@
 use core_services::{services::base::Service, DB};
 use log::info;
-use schema::devlog::{devblog::rpc::{post_interaction_request, post_interaction_response::InteractionResult, post_service_server::PostService, CreatePostRequest, CreatePostResponse, GetPostRequest, GetPostResponse, PostInteractionRequest, PostInteractionResponse}, entities::{Like, User}};
+use schema::devlog::{
+    devblog::rpc::{
+        post_interaction_request,
+        post_interaction_response::InteractionResult,
+        post_service_server::PostService as PostGrpcService,
+        CreatePostRequest,
+        CreatePostResponse,
+        GetPostRequest,
+        GetPostResponse,
+        PostInteractionRequest,
+        PostInteractionResponse
+    },
+    entities::{Like, User}
+};
 use tonic::{Request, Response, Status};
 
-use crate::services::{post::interact::{Interaction, PostInteractionParams, PostInteractionResult, PostInteractionService}, post::get_post::{GetPostParams, GetPostService}};
-use crate::services::post::create_post::{CreatePostParams, CreatePostService};
+use crate::services::post::*;
 
 #[derive(Debug, Clone)]
-pub struct PostGrpcService {}
+pub struct PostGrpcServer {}
 
-impl PostGrpcService {
+impl PostGrpcServer {
    pub fn new() -> Self {
        Self {}
    }
 }
 
 #[tonic::async_trait]
-impl PostService for PostGrpcService {
+impl PostGrpcService for PostGrpcServer {
     async fn get(&self, request: Request<GetPostRequest>) -> Result<Response<GetPostResponse>, tonic::Status> {
         let request = request.get_ref();
-        let service = GetPostService {
+        let service = PostService {
             db: DB.clone()
         };
 
@@ -38,7 +50,7 @@ impl PostService for PostGrpcService {
     async fn create(&self, request: Request<CreatePostRequest>) -> Result<Response<CreatePostResponse>, tonic::Status> {
         let user: &User = request.extensions().get::<User>().ok_or(Status::unauthenticated("You're not authorize"))?;
 
-        let service = CreatePostService {
+        let service = PostService {
             db: DB.clone()
         };
 
@@ -57,7 +69,7 @@ impl PostService for PostGrpcService {
     async fn interact(&self, request: Request<PostInteractionRequest>) -> Result<Response<PostInteractionResponse>, tonic::Status> {
         let user: &User = request.extensions().get::<User>().ok_or(Status::unauthenticated("You're not authorize"))?;
 
-        let service = PostInteractionService {
+        let service = PostService {
             db: DB.clone()
         };
 

@@ -4,3 +4,6 @@
 [submodule "schema"]
 	path = schema
 	url = git@github.com:dev-logs/schema.git
+[submodule "devlog-sdk"]
+	path = devlog-sdk
+	url = git@github.com:dev-logs/devlog-sdk.git

@@ -1,10 +1,23 @@
+#![feature(trait_alias)]
 pub mod grpc;
 pub mod config;
 pub mod services;
+mod utils;
 
-use core_services::{grpc::middle::{auth::AuthInterceptor, response_handler::ResponseHeaderHandler}, logger, s3::S3Client, DB, S3_CLIENT};
-use grpc::{authentication::AuthenticationGrpcService, base::GRPCService, discussion::DiscussionGrpcService, post::PostGrpcService};
-use surrealdb::{engine::remote::ws::Ws, opt::auth::Root};
+use std::{sync::Arc, time::Duration};
+
+use core_services::{
+    db::{SurrealDbConnection, SurrealDbConnectionInfo}, grpc::middle::response_handler::ResponseHeaderHandler, logger, s3::S3Client, utils::pool_allocator::{PoolAllocator, PoolRequest}
+};
+use devlog_sdk::{grpc::middleware::auth::AuthInterceptor, sdk::SurrealDbConnection};
+use grpc::{
+    authentication::AuthenticationGrpcService,
+    base::GRPCService,
+    discussion::DiscussionGrpcService,
+    post::PostGrpcServer
+};
+use surrealdb::{engine::remote::ws::Ws, opt::auth::{Database, Root}};
+use tokio::sync::{Mutex, OnceCell};
 use tonic_middleware::{InterceptorFor, MiddlewareLayer};
 use tower_http::cors::*;
 
@@ -13,7 +26,12 @@ use core_services::config::CONFIGS as CORE_CONFIGS;
 use tonic::transport::Server;
 use log::info;
 use tonic_web::*;
-use schema::devlog::{devblog::rpc::{devblog_discussion_service_server::DevblogDiscussionServiceServer, post_service_server::PostServiceServer}, rpc::authentication_service_server::AuthenticationServiceServer};
+use schema::devlog::{
+    self, devblog::rpc::{
+        devblog_discussion_service_server::DevblogDiscussionServiceServer,
+        post_service_server::PostServiceServer
+    }, rpc::authentication_service_server::AuthenticationServiceServer
+};
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -22,33 +40,48 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     info!(target: namespace.as_str(), "{:?}", *CONFIGS);
     info!(target: namespace.as_str(), "{:?}", *CORE_CONFIGS);
 
-    setup_db().await?;
-    setup_s3().await;
+    let (devblog_db, devlog_db) = setup_db().await?;
+    let s3_client = setup_s3().await;
+
+    let devlog_db_request = PoolRequest {
+        pool: PoolAllocator::new(10, 100, devlog_sdk::config::CONFIGS.surrealdb.clone(), Duration::new(10, 0))
+    };
+
+    let sdk = devlog_sdk::sdk::DevlogSdk::new(smtp_client, s3, devlog_db_request);
     setup_grpc_server().await?;
 
     Ok(())
 }
 
-async fn setup_db() -> Result<(), Box<dyn std::error::Error>> {
+type DevblogPool = OnceCell<Arc<Mutex<PoolAllocator<SurrealDbConnection>>>>;
+type DevlogPool = OnceCell<Arc<Mutex<PoolAllocator<SurrealDbConnection>>>>;
+
+async fn setup_db() -> Result<(DevblogPool, DevlogPool), Box<dyn std::error::Error>> {
     let ns = "devblog-api-db";
-    DB.connect::<Ws>(CONFIGS.surreal_db.socket_address.clone()).await.expect("Failed while connecting to surreal db");
-    DB.use_ns(CONFIGS.surreal_db.namespace.clone()).use_db(CONFIGS.surreal_db.db_name.clone()).await.unwrap();
-    DB.signin(Root {
-        username: CONFIGS.surreal_db.db_username.clone().as_str(),
-        password: CONFIGS.surreal_db.db_password.clone().as_str()
-    }).await.unwrap();
+    let devblog_db: DevblogPool = OnceCell::const_new();
+    let devlog_db: DevlogPool = OnceCell::const_new();
 
-    let db_version = DB.version().await.expect("Failed to get the surreal db version");
+    let devblog_db = devblog_db.get_or_init(|| async move {
+        info!(target: ns, "Connecting to devblog database");
+        let db_pool = PoolAllocator::new(10, 100, CONFIGS.surreal_db.clone(), Duration::new(10, 0));
+        Arc::new(Mutex::new(db_pool)) 
+    }).await;
 
-    info!(target: &ns, "Connected to SurrealDb version: {} {}", db_version, CONFIGS.surreal_db.socket_address);
+    let devlog_db = devlog_db.get_or_init(|| async move {
+        info!(target: ns, "Connecting to devlog database");
+        let db_pool = PoolAllocator::new(10, 100, devlog_sdk::config::CONFIGS.surrealdb.clone(), Duration::new(10, 0));
+        Arc::new(Mutex::new(db_pool)) 
+    }).await;
 
-    Ok(())
+    Ok((devblog_db, devlog_db))
 }
 
-async fn setup_s3() {
-    S3_CLIENT.get_or_init(|| async move {
+async fn setup_s3() -> OnceCell<S3Client> {
+    let s3_client: OnceCell<S3Client> = OnceCell::const_new();
+
+    s3_client.get_or_init(|| async move {
         S3Client::new().await
-    }).await;
+    }).await
 }
 
 async fn setup_grpc_server() -> Result<(), Box<dyn std::error::Error>> {
@@ -56,7 +89,7 @@ async fn setup_grpc_server() -> Result<(), Box<dyn std::error::Error>> {
     let addr = format!("127.0.0.1:{}", CONFIGS.grpc_server.port).parse()?;
     let discussion_service = DiscussionGrpcService::new();
     let authentication_service = AuthenticationGrpcService::new();
-    let post_service = PostGrpcService::new();
+    let post_server= PostGrpcServer::new();
     let response_handler = ResponseHeaderHandler {};
 
     info!(target: ns, "gRPC server starting at {}", &addr);
@@ -76,10 +109,11 @@ async fn setup_grpc_server() -> Result<(), Box<dyn std::error::Error>> {
             DevblogDiscussionServiceServer::new(discussion_service),
             AuthInterceptor::new()))
         .add_service(InterceptorFor::new(
-            PostServiceServer::new(post_service),
+            PostServiceServer::new(post_server),
             AuthInterceptor::new()))
         .serve(addr)
         .await?;
 
     Ok(())
 }
+

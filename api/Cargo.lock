@@ -1059,6 +1059,7 @@ checksum = "06ea2b9bc92be3c2baa9334a323ebca2d6f074ff852cd1d7b11064035cd3868f"
 [[package]]
 name = "core-services"
 version = "0.1.0"
+source = "git+ssh://git@github.com/dev-logs/core-services.git#3334aa47ce933d4cc45f11312f7e09894d4d5262"
 dependencies = [
  "aws-config",
  "aws-sdk-s3",
@@ -1248,6 +1249,7 @@ version = "0.1.0"
 dependencies = [
  "chrono",
  "core-services",
+ "devlog-sdk",
  "jsonwebtoken",
  "lazy_static",
  "log",
@@ -1267,6 +1269,30 @@ dependencies = [
  "tonic-middleware",
  "tonic-web",
  "tower-http",
+]
+
+[[package]]
+name = "devlog-sdk"
+version = "0.1.0"
+source = "git+ssh://git@github.com/dev-logs/devlog-sdk.git#015b13b298b790a1a7dbefd371eff42f44cca6f6"
+dependencies = [
+ "chrono",
+ "core-services",
+ "jsonwebtoken",
+ "lazy_static",
+ "log",
+ "once_cell",
+ "schema",
+ "serde",
+ "serde_derive",
+ "serde_json",
+ "surreal_derive_plus",
+ "surreal_devl",
+ "surrealdb",
+ "surrealdb_id",
+ "tokio",
+ "tonic",
+ "tonic-middleware",
 ]
 
 [[package]]
@@ -3604,6 +3630,7 @@ dependencies = [
 [[package]]
 name = "schema"
 version = "0.1.0"
+source = "git+ssh://git@github.com/dev-logs/schema.git#b450c0231e0a9b8f8dedcb69c3956a5cb3b0f1af"
 dependencies = [
  "prost",
  "prost-types",

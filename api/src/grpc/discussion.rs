@@ -1,15 +1,13 @@
-use log::info;
 use core_services::s3::S3Client;
 use core_services::services::base::Service;
-use core_services::S3_CLIENT;
 use schema::devlog::entities::User;
 use tonic::{Result, Request, Response, Status};
 use schema::devlog::devblog::rpc::devblog_discussion_service_server::DevblogDiscussionService;
 use schema::devlog::devblog::rpc::{GetDiscussionsRequest, GetDiscussionsResponse, NewDiscussionRequest, NewDiscussionResponse};
 
 use crate::grpc::base::GRPCService;
-use crate::services::discussion::get_discussion::GetListDiscussionsParam;
-use crate::services::discussion::new_discussion::NewDiscussionParams;
+use crate::services::discussion::GetListDiscussionsParam;
+use crate::services::discussion::NewDiscussionParams;
 use crate::services::discussion::DiscussionService;
 use crate::DB;
 
