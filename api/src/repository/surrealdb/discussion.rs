@@ -1,0 +1,54 @@
+use core_services::{db::{SurrealDbConnection, SurrealDbConnectionInfo}, services::{base::Resolve, errors::Errors}, utils::pool::request::PoolRequest, Db};
+use schema::devlog::{devblog::entities::{Discussion, PostId}, rpc::Paging, entities::UserId};
+use surreal_derive_plus::surreal_quote;
+use surreal_devl::wrapper::SurrealQR;
+use surrealdb_id::relation::r#trait::IntoRelation;
+
+use crate::repository::discussion::DiscussionRepository;
+
+pub struct DiscussionSurrealDbRepository {
+    db: PoolRequest<SurrealDbConnection, SurrealDbConnectionInfo>
+}
+
+#[async_trait::async_trait]
+impl DiscussionRepository for DiscussionSurrealDbRepository {
+    async fn get_discussions(&self, post_id: &PostId, start: i32, limit: i32) -> Resolve<Vec<Discussion>> {
+        let db = self.db.retreive().await.expect("Failed to connect db");
+        let result: SurrealQR = db.query(
+            surreal_quote!(r##"
+                SELECT *, in AS user 
+                FROM #id(post_id)<-discussion 
+                ORDER BY created_at 
+                DESC START #start 
+                LIMIT #limit 
+                FETCH user"##)
+            ).await?.take(0)?;
+        let result = result.array()?;
+        let result = result.unwrap().0;
+        Ok(result.into_iter().map(|it| Discussion::from(it)).collect::<Vec<Discussion>>())
+    }
+
+    async fn count_discussion(&self, post_id: &PostId) -> Resolve<i32> {
+        let db = self.db.retreive().await.expect("Failed to connect to db");
+        let total_count: Option<i32> = db.query(surreal_quote!("SELECT count() from #id(post_id)<-discussion group all")).await?.take((0, "count"))?;
+        let total_count = total_count.expect("Can not count records in table discussions");
+        Ok(total_count)
+    }
+
+    async fn new_discussion(&self, discussion: Discussion, user: UserId, post: PostId) -> Resolve<Discussion> {
+        let db = self.db.retreive().await.expect("Failed to connect to db");
+        let discussion_relation = discussion.relate(user, post);
+        let created_discussion: SurrealQR = db.query(
+            surreal_quote!("SELECT * FROM (#relate(&discussion_relation)) FETCH out")).await?.take(0)?;
+        let created_discussion = created_discussion.object()?.map(|it| Discussion::from(it));
+        if None == created_discussion.as_ref() {
+            return Err(Errors::DatabaseError {
+                message: "Failed to insert into db".to_string(),
+                db_name: "surrealdb".to_string()
+            })
+        }
+
+        Ok(created_discussion.unwrap())
+    }
+}
+

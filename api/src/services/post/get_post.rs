@@ -5,8 +5,9 @@ use surreal_devl::wrapper::{QlPath, SurrealQR};
 
 use super::{GetPostParams, GetPostResonse, PostService};
 
+#[async_trait::async_trait]
 impl Service<GetPostParams, GetPostResonse> for PostService {
-    async fn execute(self, params: GetPostParams) -> Resolve<GetPostResonse> {
+    async fn execute(&self, params: GetPostParams) -> Resolve<GetPostResonse> {
         let post_id: PostId = PostId {
             title: params.title.clone(),
         };

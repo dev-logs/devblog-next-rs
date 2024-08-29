@@ -5,31 +5,24 @@ use tonic::{Result, Request, Response, Status};
 use schema::devlog::devblog::rpc::devblog_discussion_service_server::DevblogDiscussionService;
 use schema::devlog::devblog::rpc::{GetDiscussionsRequest, GetDiscussionsResponse, NewDiscussionRequest, NewDiscussionResponse};
 
+use crate::di::ApiDependenciesInjection;
 use crate::grpc::base::GRPCService;
 use crate::services::discussion::GetListDiscussionsParam;
 use crate::services::discussion::NewDiscussionParams;
 use crate::services::discussion::DiscussionService;
 use crate::DB;
 
-#[derive(Debug, Clone)]
-pub struct DiscussionGrpcService {}
-
-impl GRPCService for DiscussionGrpcService {
-    fn new() -> Self {
-       Self {}
-    }
+#[derive(Clone)]
+pub struct DiscussionGrpcService {
+    di: &'static ApiDependenciesInjection
 }
 
-#[tonic::async_trait]
+#[async_trait::async_trait]
 impl DevblogDiscussionService for DiscussionGrpcService {
     async fn new_discussion(&self, request: Request<NewDiscussionRequest>) -> Result<Response<NewDiscussionResponse>, Status> {
         let user: &User = request.extensions().get::<User>().ok_or(Status::unauthenticated("You're not authorize"))?;
         let request = request.get_ref();
-        let s3 = S3Client::new().await;
-        let service = DiscussionService {
-            db: DB.clone(),
-            s3
-        };
+        let service = self.di.get_discussion_service();
 
         let params = NewDiscussionParams {
             user,

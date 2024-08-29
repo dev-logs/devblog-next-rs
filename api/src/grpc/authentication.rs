@@ -1,40 +1,27 @@
-use crate::DB;
+use crate::di::ApiDependenciesInjection;
 
-use super::base::GRPCService;
-use core_services::{
-    s3::S3Client,
-    smtp::client::SmtpClient,
-    services::base::*
-};
-use devlog_sdk::services::{signin::SigninService, signup::SignupService, token::TokenService};
+use core_services::services::base::Service;
+use devlog_sdk::{sdk::DependenciesInjection, services::user::{SignInService, SignupService}};
 use schema::devlog::rpc::{
     authentication_service_server::AuthenticationService, SigninRequest, SigninResponse,
     SignupRequest, SignupResponse,
 };
 use tonic::{Request, Response, Status};
 
-#[derive(Debug, Clone)]
-pub struct AuthenticationGrpcService {}
-
-impl GRPCService for AuthenticationGrpcService {
-    fn new() -> Self {
-        Self {}
-    }
+#[derive(Clone)]
+pub struct AuthenticationGrpcService {
+    di: &'static ApiDependenciesInjection
 }
 
-#[tonic::async_trait]
+#[async_trait::async_trait]
 impl AuthenticationService for AuthenticationGrpcService {
     async fn signin(
         &self,
         request: Request<SigninRequest>,
     ) -> Result<Response<SigninResponse>, Status> {
         let request = request.get_ref();
-        let service = SigninService {
-            db: DB.clone(),
-            s3: S3Client::new().await,
-            token_service: TokenService {},
-        };
 
+        let service = self.di.devlog_sdk.get().unwrap().signin_service();
         let result = service.execute(request.signin.as_ref().unwrap()).await?;
 
         let res = Response::new(SigninResponse {
@@ -50,14 +37,7 @@ impl AuthenticationService for AuthenticationGrpcService {
         request: Request<SignupRequest>,
     ) -> Result<Response<SignupResponse>, Status> {
         let request = request.get_ref();
-        let s3 = S3Client::new().await;
-        let smtp_client = SmtpClient::new();
-        let service = SignupService {
-            s3,
-            db: DB.clone(),
-            smtp_client,
-            token_service: TokenService {}
-        };
+        let service = self.di.devlog_sdk.get().unwrap().signup_service();
 
         let result = service.execute(request.signup.as_ref().unwrap()).await?;
 
@@ -67,3 +47,4 @@ impl AuthenticationService for AuthenticationGrpcService {
         }))
     }
 }
+

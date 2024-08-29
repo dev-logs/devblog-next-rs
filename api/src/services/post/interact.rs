@@ -9,8 +9,9 @@ use surrealdb_id::relation::r#trait::IntoRelation;
 
 use super::{Interaction, PostInteractionParams, PostInteractionResult, PostService};
 
+#[async_trait::async_trait]
 impl Service<PostInteractionParams, PostInteractionResult> for PostService {
-    async fn execute(self, params: PostInteractionParams) -> Resolve<PostInteractionResult> {
+    async fn execute(&self, params: PostInteractionParams) -> Resolve<PostInteractionResult> {
         let result = match params.interaction {
             Interaction::Like(action) => {
                 if action.count < 1 {

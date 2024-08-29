@@ -35,6 +35,7 @@ thiserror = "1.0.61"
 jsonwebtoken = "9.3.0"
 tonic-middleware = "0.1.4"
 chrono = "0.4.38"
+async-trait = "0.1.13"
 
 [net]
 retry = 3                   # network retries

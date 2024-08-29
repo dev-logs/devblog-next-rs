@@ -27,7 +27,7 @@ impl PostGrpcServer {
    }
 }
 
-#[tonic::async_trait]
+#[async_trait::async_trait]
 impl PostGrpcService for PostGrpcServer {
     async fn get(&self, request: Request<GetPostRequest>) -> Result<Response<GetPostResponse>, tonic::Status> {
         let request = request.get_ref();

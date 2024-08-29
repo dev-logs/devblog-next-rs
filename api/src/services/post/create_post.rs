@@ -7,8 +7,9 @@ use surreal_devl::wrapper::SurrealQR;
 
 use super::{CreatePostParams, CreatePostResult, PostService};
 
+#[async_trait::async_trait]
 impl Service<CreatePostParams, CreatePostResult> for PostService {
-    async fn execute(self, params: CreatePostParams) -> Resolve<CreatePostResult> {
+    async fn execute(&self, params: CreatePostParams) -> Resolve<CreatePostResult> {
         if params.user.name != String::from("system") {
             return Err(Errors::UnAuthorized("Only system is allowed".to_owned()));
         }

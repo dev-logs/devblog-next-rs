@@ -3,15 +3,17 @@ use schema::{devlog::{devblog::entities::{Discussion, Post, PostId}, entities::{
 use surreal_derive_plus::surreal_quote;
 use surreal_devl::wrapper::SurrealQR;
 use surrealdb_id::relation::r#trait::IntoRelation;
+use async_trait::async_trait;
 
 use super::{DiscussionService, NewDiscussionParams};
 
+#[async_trait]
 impl <'a> Service<NewDiscussionParams<'a>, Discussion> for DiscussionService {
-    async fn execute(self, params: NewDiscussionParams<'a>) -> Resolve<Discussion> {
+    async fn execute(&self, params: NewDiscussionParams<'a>) -> Resolve<Discussion> {
         let sender_id: UserId = UserId { email: params.user.email.clone() };
         let post_id: &PostId = params.post_id;
 
-        let found_post: Option<Post> = self.db.query(surreal_quote!("SELECT * FROM #val(&post_id)")).await?.take(0)?;
+        let found_post: Option<Post> = self.post_repository.get_post(&params.post_id);
         if found_post.is_none() {
             return Err(Errors::ResourceNotFound("Post does not exist".to_owned()));
         }
@@ -23,18 +25,9 @@ impl <'a> Service<NewDiscussionParams<'a>, Discussion> for DiscussionService {
 
         new_discussion.created_at = Some(created_at);
 
-        let discussion_relation = new_discussion.relate(sender_id, post_id);
-        let created_discussion: SurrealQR = self.db.query(
-            surreal_quote!("SELECT * FROM (#relate(&discussion_relation)) FETCH out")).await?.take(0)?;
-        let created_discussion = created_discussion.object()?.map(|it| Discussion::from(it));
-        if None == created_discussion.as_ref() {
-            return Err(Errors::DatabaseError {
-                message: "Failed to insert into db".to_string(),
-                db_name: "surrealdb".to_string()
-            })
-        }
+        let created_discussion = self.discussion_repository.new_discussion(discussion, sender_id, found_post.unwrap().into()).await?;
 
-        return Ok(created_discussion.unwrap());
+        return Ok(created_discussion);
     }
 }
 

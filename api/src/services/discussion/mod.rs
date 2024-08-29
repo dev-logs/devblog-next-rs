@@ -1,12 +1,14 @@
-use core_services::{s3::S3Client, services::base::Service, Db};
+use core_services::{s3::S3Client, services::base::Service};
 use schema::devlog::{devblog::entities::{Discussion, PostId}, entities::User, rpc::Paging};
+
+use crate::repository::{discussion::DiscussionRepository, post::PostRepository};
 
 pub mod new_discussion;
 pub mod get_discussion;
 
-#[derive(Debug)]
 pub struct DiscussionService {
-    pub db: Db,
+    pub discussion_repository: Box<dyn DiscussionRepository + Send + Sync + 'static>,
+    pub post_repository: Box<dyn PostRepository + Send + Sync + 'static>,
     pub s3: S3Client
 }
 
