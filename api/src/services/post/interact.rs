@@ -1,18 +1,18 @@
 use core_services::services::{base::{Resolve, Service}, errors::Errors};
 use schema::{
-    devlog::entities::{Like, View, Vote},
+    devlog::entities::{Like, UserId, View, Vote},
     misc::datetime::Datetime,
 };
-use surreal_derive_plus::surreal_quote;
-use surreal_devl::wrapper::{QlPath, SurrealQR};
-use surrealdb_id::relation::r#trait::IntoRelation;
-
 use super::{Interaction, PostInteractionParams, PostInteractionResult, PostService};
 
 #[async_trait::async_trait]
 impl Service<PostInteractionParams, PostInteractionResult> for PostService {
     async fn execute(&self, params: PostInteractionParams) -> Resolve<PostInteractionResult> {
-        let result = match params.interaction {
+         let user_id = UserId {
+            email: params.user.email.clone()
+         };
+
+         let result = match params.interaction {
             Interaction::Like(action) => {
                 if action.count < 1 {
                     return Err(Errors::BadRequest("Like count must be positive number".to_owned()))
@@ -23,16 +23,9 @@ impl Service<PostInteractionParams, PostInteractionResult> for PostService {
                     created_at: Some(Datetime::now()),
                 };
 
-                let relation = post_like.relate(&params.user, &params.post_id);
-                self.db.query(surreal_quote!(r#"#relate(&relation)"#)).await?;
+                self.interaction_repository.create_like_post(&user_id, &params.post_id, post_like).await?;
 
-                let result: SurrealQR = self.db.query(surreal_quote!(r##"
-                    SELECT out, math::sum(count) as total_count 
-                    FROM #id(&params.post_id)<-like 
-                    GROUP BY out
-                "##)).await?.take(0)?;
-
-                let total_likes: i32 = result.get(QlPath::Field("total_count"))?.as_i64()? as i32;
+                let total_likes = self.interaction_repository.count_like(&params.post_id).await?;
 
                 PostInteractionResult::Like(total_likes)
             }
@@ -41,14 +34,9 @@ impl Service<PostInteractionParams, PostInteractionResult> for PostService {
                     created_at: Some(Datetime::now()),
                 };
 
-                let relation = post_view.relate(&params.user, &params.post_id);
-                self.db.query(surreal_quote!(r#"#relate(&relation)"#)).await?;
 
-                let result: SurrealQR = self.db.query(surreal_quote!("
-                        SELECT out, count() as total_count from #id(&params.post_id)<-view 
-                        GROUP BY out
-                ")).await?.take(0)?;
-                let total_views: i32 = result.get(QlPath::Field("total_count"))?.as_i64()? as i32;
+                self.interaction_repository.create_view_post(&user_id, &params.post_id, post_view).await?;
+                let total_views = self.interaction_repository.count_view(&params.post_id).await?;
 
                 PostInteractionResult::View(total_views)
             },
@@ -57,14 +45,8 @@ impl Service<PostInteractionParams, PostInteractionResult> for PostService {
                     created_at: Some(Datetime::now()),
                 };
 
-                let relation = post_vote.relate(&params.user, &params.post_id);
-                self.db.query(surreal_quote!(r#"#relate(&relation)"#)).await?;
-
-                let result: SurrealQR = self.db.query(surreal_quote!("
-                        SELECT out, count() as total_count from #id(&params.post_id)<-vote
-                        GROUP BY out"
-                )).await?.take(0)?;
-                let total_votes: i32 = result.get(QlPath::Field("total_count"))?.as_i64()? as i32;
+                self.interaction_repository.create_vote_post(&user_id, &params.post_id, vote_psot).await?;
+                let total_votes = self.interaction_repository.count_vote(&params.post_id).await?;
 
                 PostInteractionResult::Vote(total_votes)
             },

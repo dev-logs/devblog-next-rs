@@ -2,14 +2,18 @@ pub mod create_post;
 pub mod get_post;
 pub mod interact;
 
-use core_services::Db;
 use core_services::services::base::Service;
 use schema::devlog::devblog::entities::{Post, PostId};
 use schema::devlog::entities::{Like, User};
 
-#[derive(Debug, Clone)]
+use crate::repository::author::AuthorRepository;
+use crate::repository::interactive::InteractionRepository;
+use crate::repository::post::PostRepository;
+
 pub struct PostService {
-    pub db: Db
+    pub post_repository: Box<dyn PostRepository + Sync + Send>,
+    pub interaction_repository: Box<dyn InteractionRepository + Send + Sync>,
+    pub author_repository: Box<dyn AuthorRepository + Send + Sync>,
 }
 
 #[derive(Debug, Clone)]
@@ -36,7 +40,6 @@ pub enum PostInteractionResult {
 pub trait PostInteractionService : Service<PostInteractionParams, PostInteractionResult> {}
 
 impl PostInteractionService for PostService {}
-
 
 #[derive(Debug, Clone)]
 pub struct GetPostParams {

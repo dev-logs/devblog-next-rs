@@ -1,5 +1,4 @@
-use core_services::{services::base::Service, DB};
-use log::info;
+use core_services::services::base::Service;
 use schema::devlog::{
     devblog::rpc::{
         post_interaction_request,
@@ -16,24 +15,18 @@ use schema::devlog::{
 };
 use tonic::{Request, Response, Status};
 
-use crate::services::post::*;
+use crate::{di::ApiDependenciesInjection, services::post::*};
 
-#[derive(Debug, Clone)]
-pub struct PostGrpcServer {}
-
-impl PostGrpcServer {
-   pub fn new() -> Self {
-       Self {}
-   }
+#[derive(Clone)]
+pub struct PostGrpcServer {
+    pub(crate) di: &'static ApiDependenciesInjection
 }
 
 #[async_trait::async_trait]
 impl PostGrpcService for PostGrpcServer {
     async fn get(&self, request: Request<GetPostRequest>) -> Result<Response<GetPostResponse>, tonic::Status> {
         let request = request.get_ref();
-        let service = PostService {
-            db: DB.clone()
-        };
+        let service = self.di.get_post_service();
 
         let params = GetPostParams {
             title: request.title.clone()
@@ -50,9 +43,7 @@ impl PostGrpcService for PostGrpcServer {
     async fn create(&self, request: Request<CreatePostRequest>) -> Result<Response<CreatePostResponse>, tonic::Status> {
         let user: &User = request.extensions().get::<User>().ok_or(Status::unauthenticated("You're not authorize"))?;
 
-        let service = PostService {
-            db: DB.clone()
-        };
+        let service = self.di.create_post_service();
 
         let request = request.get_ref();
         let params = CreatePostParams {
@@ -69,16 +60,14 @@ impl PostGrpcService for PostGrpcServer {
     async fn interact(&self, request: Request<PostInteractionRequest>) -> Result<Response<PostInteractionResponse>, tonic::Status> {
         let user: &User = request.extensions().get::<User>().ok_or(Status::unauthenticated("You're not authorize"))?;
 
-        let service = PostService {
-            db: DB.clone()
-        };
+        let service = self.di.interaction_service();
 
         let request = request.get_ref();
         let post_id = request.id.as_ref().expect("The post id is required").clone();
         let interaction = match &request.interaction {
             Some(post_interaction_request::Interaction::Like(like)) => Interaction::Like(like.clone()),
-            Some(post_interaction_request::Interaction::Vote(vote)) => Interaction::Vote,
-            Some(post_interaction_request::Interaction::View(view)) => Interaction::View,
+            Some(post_interaction_request::Interaction::Vote(_vote)) => Interaction::Vote,
+            Some(post_interaction_request::Interaction::View(_view)) => Interaction::View,
             _ => return Err(Status::invalid_argument("Not support this interaction in post")),
         };
 

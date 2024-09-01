@@ -10,7 +10,6 @@ use crate::grpc::base::GRPCService;
 use crate::services::discussion::GetListDiscussionsParam;
 use crate::services::discussion::NewDiscussionParams;
 use crate::services::discussion::DiscussionService;
-use crate::DB;
 
 #[derive(Clone)]
 pub struct DiscussionGrpcService {
@@ -22,7 +21,7 @@ impl DevblogDiscussionService for DiscussionGrpcService {
     async fn new_discussion(&self, request: Request<NewDiscussionRequest>) -> Result<Response<NewDiscussionResponse>, Status> {
         let user: &User = request.extensions().get::<User>().ok_or(Status::unauthenticated("You're not authorize"))?;
         let request = request.get_ref();
-        let service = self.di.get_discussion_service();
+        let service = self.di.new_discussion_service();
 
         let params = NewDiscussionParams {
             user,
@@ -37,7 +36,7 @@ impl DevblogDiscussionService for DiscussionGrpcService {
 
     async fn get_discussions(&self, request: Request<GetDiscussionsRequest>) -> Result<Response<GetDiscussionsResponse>, Status> {
         let request = request.get_ref();
-        let service = DiscussionService {db:DB.clone(), s3: S3Client::new().await };
+        let service = self.di.list_discussion_service();
         let param = GetListDiscussionsParam {
             paging: request.paging.as_ref().unwrap().clone(),
             post_id: request.post_id.clone().unwrap()

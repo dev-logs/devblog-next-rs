@@ -1,6 +1,6 @@
 use core_services::{services::{base::{Resolve, Service}, errors::Errors}, Db};
 use schema::{
-    devlog::devblog::entities::{Author, AuthorId, Post},
+    devlog::devblog::entities::{Author, AuthorId, Post, PostId},
     misc::datetime::Datetime, surrealdb::links::{author_link, AuthorLink}};
 use surreal_derive_plus::surreal_quote;
 use surreal_devl::wrapper::SurrealQR;
@@ -16,10 +16,10 @@ impl Service<CreatePostParams, CreatePostResult> for PostService {
 
         let author: Author = match params.post.author.as_ref().map(|it| it.link.as_ref().unwrap()) {
             Some(author_link::Link::Object(author)) => {
-                let mut found_author: Option<Author> = self.db.query(
-                    surreal_quote!("SELECT * FROM #id(&author)")).await?.take(0)?;
+                let author_id = AuthorId {email: author.email.clone()};
+                let mut found_author: Option<Author> = self.author_repository.get(&author_id).await?;
                 if found_author.is_none() {
-                    found_author = self.db.query(surreal_quote!("CREATE #record(&author)")).await?.take(0)?;
+                    found_author = Some(self.author_repository.create(&author).await?);
                 }
 
                 found_author.unwrap()
@@ -31,10 +31,12 @@ impl Service<CreatePostParams, CreatePostResult> for PostService {
 
         let mut new_post = params.post.clone();
         new_post.created_at = Some(Datetime::now());
-        let existing_post: SurrealQR = self.db.query(surreal_quote!("SELECT * FROM #id(&params.post)")).await?.take(0)?;
-        let existing_post = existing_post.object()?;
+        let post_id = PostId {
+            title: new_post.title.clone()
+        };
+        let existing_post = self.post_repository.get(&post_id).await?;
         if existing_post.is_some() {
-            return Ok(CreatePostResult { post: existing_post.map(|it| Post::from(it)).unwrap()});
+            return Ok(CreatePostResult { post: existing_post.unwrap() });
         }
 
         let author_id: AuthorId = AuthorId {
@@ -42,11 +44,11 @@ impl Service<CreatePostParams, CreatePostResult> for PostService {
         };
 
         new_post.author = Some(AuthorLink {link: Some(author_link::Link::Id(author_id))});
-        let statement = surreal_quote!("CREATE #id(&new_post) #set(&new_post)");
-        let create_post: SurrealQR = self.db.query(statement).await?.take(0)?;
+        let create_post: SurrealQR = self.post_repository.create(&new_post).await?.take(0)?;
         let created_post = create_post.object()?.map(|it| Post::from(it));
         Ok(CreatePostResult {
             post: created_post.expect("The post must be created")
         })
     }
 }
+

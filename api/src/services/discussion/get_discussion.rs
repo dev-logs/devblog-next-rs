@@ -7,7 +7,6 @@ use schema::{
 use core_services::services::errors::Errors;
 use async_trait::async_trait;
 use super::{DiscussionService, GetListDiscussionsParam, GetListDiscussionsResult};
-use crate::DEVLOG_SDK;
 
 #[async_trait]
 impl Service<GetListDiscussionsParam, GetListDiscussionsResult> for DiscussionService {
@@ -20,7 +19,6 @@ impl Service<GetListDiscussionsParam, GetListDiscussionsResult> for DiscussionSe
         let start = paging.rows_per_page * (paging.page - 1);
         let limit = paging.rows_per_page;
 
-        DEVLOG_SDK.get().unwrap().generate_guest_service();
         let total_count: i32 = self.discussion_repository.count_discussion(&params.post_id).await?;
         let mut total_pages = total_count / paging.rows_per_page;
         if total_count % paging.rows_per_page > 0 {

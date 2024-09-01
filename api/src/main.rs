@@ -11,7 +11,7 @@ use std::{sync::Arc, time::Duration};
 use core_services::{
     db::{SurrealDbConnection, SurrealDbConnectionInfo}, grpc::middle::response_handler::ResponseHeaderHandler, logger, s3::S3Client, utils::{pool::allocator::PoolAllocator, pool_allocator::{PoolAllocator, PoolRequest}}
 };
-use devlog_sdk::{grpc::middleware::auth::AuthInterceptor, sdk::{DevlogSdk, SurrealDbConnection}};
+use devlog_sdk::{grpc::middleware::auth::AuthInterceptor, sdk::{DependenciesInjection, DevlogSdk, SurrealDbConnection}};
 use di::ApiDependenciesInjection;
 use grpc::{
     authentication::AuthenticationGrpcService,
@@ -34,7 +34,6 @@ use schema::devlog::{
     }, rpc::authentication_service_server::AuthenticationServiceServer
 };
 
-pub static DEVLOG_SDK: OnceCell<DevlogSdk> = OnceCell::const_new();
 pub static DI: OnceCell<ApiDependenciesInjection> = OnceCell::const_new();
 
 #[tokio::main]
@@ -57,9 +56,10 @@ type SmtpTransportPool = Arc<PoolAllocator<core_services::SmtpTransport, ()>>;
 async fn setup_grpc_server() -> Result<(), Box<dyn std::error::Error>> {
     let ns = "devblog-api-grpc-server";
     let addr = format!("127.0.0.1:{}", CONFIGS.grpc_server.port).parse()?;
-    let discussion_service = DiscussionGrpcService::new();
-    let authentication_service = AuthenticationGrpcService::new();
-    let post_server= PostGrpcServer::new();
+    let discussion_service = DI.get().unwrap().grpc_discussion_service();
+    let authentication_service = DI.get().unwrap().grpc_authentication_service();
+    let post_server= DI.get().unwrap().grpc_post_service();
+    let auth_middleware = DI.get().unwrap().devlog_sdk.get().unwrap().get_grpc_middleware_auth();
     let response_handler = ResponseHeaderHandler {};
 
     info!(target: ns, "gRPC server starting at {}", &addr);
@@ -77,10 +77,10 @@ async fn setup_grpc_server() -> Result<(), Box<dyn std::error::Error>> {
         .add_service(AuthenticationServiceServer::new(authentication_service))
         .add_service(InterceptorFor::new(
             DevblogDiscussionServiceServer::new(discussion_service),
-            AuthInterceptor::new()))
+            DI.get().unwrap().devlog_sdk.get().unwrap().get_grpc_middleware_auth()))
         .add_service(InterceptorFor::new(
             PostServiceServer::new(post_server),
-            AuthInterceptor::new()))
+            DI.get().unwrap().devlog_sdk.get().unwrap().get_grpc_middleware_auth()))
         .serve(addr)
         .await?;
 

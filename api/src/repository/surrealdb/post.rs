@@ -1,4 +1,4 @@
-use core_services::{db::{SurrealDbConnection, SurrealDbConnectionInfo}, services::base::Resolve, utils::pool::request::PoolRequest};
+use core_services::{db::{builder::SurrealDbRepository, trusted::TrustedOne, SurrealDbConnection, SurrealDbConnectionInfo}, services::base::Resolve, utils::pool::{allocator::PoolResource, reponse::PoolResponse, request::PoolRequest}};
 use schema::devlog::devblog::entities::{Post, PostId};
 use surreal_derive_plus::surreal_quote;
 
@@ -9,11 +9,13 @@ pub struct PostSurrealDbRepository {
 }
 
 #[async_trait::async_trait]
-impl PostRepository for PostSurrealDbRepository {
-    async fn get_post(&self, post_id: &PostId) -> Resolve<Option<Post>> {
-        let db = self.db.retreive().await.expect("Surrealdb connection failed");
-        let post: Option<Post> = db.query(surreal_quote!("SELECT * FROM #id(&post_id)")).await?.take(0)?;
-        Ok(post)
+impl SurrealDbRepository<Post, PostId> for PostSurrealDbRepository {
+    async fn get_db(&self) -> PoolResponse<SurrealDbConnection, SurrealDbConnectionInfo> {
+        self.db.retreive().await.unwrap()
     }
+}
+
+#[async_trait::async_trait]
+impl PostRepository for PostSurrealDbRepository {
 }
 
