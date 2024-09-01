@@ -96,15 +96,15 @@ impl ApiDependenciesInjection {
         self.devblog_db.get_or_init(|| async move {
             info!(target: ns, "Connecting to devblog database");
             PoolBuilder::new(crate::config::CONFIGS.surreal_db.clone())
-                .min_pool_size(1)
-                .max_pool_size(100)
+                .min_pool_size(10)
+                .max_pool_size(1000)
                 .build().await
         }).await;
 
         self.devlog_db.get_or_init(|| async move {
             info!(target: ns, "Connecting to devlog database");
             PoolBuilder::new(devlog_sdk::config::CONFIGS.surrealdb.clone())
-                .min_pool_size(1)
+                .min_pool_size(10)
                 .max_pool_size(100)
                 .build().await
         }).await;

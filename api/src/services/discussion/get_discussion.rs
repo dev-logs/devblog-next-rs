@@ -1,5 +1,4 @@
 use core_services::services::base::{Resolve, Service};
-use devlog_sdk::sdk::DependenciesInjection;
 use schema::{
     devlog::rpc::Paging,
     surrealdb::links::user_link
