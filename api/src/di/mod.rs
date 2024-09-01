@@ -11,7 +11,7 @@ use core_services::{
 use devlog_sdk::sdk::{DevlogSdk, SharingResource};
 use log::info;
 use crate::{
-    repository::{author::AuthorRepository, discussion::DiscussionRepository, interactive::InteractionRepository, post::PostRepository, surrealdb::{author::AuthorSurrealDbRepository, discussion::DiscussionSurrealDbRepository, interaction::InteractionSurrealDb, post::PostSurrealDbRepository}}, services::{discussion::{DiscussionService, GetDiscussionsService, NewDiscussionService}, post::{CreatePostService, GetPostService, PostInteractionService, PostService}}, S3ConnectionPool, SmtpTransportPool
+    grpc, repository::{author::AuthorRepository, discussion::DiscussionRepository, interactive::InteractionRepository, post::PostRepository, surrealdb::{author::AuthorSurrealDbRepository, discussion::DiscussionSurrealDbRepository, interaction::InteractionSurrealDb, post::PostSurrealDbRepository}}, services::{discussion::{DiscussionService, GetDiscussionsService, NewDiscussionService}, post::{CreatePostService, GetPostService, PostInteractionService, PostService}}, S3ConnectionPool, SmtpTransportPool
 };
 use tokio::sync::OnceCell;
 
@@ -37,6 +37,8 @@ impl ApiDependenciesInjection {
 
         me.setup_db().await?;
         me.setup_s3().await?;
+        me.setup_smtp().await?;
+        me.setup_sdk().await?;
 
         Ok(me)
     }
@@ -94,7 +96,7 @@ impl ApiDependenciesInjection {
         self.devblog_db.get_or_init(|| async move {
             info!(target: ns, "Connecting to devblog database");
             PoolBuilder::new(crate::config::CONFIGS.surreal_db.clone())
-                .min_pool_size(10)
+                .min_pool_size(1)
                 .max_pool_size(100)
                 .build().await
         }).await;
@@ -102,7 +104,7 @@ impl ApiDependenciesInjection {
         self.devlog_db.get_or_init(|| async move {
             info!(target: ns, "Connecting to devlog database");
             PoolBuilder::new(devlog_sdk::config::CONFIGS.surrealdb.clone())
-                .min_pool_size(10)
+                .min_pool_size(1)
                 .max_pool_size(100)
                 .build().await
         }).await;
@@ -113,7 +115,20 @@ impl ApiDependenciesInjection {
     async fn setup_s3(&self) -> Result<(), Box<dyn std::error::Error>> {
         self.s3_client.get_or_init(|| async move {
             PoolBuilder::new(())
-                .min_pool_size(5)
+                .min_pool_size(1)
+                .max_pool_size(1000)
+                .cleanup(CleanupStrategy::Best { interval: Duration::new(100, 0), min_pool_size: 5 })
+                .build()
+                .await
+        }).await;
+
+        Ok(())
+    }
+
+    async fn setup_smtp(&self) -> Result<(), Box<dyn std::error::Error>> {
+        self.smtp_client.get_or_init(|| async move {
+            PoolBuilder::new(())
+                .min_pool_size(1)
                 .max_pool_size(1000)
                 .cleanup(CleanupStrategy::Best { interval: Duration::new(100, 0), min_pool_size: 5 })
                 .build()

@@ -45,7 +45,7 @@ impl Service<PostInteractionParams, PostInteractionResult> for PostService {
                     created_at: Some(Datetime::now()),
                 };
 
-                self.interaction_repository.create_vote_post(&user_id, &params.post_id, vote_psot).await?;
+                self.interaction_repository.create_vote_post(&user_id, &params.post_id, post_vote).await?;
                 let total_votes = self.interaction_repository.count_vote(&params.post_id).await?;
 
                 PostInteractionResult::Vote(total_votes)

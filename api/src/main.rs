@@ -9,16 +9,13 @@ mod repository;
 use std::{sync::Arc, time::Duration};
 
 use core_services::{
-    db::{SurrealDbConnection, SurrealDbConnectionInfo}, grpc::middle::response_handler::ResponseHeaderHandler, logger, s3::S3Client, utils::{pool::allocator::PoolAllocator, pool_allocator::{PoolAllocator, PoolRequest}}
+    db::{SurrealDbConnection, SurrealDbConnectionInfo},
+    grpc::middle::response_handler::ResponseHeaderHandler,
+    logger,
+    utils::pool::allocator::PoolAllocator
 };
-use devlog_sdk::{grpc::middleware::auth::AuthInterceptor, sdk::{DependenciesInjection, DevlogSdk, SurrealDbConnection}};
+use devlog_sdk::sdk::DependenciesInjection;
 use di::ApiDependenciesInjection;
-use grpc::{
-    authentication::AuthenticationGrpcService,
-    base::GRPCService,
-    discussion::DiscussionGrpcService,
-    post::PostGrpcServer
-};
 use tokio::sync::OnceCell;
 use tonic_middleware::{InterceptorFor, MiddlewareLayer};
 use tower_http::cors::*;
@@ -28,7 +25,7 @@ use tonic::transport::Server;
 use log::info;
 use tonic_web::*;
 use schema::devlog::{
-    self, devblog::rpc::{
+    devblog::rpc::{
         devblog_discussion_service_server::DevblogDiscussionServiceServer,
         post_service_server::PostServiceServer
     }, rpc::authentication_service_server::AuthenticationServiceServer
@@ -38,11 +35,12 @@ pub static DI: OnceCell<ApiDependenciesInjection> = OnceCell::const_new();
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    DI.get_or_init(|| async move {
+    logger::setup();
+    let di = DI.get_or_init(|| async move {
+        info!(target: "api", "Initialize dependencies injection");
         ApiDependenciesInjection::new().await.expect("Failed to initialize dependencies")
     }).await;
 
-    logger::setup();
     setup_grpc_server().await?;
 
     Ok(())
@@ -59,7 +57,6 @@ async fn setup_grpc_server() -> Result<(), Box<dyn std::error::Error>> {
     let discussion_service = DI.get().unwrap().grpc_discussion_service();
     let authentication_service = DI.get().unwrap().grpc_authentication_service();
     let post_server= DI.get().unwrap().grpc_post_service();
-    let auth_middleware = DI.get().unwrap().devlog_sdk.get().unwrap().get_grpc_middleware_auth();
     let response_handler = ResponseHeaderHandler {};
 
     info!(target: ns, "gRPC server starting at {}", &addr);

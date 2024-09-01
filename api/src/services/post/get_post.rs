@@ -12,34 +12,14 @@ impl Service<GetPostParams, GetPostResonse> for PostService {
             title: params.title.clone(),
         };
 
-        let total_likes: SurrealQR = self.db.query(surreal_quote!("
-                SELECT out, math::sum(count) as total_likes
-                FROM #val(&post_id)<-like
-                GROUP BY out
-         ")).await?.take(0)?;
+        let post = self.post_repository.get(&post_id).await?;
+        if post.is_none() {
+            return Err(Errors::ResourceNotFound(format!("Not found post with id={:?}", &post_id)))
+        }
 
-        let total_likes = total_likes.get(QlPath::Field("total_likes"))?.as_i64().unwrap_or(0) as i32;
-
-        let total_views: SurrealQR = self.db.query(surreal_quote!("
-                SELECT out, count() as total_views
-                FROM #val(&post_id)<-view
-                GROUP BY out
-        ")).await?.take(0)?;
-
-        let total_views= total_views.get(QlPath::Field("total_views"))?.as_i64().unwrap_or(0) as i32;
-
-        let total_votes: SurrealQR = self.db.query(surreal_quote!("
-                SELECT out, count() as total_votes
-                FROM #val(&post_id)<-vote
-                GROUP BY out
-        ")).await?.take(0)?;
-
-        let total_votes= total_votes.get(QlPath::Field("total_votes"))?.as_i64().unwrap_or(0) as i32;
-
-        let post: SurrealQR = self.db.query(surreal_quote!("SELECT * FROM #val(&post_id)")).await?.take(0)?;
-        let post = post.object()?.map(|it| {
-            Post::from(it)
-        });
+        let total_likes = self.interaction_repository.count_like(&post_id).await?;
+        let total_views = self.interaction_repository.count_view(&post_id).await?;
+        let _total_votes = self.interaction_repository.count_vote(&post_id).await?;
 
         match post {
             Some(post) => Ok(

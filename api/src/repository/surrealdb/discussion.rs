@@ -7,7 +7,7 @@ use surrealdb_id::relation::r#trait::IntoRelation;
 use crate::{grpc::discussion, repository::discussion::DiscussionRepository};
 
 pub struct DiscussionSurrealDbRepository {
-    db: PoolRequest<SurrealDbConnection, SurrealDbConnectionInfo>
+    pub(crate) db: PoolRequest<SurrealDbConnection, SurrealDbConnectionInfo>
 }
 
 #[async_trait::async_trait]

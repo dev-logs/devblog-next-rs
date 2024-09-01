@@ -2,8 +2,6 @@ use core_services::{services::{base::{Resolve, Service}, errors::Errors}, Db};
 use schema::{
     devlog::devblog::entities::{Author, AuthorId, Post, PostId},
     misc::datetime::Datetime, surrealdb::links::{author_link, AuthorLink}};
-use surreal_derive_plus::surreal_quote;
-use surreal_devl::wrapper::SurrealQR;
 
 use super::{CreatePostParams, CreatePostResult, PostService};
 
@@ -44,10 +42,9 @@ impl Service<CreatePostParams, CreatePostResult> for PostService {
         };
 
         new_post.author = Some(AuthorLink {link: Some(author_link::Link::Id(author_id))});
-        let create_post: SurrealQR = self.post_repository.create(&new_post).await?.take(0)?;
-        let created_post = create_post.object()?.map(|it| Post::from(it));
+        let create_post = self.post_repository.create(&new_post).await?;
         Ok(CreatePostResult {
-            post: created_post.expect("The post must be created")
+            post: create_post
         })
     }
 }

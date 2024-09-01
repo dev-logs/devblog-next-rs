@@ -10,7 +10,7 @@ use tonic::{Request, Response, Status};
 
 #[derive(Clone)]
 pub struct AuthenticationGrpcService {
-    di: &'static ApiDependenciesInjection
+   pub(crate) di: &'static ApiDependenciesInjection
 }
 
 #[async_trait::async_trait]

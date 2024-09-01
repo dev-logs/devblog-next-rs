@@ -9,11 +9,10 @@ use crate::di::ApiDependenciesInjection;
 use crate::grpc::base::GRPCService;
 use crate::services::discussion::GetListDiscussionsParam;
 use crate::services::discussion::NewDiscussionParams;
-use crate::services::discussion::DiscussionService;
 
 #[derive(Clone)]
 pub struct DiscussionGrpcService {
-    di: &'static ApiDependenciesInjection
+    pub(crate) di: &'static ApiDependenciesInjection
 }
 
 #[async_trait::async_trait]
