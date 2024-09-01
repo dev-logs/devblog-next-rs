@@ -11,7 +11,7 @@ use schema::devlog::{
         PostInteractionRequest,
         PostInteractionResponse
     },
-    entities::{Like, User}
+    entities::User
 };
 use tonic::{Request, Response, Status};
 

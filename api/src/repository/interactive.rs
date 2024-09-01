@@ -1,5 +1,5 @@
 use core_services::services::base::Resolve;
-use schema::devlog::{devblog::{entities::{Post, PostId}, rpc::post_interaction_request::Interaction}, entities::{Like, User, UserId}};
+use schema::devlog::{devblog::entities::PostId, entities::{Like, UserId}};
 use schema::devlog::entities::{View, Vote};
 
 #[async_trait::async_trait]

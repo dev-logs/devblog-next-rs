@@ -6,7 +6,7 @@ mod utils;
 mod di;
 mod repository;
 
-use std::{sync::Arc, time::Duration};
+use std::sync::Arc;
 
 use core_services::{
     db::{SurrealDbConnection, SurrealDbConnectionInfo},
@@ -36,7 +36,7 @@ pub static DI: OnceCell<ApiDependenciesInjection> = OnceCell::const_new();
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     logger::setup();
-    let di = DI.get_or_init(|| async move {
+    DI.get_or_init(|| async move {
         info!(target: "api", "Initialize dependencies injection");
         ApiDependenciesInjection::new().await.expect("Failed to initialize dependencies")
     }).await;

@@ -1,7 +1,6 @@
 use core_services::db::SurrealDbConnectionInfo;
 use lazy_static::lazy_static;
 use std::env;
-use crate::utils::wrapper::W;
 
 #[derive(Debug)]
 pub struct GRPCServer {

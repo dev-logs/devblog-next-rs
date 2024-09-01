@@ -1,6 +1,6 @@
-use core_services::{services::{base::{Resolve, Service}, errors::Errors}, Db};
+use core_services::services::{base::{Resolve, Service}, errors::Errors};
 use schema::{
-    devlog::devblog::entities::{Author, AuthorId, Post, PostId},
+    devlog::devblog::entities::{Author, AuthorId, PostId},
     misc::datetime::Datetime, surrealdb::links::{author_link, AuthorLink}};
 
 use super::{CreatePostParams, CreatePostResult, PostService};

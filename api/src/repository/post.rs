@@ -1,4 +1,4 @@
-use core_services::{db::builder::Repository, services::base::Resolve};
+use core_services::db::builder::Repository;
 use schema::devlog::devblog::entities::{Post, PostId};
 
 #[async_trait::async_trait]

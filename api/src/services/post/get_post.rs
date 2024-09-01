@@ -1,7 +1,5 @@
-use core_services::{services::{base::{Resolve, Service}, errors::Errors}, Db};
-use schema::devlog::devblog::entities::{Post, PostId};
-use surreal_derive_plus::surreal_quote;
-use surreal_devl::wrapper::{QlPath, SurrealQR};
+use core_services::services::{base::{Resolve, Service}, errors::Errors};
+use schema::devlog::devblog::entities::PostId;
 
 use super::{GetPostParams, GetPostResonse, PostService};
 

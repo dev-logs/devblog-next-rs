@@ -1,4 +1,4 @@
-use core_services::{db::{builder::{Repository, SurrealDbRepository}, trusted::{DbIntent, TrustedOne}, SurrealDbConnection, SurrealDbConnectionInfo}, services::base::Resolve, utils::pool::{reponse::PoolResponse, request::PoolRequest}, Db};
+use core_services::{db::{builder::SurrealDbRepository, SurrealDbConnection, SurrealDbConnectionInfo}, utils::pool::{reponse::PoolResponse, request::PoolRequest}};
 use schema::devlog::devblog::entities::{Author, AuthorId};
 
 use crate::repository::author::AuthorRepository;

@@ -1,5 +1,5 @@
 use core_services::{db::builder::Repository, services::base::Resolve};
-use schema::devlog::{devblog::entities::{Discussion, DiscussionId, Post, PostId}, entities::UserId, rpc::Paging};
+use schema::devlog::devblog::entities::{Discussion, DiscussionId, PostId};
 use async_trait::async_trait;
 
 #[async_trait]

@@ -3,7 +3,6 @@ use std::time::Duration;
 use core_services::{
     db::{SurrealDbConnection, SurrealDbConnectionInfo},
     s3::S3Client,
-    smtp::client::SmtpClient,
     utils::pool::{allocator::PoolBuilder, cleanup::CleanupStrategy, request::{PoolRequest, PoolRequestBuilder}},
     S3Connection, SmtpTransport
 };
@@ -144,11 +143,11 @@ impl ApiDependenciesInjection {
         })
     }
 
-    fn smtp_client(&self) -> Result<SmtpClient, Box<dyn std::error::Error>> {
-        Ok(SmtpClient {
-            transport: self.smtp_pool_request()?
-        })
-    }
+    //fn smtp_client(&self) -> Result<SmtpClient, Box<dyn std::error::Error>> {
+    //    Ok(SmtpClient {
+    //        transport: self.smtp_pool_request()?
+    //    })
+    //}
 
     pub fn discussion_repository(&self) -> impl DiscussionRepository {
         DiscussionSurrealDbRepository {

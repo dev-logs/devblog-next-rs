@@ -1,4 +1,3 @@
-use core_services::s3::S3Client;
 use core_services::services::base::Service;
 use schema::devlog::entities::User;
 use tonic::{Result, Request, Response, Status};
@@ -6,7 +5,6 @@ use schema::devlog::devblog::rpc::devblog_discussion_service_server::DevblogDisc
 use schema::devlog::devblog::rpc::{GetDiscussionsRequest, GetDiscussionsResponse, NewDiscussionRequest, NewDiscussionResponse};
 
 use crate::di::ApiDependenciesInjection;
-use crate::grpc::base::GRPCService;
 use crate::services::discussion::GetListDiscussionsParam;
 use crate::services::discussion::NewDiscussionParams;
 
@@ -28,7 +26,7 @@ impl DevblogDiscussionService for DiscussionGrpcService {
             post_id: request.post_id.as_ref().expect("Post_id must be defined")
         };
 
-        let created_discussion = service.execute(params).await?;
+        service.execute(params).await?;
         let response = NewDiscussionResponse {};
         Ok(Response::new(response))
     }

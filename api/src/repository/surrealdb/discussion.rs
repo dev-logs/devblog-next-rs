@@ -1,10 +1,10 @@
-use core_services::{db::{builder::SurrealDbRepository, SurrealDbConnection, SurrealDbConnectionInfo}, services::{base::Resolve, errors::Errors}, utils::pool::{reponse::PoolResponse, request::PoolRequest}, Db};
+use core_services::{db::{builder::SurrealDbRepository, SurrealDbConnection, SurrealDbConnectionInfo}, services::{base::Resolve, errors::Errors}, utils::pool::{reponse::PoolResponse, request::PoolRequest}};
 use core_services::db::trusted::{DbIntent, TrustedOne};
-use schema::{devlog::{devblog::entities::{Author, AuthorId, Discussion, DiscussionId, Post, PostId}, entities::UserId}, surrealdb::links::{post_link, user_link}};
+use schema::{devlog::{devblog::entities::{Discussion, DiscussionId, PostId}, entities::UserId}, surrealdb::links::{post_link, user_link}};
 use surreal_derive_plus::surreal_quote;
 use surrealdb_id::relation::r#trait::IntoRelation;
 
-use crate::{grpc::discussion, repository::discussion::DiscussionRepository};
+use crate::repository::discussion::DiscussionRepository;
 
 pub struct DiscussionSurrealDbRepository {
     pub(crate) db: PoolRequest<SurrealDbConnection, SurrealDbConnectionInfo>
