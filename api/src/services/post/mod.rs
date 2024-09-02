@@ -11,64 +11,63 @@ use crate::repository::interactive::InteractionRepository;
 use crate::repository::post::PostRepository;
 
 pub struct PostService {
-    pub post_repository: Box<dyn PostRepository + Sync + Send>,
-    pub interaction_repository: Box<dyn InteractionRepository + Send + Sync>,
-    pub author_repository: Box<dyn AuthorRepository + Send + Sync>,
+    pub post_repository: Box<dyn PostRepository + Sync + Send,>,
+    pub interaction_repository: Box<dyn InteractionRepository + Send + Sync,>,
+    pub author_repository: Box<dyn AuthorRepository + Send + Sync,>,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone,)]
 pub enum Interaction {
-    Like(Like),
+    Like(Like,),
     View,
-    Vote
+    Vote,
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug,)]
 pub struct PostInteractionParams {
     pub user: User,
     pub post_id: PostId,
     pub interaction: Interaction,
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug,)]
 pub enum PostInteractionResult {
-    Like(i32),
-    View(i32),
-    Vote(i32),
+    Like(i32,),
+    View(i32,),
+    Vote(i32,),
 }
 
-pub trait PostInteractionService : Service<PostInteractionParams, PostInteractionResult> {}
+pub trait PostInteractionService: Service<PostInteractionParams, PostInteractionResult,> {}
 
 impl PostInteractionService for PostService {}
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone,)]
 pub struct GetPostParams {
-    pub title: String
+    pub title: String,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone,)]
 pub struct GetPostResonse {
-   pub post: Post,
-   pub total_likes: i32,
-   pub total_views: i32
+    pub post: Post,
+    pub total_likes: i32,
+    pub total_views: i32,
 }
 
-pub trait GetPostService : Service<GetPostParams, GetPostResonse> {}
+pub trait GetPostService: Service<GetPostParams, GetPostResonse,> {}
 
 impl GetPostService for PostService {}
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone,)]
 pub struct CreatePostResult {
-    pub post: Post
+    pub post: Post,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone,)]
 pub struct CreatePostParams {
     pub post: Post,
-    pub user: User
+    pub user: User,
 }
 
-pub trait CreatePostService : Service<CreatePostParams, CreatePostResult> {}
+pub trait CreatePostService: Service<CreatePostParams, CreatePostResult,> {}
 
 impl CreatePostService for PostService {}
-

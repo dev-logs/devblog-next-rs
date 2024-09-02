@@ -1,31 +1,39 @@
 use std::time::Duration;
 
-use core_services::{
-    db::{SurrealDbConnection, SurrealDbConnectionInfo},
-    s3::S3Client,
-    utils::pool::{allocator::PoolBuilder, cleanup::CleanupStrategy, request::{PoolRequest, PoolRequestBuilder}},
-    S3Connection, SmtpTransport
-};
+use core_services::db::{SurrealDbConnection, SurrealDbConnectionInfo};
+use core_services::s3::S3Client;
+use core_services::utils::pool::allocator::PoolBuilder;
+use core_services::utils::pool::cleanup::CleanupStrategy;
+use core_services::utils::pool::request::{PoolRequest, PoolRequestBuilder};
+use core_services::{S3Connection, SmtpTransport};
 
+use crate::repository::author::AuthorRepository;
+use crate::repository::discussion::DiscussionRepository;
+use crate::repository::interactive::InteractionRepository;
+use crate::repository::post::PostRepository;
+use crate::repository::surrealdb::author::AuthorSurrealDbRepository;
+use crate::repository::surrealdb::discussion::DiscussionSurrealDbRepository;
+use crate::repository::surrealdb::interaction::InteractionSurrealDb;
+use crate::repository::surrealdb::post::PostSurrealDbRepository;
+use crate::services::discussion::{DiscussionService, GetDiscussionsService, NewDiscussionService};
+use crate::services::post::{CreatePostService, GetPostService, PostInteractionService, PostService};
+use crate::{grpc, S3ConnectionPool, SmtpTransportPool};
 use devlog_sdk::sdk::{DevlogSdk, SharingResource};
 use log::info;
-use crate::{
-    grpc, repository::{author::AuthorRepository, discussion::DiscussionRepository, interactive::InteractionRepository, post::PostRepository, surrealdb::{author::AuthorSurrealDbRepository, discussion::DiscussionSurrealDbRepository, interaction::InteractionSurrealDb, post::PostSurrealDbRepository}}, services::{discussion::{DiscussionService, GetDiscussionsService, NewDiscussionService}, post::{CreatePostService, GetPostService, PostInteractionService, PostService}}, S3ConnectionPool, SmtpTransportPool
-};
 use tokio::sync::OnceCell;
 
 use crate::{DevblogPool, DevlogPool};
 
 pub struct ApiDependenciesInjection {
-    pub devlog_sdk: OnceCell<DevlogSdk>,
-    pub devlog_db: OnceCell<DevlogPool>,
-    pub devblog_db: OnceCell<DevblogPool>,
-    pub s3_client: OnceCell<S3ConnectionPool>,
-    pub smtp_client: OnceCell<SmtpTransportPool>
+    pub devlog_sdk: OnceCell<DevlogSdk,>,
+    pub devlog_db: OnceCell<DevlogPool,>,
+    pub devblog_db: OnceCell<DevblogPool,>,
+    pub s3_client: OnceCell<S3ConnectionPool,>,
+    pub smtp_client: OnceCell<SmtpTransportPool,>,
 }
 
 impl ApiDependenciesInjection {
-    pub async fn new() -> Result<Self, Box<dyn std::error::Error>> {
+    pub async fn new() -> Result<Self, Box<dyn std::error::Error,>,> {
         let me = Self {
             devlog_db: OnceCell::new(),
             devblog_db: OnceCell::new(),
@@ -39,108 +47,130 @@ impl ApiDependenciesInjection {
         me.setup_smtp().await?;
         me.setup_sdk().await?;
 
-        Ok(me)
+        Ok(me,)
     }
 
-    async fn setup_sdk(&self) -> Result<(), Box<dyn std::error::Error>> {
-        self.devlog_sdk.get_or_init(|| async move {
-            DevlogSdk::new(SharingResource {
-                smtp_transport: self.smtp_pool_request().expect("Smtp client connection failed"),
-                s3: self.s3_pool_request().expect("S3 client connection failed"),
-                devlog_db: self.devlog_pool_request().expect("Devlog db connection failed"),
-            })
-        }).await;
+    async fn setup_sdk(&self,) -> Result<(), Box<dyn std::error::Error,>,> {
+        self.devlog_sdk
+            .get_or_init(|| async move {
+                DevlogSdk::new(SharingResource {
+                    smtp_transport: self.smtp_pool_request().expect("Smtp client connection failed",),
+                    s3: self.s3_pool_request().expect("S3 client connection failed",),
+                    devlog_db: self.devlog_pool_request().expect("Devlog db connection failed",),
+                },)
+            },)
+            .await;
 
-        Ok(())
+        Ok((),)
     }
 
-    fn s3_pool_request(&self) -> Result<PoolRequest<S3Connection, ()>, Box<dyn std::error::Error>> {
+    fn s3_pool_request(&self,) -> Result<PoolRequest<S3Connection, (),>, Box<dyn std::error::Error,>,> {
         let request = PoolRequestBuilder::new()
-            .pool(self.s3_client.get().unwrap().clone())
-            .retreiving_timeout(Duration::new(10, 0))
+            .pool(self.s3_client.get().unwrap().clone(),)
+            .retreiving_timeout(Duration::new(10, 0,),)
             .build();
 
-        Ok(request)
+        Ok(request,)
     }
 
-    fn smtp_pool_request(&self) -> Result<PoolRequest<SmtpTransport, ()>, Box<dyn std::error::Error>> {
+    fn smtp_pool_request(&self,) -> Result<PoolRequest<SmtpTransport, (),>, Box<dyn std::error::Error,>,> {
         let request = PoolRequestBuilder::new()
-            .pool(self.smtp_client.get().unwrap().clone())
-            .retreiving_timeout(Duration::new(10, 0))
+            .pool(self.smtp_client.get().unwrap().clone(),)
+            .retreiving_timeout(Duration::new(10, 0,),)
             .build();
 
-        Ok(request)
+        Ok(request,)
     }
 
-    fn devlog_pool_request(&self) -> Result<PoolRequest<SurrealDbConnection, SurrealDbConnectionInfo>, Box<dyn std::error::Error>> {
+    fn devlog_pool_request(
+        &self,
+    ) -> Result<PoolRequest<SurrealDbConnection, SurrealDbConnectionInfo,>, Box<dyn std::error::Error,>,> {
         let request = PoolRequestBuilder::new()
-            .pool(self.devblog_db.get().unwrap().clone())
-            .retreiving_timeout(Duration::new(10, 0))
+            .pool(self.devblog_db.get().unwrap().clone(),)
+            .retreiving_timeout(Duration::new(10, 0,),)
             .build();
 
-        Ok(request)
+        Ok(request,)
     }
 
-    fn devblog_pool_request(&self) -> Result<PoolRequest<SurrealDbConnection, SurrealDbConnectionInfo>, Box<dyn std::error::Error>> {
+    fn devblog_pool_request(
+        &self,
+    ) -> Result<PoolRequest<SurrealDbConnection, SurrealDbConnectionInfo,>, Box<dyn std::error::Error,>,> {
         let request = PoolRequestBuilder::new()
-            .pool(self.devblog_db.get().unwrap().clone())
-            .retreiving_timeout(Duration::new(10, 0))
+            .pool(self.devblog_db.get().unwrap().clone(),)
+            .retreiving_timeout(Duration::new(10, 0,),)
             .build();
 
-        Ok(request)
+        Ok(request,)
     }
 
-    async fn setup_db(&self) -> Result<(), Box<dyn std::error::Error>> {
+    async fn setup_db(&self,) -> Result<(), Box<dyn std::error::Error,>,> {
         let ns = "devblog-api";
-        self.devblog_db.get_or_init(|| async move {
-            info!(target: ns, "Connecting to devblog database");
-            PoolBuilder::new(crate::config::CONFIGS.surreal_db.clone())
-                .min_pool_size(10)
-                .max_pool_size(1000)
-                .build().await
-        }).await;
+        self.devblog_db
+            .get_or_init(|| async move {
+                info!(target: ns, "Connecting to devblog database");
+                PoolBuilder::new(crate::config::CONFIGS.surreal_db.clone(),)
+                    .min_pool_size(10,)
+                    .max_pool_size(1000,)
+                    .build()
+                    .await
+            },)
+            .await;
 
-        self.devlog_db.get_or_init(|| async move {
-            info!(target: ns, "Connecting to devlog database");
-            PoolBuilder::new(devlog_sdk::config::CONFIGS.surrealdb.clone())
-                .min_pool_size(10)
-                .max_pool_size(100)
-                .build().await
-        }).await;
+        self.devlog_db
+            .get_or_init(|| async move {
+                info!(target: ns, "Connecting to devlog database");
+                PoolBuilder::new(devlog_sdk::config::CONFIGS.surrealdb.clone(),)
+                    .min_pool_size(10,)
+                    .max_pool_size(100,)
+                    .build()
+                    .await
+            },)
+            .await;
 
-        Ok(())
+        Ok((),)
     }
 
-    async fn setup_s3(&self) -> Result<(), Box<dyn std::error::Error>> {
-        self.s3_client.get_or_init(|| async move {
-            PoolBuilder::new(())
-                .min_pool_size(1)
-                .max_pool_size(1000)
-                .cleanup(CleanupStrategy::Best { interval: Duration::new(100, 0), min_pool_size: 5 })
-                .build()
-                .await
-        }).await;
+    async fn setup_s3(&self,) -> Result<(), Box<dyn std::error::Error,>,> {
+        self.s3_client
+            .get_or_init(|| async move {
+                PoolBuilder::new((),)
+                    .min_pool_size(1,)
+                    .max_pool_size(1000,)
+                    .cleanup(CleanupStrategy::Best {
+                        interval: Duration::new(100, 0,),
+                        min_pool_size: 5,
+                    },)
+                    .build()
+                    .await
+            },)
+            .await;
 
-        Ok(())
+        Ok((),)
     }
 
-    async fn setup_smtp(&self) -> Result<(), Box<dyn std::error::Error>> {
-        self.smtp_client.get_or_init(|| async move {
-            PoolBuilder::new(())
-                .min_pool_size(1)
-                .max_pool_size(1000)
-                .cleanup(CleanupStrategy::Best { interval: Duration::new(100, 0), min_pool_size: 5 })
-                .build()
-                .await
-        }).await;
+    async fn setup_smtp(&self,) -> Result<(), Box<dyn std::error::Error,>,> {
+        self.smtp_client
+            .get_or_init(|| async move {
+                PoolBuilder::new((),)
+                    .min_pool_size(1,)
+                    .max_pool_size(1000,)
+                    .cleanup(CleanupStrategy::Best {
+                        interval: Duration::new(100, 0,),
+                        min_pool_size: 5,
+                    },)
+                    .build()
+                    .await
+            },)
+            .await;
 
-        Ok(())
+        Ok((),)
     }
 
-    fn s3_client(&self) -> Result<S3Client, Box<dyn std::error::Error>> {
+    fn s3_client(&self,) -> Result<S3Client, Box<dyn std::error::Error,>,> {
         Ok(S3Client {
-            client: self.s3_pool_request()?
-        })
+            client: self.s3_pool_request()?,
+        },)
     }
 
     //fn smtp_client(&self) -> Result<SmtpClient, Box<dyn std::error::Error>> {
@@ -149,86 +179,79 @@ impl ApiDependenciesInjection {
     //    })
     //}
 
-    pub fn discussion_repository(&self) -> impl DiscussionRepository {
+    pub fn discussion_repository(&self,) -> impl DiscussionRepository {
         DiscussionSurrealDbRepository {
-            db: self.devblog_pool_request().expect("Devblog db must be connected")
+            db: self.devblog_pool_request().expect("Devblog db must be connected",),
         }
     }
 
-    pub fn post_repository(&self) -> impl PostRepository {
+    pub fn post_repository(&self,) -> impl PostRepository {
         PostSurrealDbRepository {
-            db: self.devblog_pool_request().expect("Devblog db must be connected"),
+            db: self.devblog_pool_request().expect("Devblog db must be connected",),
         }
     }
 
-    pub fn interaction_repository(&self) -> impl InteractionRepository {
+    pub fn interaction_repository(&self,) -> impl InteractionRepository {
         InteractionSurrealDb {
-            db: self.devblog_pool_request().expect("Devblog db must be connected"),
+            db: self.devblog_pool_request().expect("Devblog db must be connected",),
         }
     }
 
-    pub fn author_repository(&self) -> impl AuthorRepository {
+    pub fn author_repository(&self,) -> impl AuthorRepository {
         AuthorSurrealDbRepository {
-            db: self.devblog_pool_request().expect("Devblog must be connected"),
+            db: self.devblog_pool_request().expect("Devblog must be connected",),
         }
     }
 
-    pub fn new_discussion_service(&self) -> impl NewDiscussionService {
+    pub fn new_discussion_service(&self,) -> impl NewDiscussionService {
         DiscussionService {
             s3: self.s3_client().unwrap(),
-            discussion_repository: Box::new(self.discussion_repository()),
-            post_repository: Box::new(self.post_repository()),
+            discussion_repository: Box::new(self.discussion_repository(),),
+            post_repository: Box::new(self.post_repository(),),
         }
     }
 
-    pub fn list_discussion_service(&self) -> impl GetDiscussionsService {
+    pub fn list_discussion_service(&self,) -> impl GetDiscussionsService {
         DiscussionService {
             s3: self.s3_client().unwrap(),
-            discussion_repository: Box::new(self.discussion_repository()),
-            post_repository: Box::new(self.post_repository()),
+            discussion_repository: Box::new(self.discussion_repository(),),
+            post_repository: Box::new(self.post_repository(),),
         }
     }
 
-    pub fn create_post_service (&self) -> impl CreatePostService {
+    pub fn create_post_service(&self,) -> impl CreatePostService {
         PostService {
-            post_repository: Box::new(self.post_repository()),
-            interaction_repository: Box::new(self.interaction_repository()),
-            author_repository: Box::new(self.author_repository())
+            post_repository: Box::new(self.post_repository(),),
+            interaction_repository: Box::new(self.interaction_repository(),),
+            author_repository: Box::new(self.author_repository(),),
         }
     }
 
-    pub fn get_post_service (&self) -> impl GetPostService {
+    pub fn get_post_service(&self,) -> impl GetPostService {
         PostService {
-            post_repository: Box::new(self.post_repository()),
-            interaction_repository: Box::new(self.interaction_repository()),
-            author_repository: Box::new(self.author_repository())
+            post_repository: Box::new(self.post_repository(),),
+            interaction_repository: Box::new(self.interaction_repository(),),
+            author_repository: Box::new(self.author_repository(),),
         }
     }
 
-    pub fn interaction_service(&self) -> impl PostInteractionService {
+    pub fn interaction_service(&self,) -> impl PostInteractionService {
         PostService {
-            post_repository: Box::new(self.post_repository()),
-            interaction_repository: Box::new(self.interaction_repository()),
-            author_repository: Box::new(self.author_repository())
+            post_repository: Box::new(self.post_repository(),),
+            interaction_repository: Box::new(self.interaction_repository(),),
+            author_repository: Box::new(self.author_repository(),),
         }
     }
 
-    pub fn grpc_authentication_service(&'static self) -> grpc::authentication::AuthenticationGrpcService {
-        grpc::authentication::AuthenticationGrpcService {
-            di: self,
-        }
+    pub fn grpc_authentication_service(&'static self,) -> grpc::authentication::AuthenticationGrpcService {
+        grpc::authentication::AuthenticationGrpcService { di: self, }
     }
 
-    pub fn grpc_post_service(&'static self) -> grpc::post::PostGrpcServer {
-        grpc::post::PostGrpcServer {
-            di: self,
-        }
+    pub fn grpc_post_service(&'static self,) -> grpc::post::PostGrpcServer {
+        grpc::post::PostGrpcServer { di: self, }
     }
 
-    pub fn grpc_discussion_service(&'static self) -> grpc::discussion::DiscussionGrpcService {
-        grpc::discussion::DiscussionGrpcService {
-            di: self,
-        }
+    pub fn grpc_discussion_service(&'static self,) -> grpc::discussion::DiscussionGrpcService {
+        grpc::discussion::DiscussionGrpcService { di: self, }
     }
 }
-
