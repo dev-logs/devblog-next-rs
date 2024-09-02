@@ -8,8 +8,8 @@ import noop from 'lodash/noop'
 export interface ComputerWithFaceProps {}
 
 export const ComputerWithFace = forwardRef((props: ComputerWithFaceProps & any, ref) => {
-    const model = useGLTF(`${process.env.PATH_PREFIX}/3d-models/the-scene-1/geometries-computer-4.glb`)
-    const computerTexture = useTexture(`${process.env.PATH_PREFIX}/3d-models/the-scene-1/base-texture-computer-4.jpg`)
+    const model = useGLTF(`${process.env.NEXT_PUBLIC_PATH_PREFIX}3d-models/the-scene-1/geometries-computer-4.glb`)
+    const computerTexture = useTexture(`${process.env.NEXT_PUBLIC_PATH_PREFIX}3d-models/the-scene-1/base-texture-computer-4.jpg`)
     computerTexture.colorSpace = THREE.SRGBColorSpace
     computerTexture.flipY = false
 
@@ -31,7 +31,7 @@ export interface ComputerWithFaceTransformProps extends ComputerWithFaceProps {
 export const ComputerWithFaceTransform = (props: ComputerWithFaceTransformProps & any) => {
     const lowVertexModels: any = useContext(LowVertexContext)!
     const fromModel: any = lowVertexModels['paper-folded-carton'] as any
-    const toModel: any = useGLTF(`${process.env.PATH_PREFIX}/3d-models/the-scene-1/geometries-computer-4.glb`).scene.children[0]
+    const toModel: any = useGLTF(`${process.env.NEXT_PUBLIC_PATH_PREFIX}3d-models/the-scene-1/geometries-computer-4.glb`).scene.children[0]
 
     return <>
         <TransformGeometry
@@ -48,4 +48,4 @@ export const ComputerWithFaceTransform = (props: ComputerWithFaceTransformProps 
     </>
 }
 
-useGLTF.preload(`${process.env.PATH_PREFIX}/3d-models/the-scene-1/geometries-computer-4.glb`)
+useGLTF.preload(`${process.env.NEXT_PUBLIC_PATH_PREFIX}3d-models/the-scene-1/geometries-computer-4.glb`)

@@ -1,15 +1,8 @@
 import {withContentlayer} from 'next-contentlayer'
 
-const env = {
-  NEXT_PUBLIC_API_URL: process.env.DEVLOG_DEVBLOG_API_URL || 'http://localhost:3000',
-  NEXT_PUBLIC_API_GRPC_URL: process.env.DEVLOG_DEVBLOG_API_GRPC_URL || 'http://localhost:30001',
-  NEXT_PUBLIC_PATH_PREFIX: process.env.DEVLOG_DEVBLOG_PATH_PREFIX || ''
-}
-
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-    env,
-    assetPrefix: process.env.DEVLOG_DEVBLOG_PATH_PREFIX,
+    assetPrefix: process.env.DEVLOG_DEVBLOG_NEXT_PUBLIC_PATH_PREFIX,
     reactStrictMode: false,
     trailingSlash: true,
     webpack: (config) => {
@@ -22,6 +15,14 @@ const nextConfig = {
         })
 
         return config
+    },
+    // These variables will always be public to the client even we don't use prefix: NEXT_PUBLIC.
+    // So that, please don't put any private key here.
+    // NextJS will consider empty string as undefined, so don't put the default value as empty string
+    env: {
+        NEXT_PUBLIC_API_URL: process.env.DEVLOG_DEVBLOG_API_URL || 'http://localhost:3000',
+        NEXT_PUBLIC_API_GRPC_URL: process.env.DEVLOG_DEVBLOG_API_GRPC_URL || 'http://localhost:30001',
+        NEXT_PUBLIC_PATH_PREFIX: process.env.DEVLOG_DEVBLOG_PATH_PREFIX || '/'
     }
 }
 

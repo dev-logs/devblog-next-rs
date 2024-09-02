@@ -5,7 +5,7 @@ import * as THREE from 'three'
 export default function Keyboard(props: any) {
   const {} = props || {}
 
-  const model = useGLTF(`${process.env.PATH_PREFIX}/3d-models/keyboard/geometries.glb`)
+  const model = useGLTF(`${process.env.NEXT_PUBLIC_PATH_PREFIX}3d-models/keyboard/geometries.glb`)
 
   useEffect(() => {
     model.scene.traverse((c: any) => {
@@ -18,9 +18,9 @@ export default function Keyboard(props: any) {
   }, [model])
 
   return <>
-    <Environment files={`${process.env.PATH_PREFIX}/images/warehouse.hdr`} environmentIntensity={3}/>
+    <Environment files={`${process.env.NEXT_PUBLIC_PATH_PREFIX}images/warehouse.hdr`} environmentIntensity={3}/>
     <primitive {...props} object={model.scene}/>
   </>
 }
 
-useGLTF.preload(`${process.env.PATH_PREFIX}/3d-models/keyboard/geometries.glb`)
+useGLTF.preload(`${process.env.NEXT_PUBLIC_PATH_PREFIX}3d-models/keyboard/geometries.glb`)

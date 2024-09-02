@@ -224,7 +224,7 @@ export const ThumbUpRiveComponent = (props: {
 
   return <RiveComponent
     onEvent={onEvent}
-    rivFileUrl={`${process.env.PATH_PREFIX}/riv/rive.riv`}
+    rivFileUrl={`${process.env.NEXT_PUBLIC_PATH_PREFIX}riv/rive.riv`}
     state="thumb_up"
     artboardName="thumb"
   />
@@ -249,7 +249,7 @@ export const RiveText: React.FC<{ text: string }> = ({ text }) => {
   return (
     <RiveComponent
       setRiveRuntime={setRiveRuntime}
-      rivFileUrl={`${process.env.PATH_PREFIX}/image.riv`}
+      rivFileUrl={`${process.env.NEXT_PUBLIC_PATH_PREFIX}riv/rive.riv`}
       state="controller"
       artboardName="text"
     />
@@ -258,7 +258,7 @@ export const RiveText: React.FC<{ text: string }> = ({ text }) => {
 
 export const RiveEmojiFaceLove: React.FC = () => (
   <RiveComponent
-    rivFileUrl={`${process.env.PATH_PREFIX}/riv/rive.riv`}
+    rivFileUrl={`${process.env.NEXT_PUBLIC_PATH_PREFIX}riv/rive.riv`}
     state="controller"
     artboardName="love"
   />

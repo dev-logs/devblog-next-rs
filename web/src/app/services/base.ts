@@ -6,7 +6,7 @@ export default class gRPCClientBase<T extends ServiceType> {
   client: PromiseClient<T>
   constructor(clientDesc: T) {
     const transport = createGrpcWebTransport({
-      baseUrl: process.env.API_GRPC_URL!,
+      baseUrl: process.env.NEXT_PUBLIC_API_GRPC_URL!,
       useBinaryFormat: true,
     })
 

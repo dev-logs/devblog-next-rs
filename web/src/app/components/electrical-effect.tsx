@@ -11,10 +11,10 @@ interface ElectricalEffectProps {
 }
 
 export const ElectricalEffect = (props: ElectricalEffectProps) => {
-    const woodTexture = useTexture(`${process.env.PATH_PREFIX}/3d-models/bloom/wood.jpg`)
+    const woodTexture = useTexture(`${process.env.NEXT_PUBLIC_PATH_PREFIX}3d-models/bloom/wood.jpg`)
     woodTexture.colorSpace = THREE.SRGBColorSpace
     const [geometry, wireGeometry, bulb, filamentMaterial]: any = useMemo(() => {
-        const wireGeometry = useGLTF(`${process.env.PATH_PREFIX}/3d-models/bloom/bulb.glb`)
+        const wireGeometry = useGLTF(`${process.env.NEXT_PUBLIC_PATH_PREFIX}3d-models/bloom/bulb.glb`)
 
         const metalMaterial = new THREE.MeshStandardMaterial({
           metalness: 0.9,
@@ -183,5 +183,5 @@ function coordinate2dTo3d(coordinate: {x: number, y: number}, camera: any) {
 }
 
 
-useTexture.preload(`${process.env.PATH_PREFIX}/3d-models/bloom/wood.jpg`)
-useGLTF.preload(`${process.env.PATH_PREFIX}/3d-models/bloom/bulb.glb`)
+useTexture.preload(`${process.env.NEXT_PUBLIC_PATH_PREFIX}3d-models/bloom/wood.jpg`)
+useGLTF.preload(`${process.env.NEXT_PUBLIC_PATH_PREFIX}3d-models/bloom/bulb.glb`)

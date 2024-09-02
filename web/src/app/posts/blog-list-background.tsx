@@ -1,5 +1,3 @@
-import { largerThan, Reponsive, reponsiveMatch, WidthReponsive } from "@/app/components/reponsive";
-import { Fragment } from "react";
 import { ElectricalEffect } from "@/app/components/electrical-effect";
 
 export default function BlogListBackground(props: any) {

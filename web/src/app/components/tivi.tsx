@@ -7,7 +7,7 @@ import {useFrame} from '@react-three/fiber'
 import {Environment, useTexture} from '@react-three/drei'
 
 export const Tivi = (props: any) => {
-    const beerMugTexture = useTexture(`${process.env.PATH_PREFIX}/images/dale-typing-pixelated-frame.jpg`)
+    const beerMugTexture = useTexture(`${process.env.NEXT_PUBLIC_PATH_PREFIX}images/dale-typing-pixelated-frame.jpg`)
     beerMugTexture.flipY = false
     beerMugTexture.colorSpace = THREE.SRGBColorSpace
 
@@ -77,5 +77,5 @@ export const Tivi = (props: any) => {
     </>
 }
 
-useTexture.preload(`${process.env.PATH_PREFIX}/images/dale-typing-pixelated-frame.jpg`)
+useTexture.preload(`${process.env.NEXT_PUBLIC_PATH_PREFIX}images/dale-typing-pixelated-frame.jpg`)
 

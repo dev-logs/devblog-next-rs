@@ -1,4 +1,3 @@
-import {ThreeDCanvas} from "@/app/components/canvas";
 import * as THREE from 'three'
 import {useMemo} from "react";
 import CustomShaderMaterial from "three-custom-shader-material/vanilla";
@@ -27,8 +26,7 @@ export const PostBackground = (props: any) => {
 
     useFrame((tick) => {
         const clock = tick.clock
-        const elapsedTime = clock.getElapsedTime()
-        material.uniforms.uTime.value = elapsedTime
+        material.uniforms.uTime.value = clock.getElapsedTime()
     })
 
     return <>
