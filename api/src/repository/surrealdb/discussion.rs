@@ -63,7 +63,7 @@ impl DiscussionRepository for DiscussionSurrealDbRepository {
         let result: TrustedOne = db
             .query(surreal_quote!(
                 r##"
-                SELECT *, in AS user
+                SELECT *
                 FROM #id(post_id)<-discussion
                 ORDER BY created_at
                 DESC START #start
@@ -82,7 +82,7 @@ impl DiscussionRepository for DiscussionSurrealDbRepository {
             .query(surreal_quote!("SELECT count() from #id(post_id)<-discussion group all"))
             .await?
             .take((0, "count"))?;
-        let total_count = total_count.expect("Can not count records in table discussions");
+        let total_count = total_count.unwrap_or(0);
         Ok(total_count)
     }
 }

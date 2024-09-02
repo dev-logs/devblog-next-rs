@@ -19,7 +19,7 @@ export default class PostLocalStorage {
   async isVoted(title: string) {
     const votedPosts = await this.getVotedPosts()
     const isVoted = !!votedPosts.find((it: string) => it === title)
-    console.log('is voted', title, isVoted)
+    console.log('is voted', title, votedPosts, isVoted)
     return isVoted
   }
 }

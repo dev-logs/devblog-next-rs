@@ -61,7 +61,7 @@ impl InteractionRepository for InteractionSurrealDb {
             .take(0)?;
 
         let result: SurrealQR = result.into();
-        Ok(result.get(QlPath::Field("total_count"))?.as_i64()? as i32)
+        Ok(result.get(QlPath::Field("total_count"))?.as_i64().unwrap_or(0) as i32)
     }
 
     async fn count_view(&self, post: &PostId) -> Resolve<i32> {
@@ -69,7 +69,7 @@ impl InteractionRepository for InteractionSurrealDb {
         let result: TrustedOne = db
             .query(surreal_quote!(
                 r##"
-                SELECT out, math::sum(count) as total_count
+                SELECT out, count() as total_count
                 FROM #id(post)<-view
                 WHERE deleted_at = nil
                 GROUP BY out
@@ -79,7 +79,7 @@ impl InteractionRepository for InteractionSurrealDb {
             .take(0)?;
 
         let result: SurrealQR = result.into();
-        Ok(result.get(QlPath::Field("total_count"))?.as_i64()? as i32)
+        Ok(result.get(QlPath::Field("total_count"))?.as_i64().unwrap_or(0) as i32)
     }
 
     async fn count_vote(&self, post: &PostId) -> Resolve<i32> {
@@ -97,6 +97,6 @@ impl InteractionRepository for InteractionSurrealDb {
             .take(0)?;
 
         let result: SurrealQR = result.into();
-        Ok(result.get(QlPath::Field("total_count"))?.as_i64()? as i32)
+        Ok(result.get(QlPath::Field("total_count"))?.as_i64().unwrap_or(0) as i32)
     }
 }
