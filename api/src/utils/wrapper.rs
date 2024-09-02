@@ -1,17 +1,17 @@
 use std::ops::Deref;
 
-#[derive(Clone,)]
-pub struct W<T,>(T,)
+#[derive(Clone)]
+pub struct W<T>(T)
 where
     T: Clone;
 
-impl<T,> Deref for W<T,>
+impl<T> Deref for W<T>
 where
-    T: Clone,
+    T: Clone
 {
     type Target = T;
 
-    fn deref(&self,) -> &Self::Target {
+    fn deref(&self) -> &Self::Target {
         &self.0
     }
 }
