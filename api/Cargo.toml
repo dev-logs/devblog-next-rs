@@ -2,6 +2,11 @@
 name = "devblog-api"
 version = "0.1.0"
 edition = "2021"
+members = [
+  "../core-services",
+  "../schema/rust",
+  "../devlog-sdk"
+]
 
 [toolchain]
 channel = "nightly"
