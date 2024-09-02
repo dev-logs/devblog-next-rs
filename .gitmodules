@@ -1,9 +1,10 @@
 [submodule "api/core-services"]
 	path = api/core-services
 	url = git@github.com:dev-logs/core-services.git
-[submodule "api/schema"]
-	path = api/schema
-	url = git@github.com:dev-logs/schema.git
+
 [submodule "api/devlog-sdk"]
 	path = api/devlog-sdk
 	url = git@github.com:dev-logs/devlog-sdk.git
+[submodule "api/schema"]
+	path = api/schema
+	url = git@github.com:dev-logs/schema.git
