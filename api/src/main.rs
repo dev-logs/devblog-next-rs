@@ -1,4 +1,3 @@
-#![feature(trait_alias)]
 pub mod config;
 mod di;
 pub mod grpc;
