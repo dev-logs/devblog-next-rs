@@ -8,3 +8,6 @@
 [submodule "api/schema"]
 	path = api/schema
 	url = git@github.com:dev-logs/schema.git
+[submodule "web/schema"]
+	path = web/schema
+	url = git@github.com:dev-logs/schema.git

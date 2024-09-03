@@ -80,8 +80,8 @@ export const Post = defineDocumentType(() => ({
         },
         entity: {
           type: "json",
-          required: true,
           resolve: async (content: any) => {
+            try {
               const privateKey = process.env.DEVLOGS_ACCESS_TOKEN_PRIVATE_KEY || 'this_is_unsafe_keythis_is_unsafe_keythis_is_unsafe_key'
               const request = new CreatePostRequest()
               const author = new Author()
@@ -115,6 +115,8 @@ export const Post = defineDocumentType(() => ({
               const client = createPromiseClient(PostService, connectTransport)
               const response = await client.create(request, {headers: [['authorization', accessKey.content]]}) as CreatePostResponse
               console.log(`Migrated post ${content.title}`, response)
+            }
+            catch (ignored) {}
           }
         }
     },

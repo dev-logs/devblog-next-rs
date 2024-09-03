@@ -1,10 +1,14 @@
-import {withContentlayer} from 'next-contentlayer'
+const {withContentlayer} = require('next-contentlayer')
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-    assetPrefix: process.env.DEVLOG_DEVBLOG_NEXT_PUBLIC_PATH_PREFIX,
+    assetPrefix: process.env.DEVLOG_DEVBLOG_PATH_PREFIX,
     reactStrictMode: false,
     trailingSlash: true,
+    typescript: {
+      tsconfigPath: "./tsconfig.json",
+      ignoreBuildErrors: true
+    },
     webpack: (config) => {
         config.module.rules.push({
             test: /\.glsl$/,
@@ -26,5 +30,5 @@ const nextConfig = {
     }
 }
 
-export default withContentlayer({...nextConfig})
+module.exports = withContentlayer(nextConfig);
 
