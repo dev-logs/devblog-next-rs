@@ -1,8 +1,9 @@
 pub mod create_post;
 pub mod get_post;
 pub mod interact;
+pub mod migrate;
 
-use core_services::services::base::Service;
+use core_services::services::base::{Service, VoidResponse};
 use schema::devlog::devblog::entities::{Post, PostId};
 use schema::devlog::entities::{Like, User};
 
@@ -71,3 +72,11 @@ pub struct CreatePostParams {
 pub trait CreatePostService: Service<CreatePostParams, CreatePostResult> {}
 
 impl CreatePostService for PostService {}
+
+#[derive(Debug, Clone)]
+pub struct MigratePostParams {}
+
+pub trait MigratePostService: Service<MigratePostParams, VoidResponse> {}
+
+impl MigratePostService for PostService {}
+

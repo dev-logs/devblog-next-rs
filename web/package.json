@@ -4,9 +4,9 @@
   "private": true,
   "scripts": {
     "schema:compile": "yarn --cwd ./schema/typescript install && yarn --cwd ./schema/typescript schema:compile && yarn --cwd ./schema/typescript build && yarn remove @devlog/schema-ts; yarn add ./schema/typescript",
-    "contentlayer:schema": "yarn --cwd ./schema/grpc-ts schema:compile && yarn --cwd ./schema/grpc-ts build && cp -rf ./schema/grpc-ts/dist ./node_modules/grpc-ts/",
     "lint": "next lint",
     "dev": "yarn next dev",
+    "content:build": "(yarn contentlayer build || true) && cp -r ./.contentlayer/generated/bumped ../api/",
     "build": "yarn next build"
   },
   "types": "dist/index.d.ts",
@@ -53,7 +53,8 @@
     "tailwind-scrollbar": "^3.1.0",
     "three": "0.164.1",
     "three-custom-shader-material": "5.4.0",
-    "ts-shader-loader": "2.0.2"
+    "ts-shader-loader": "2.0.2",
+    "typescript": "5.5.4"
   },
   "devDependencies": {
     "@types/jsonwebtoken": "^9.0.6",
@@ -66,7 +67,6 @@
     "eslint-config-next": "14.2.3",
     "postcss": "8",
     "tailwindcss": "3.4.1",
-    "webpack-glsl-loader": "1.0.1",
-    "typescript": "5.5.4"
+    "webpack-glsl-loader": "1.0.1"
   }
 }

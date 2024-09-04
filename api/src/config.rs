@@ -22,14 +22,31 @@ impl Default for GRPCServer {
 }
 
 #[derive(Debug)]
+pub struct PostMigrate {
+    pub bumped_folder_path: String
+}
+
+impl Default for PostMigrate {
+    fn default() -> Self {
+        Self {
+            bumped_folder_path: env::var("DEVLOG_DEVBLOG_POST_BUMPED_FOLDER_PATH")
+                .map(|env_var| env_var.parse().expect("DEVLOG_DEVBLOG_POST_BUMPED_FOLDER_PATH must be string"))
+                .unwrap_or("./bumped".to_owned())
+        }
+    }
+}
+
+#[derive(Debug)]
 pub struct Config {
     pub surreal_db: SurrealDbConnectionInfo,
-    pub grpc_server: GRPCServer
+    pub grpc_server: GRPCServer,
+    pub post_migrate: PostMigrate
 }
 
 impl Default for Config {
     fn default() -> Self {
         Self {
+            post_migrate: Default::default(),
             grpc_server: Default::default(),
             surreal_db: SurrealDbConnectionInfo {
                 namespace: env::var("DEVLOG_SURREAL_DB_NAMESPACE").unwrap_or("dev".to_owned()),

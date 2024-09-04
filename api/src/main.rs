@@ -4,15 +4,18 @@ pub mod grpc;
 mod repository;
 pub mod services;
 mod utils;
+pub mod fs;
 
 use std::sync::Arc;
 
 use core_services::db::{SurrealDbConnection, SurrealDbConnectionInfo};
 use core_services::grpc::middle::response_handler::ResponseHeaderHandler;
 use core_services::logger;
+use core_services::services::base::Service;
 use core_services::utils::pool::allocator::PoolAllocator;
 use devlog_sdk::sdk::DependenciesInjection;
 use di::ApiDependenciesInjection;
+use services::post::MigratePostParams;
 use tokio::sync::OnceCell;
 use tonic_middleware::{InterceptorFor, MiddlewareLayer};
 use tower_http::cors::*;
@@ -25,6 +28,11 @@ use schema::devlog::rpc::authentication_service_server::AuthenticationServiceSer
 use tonic::transport::Server;
 use tonic_web::*;
 
+type DevblogPool = Arc<PoolAllocator<SurrealDbConnection, SurrealDbConnectionInfo>>;
+type DevlogPool = Arc<PoolAllocator<SurrealDbConnection, SurrealDbConnectionInfo>>;
+type S3ConnectionPool = Arc<PoolAllocator<core_services::S3Connection, ()>>;
+type SmtpTransportPool = Arc<PoolAllocator<core_services::SmtpTransport, ()>>;
+
 pub static DI: OnceCell<ApiDependenciesInjection> = OnceCell::const_new();
 
 #[tokio::main]
@@ -36,15 +44,17 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     })
     .await;
 
+    migrate_post().await?;
+
     setup_grpc_server().await?;
 
     Ok(())
 }
 
-type DevblogPool = Arc<PoolAllocator<SurrealDbConnection, SurrealDbConnectionInfo>>;
-type DevlogPool = Arc<PoolAllocator<SurrealDbConnection, SurrealDbConnectionInfo>>;
-type S3ConnectionPool = Arc<PoolAllocator<core_services::S3Connection, ()>>;
-type SmtpTransportPool = Arc<PoolAllocator<core_services::SmtpTransport, ()>>;
+async fn migrate_post() -> Result<(), Box<dyn std::error::Error>> {
+    DI.get().unwrap().migrate_post_service().execute(MigratePostParams {}).await?;
+    Ok(())
+}
 
 async fn setup_grpc_server() -> Result<(), Box<dyn std::error::Error>> {
     let ns = "devblog-api-grpc-server";

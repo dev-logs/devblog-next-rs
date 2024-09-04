@@ -6,16 +6,11 @@ import remarkGfm from "remark-gfm"
 import {
     AuthorLink,
     Author,
-    CreatePostRequest,
-    CreatePostResponse,
     Post as PostEntity,
-    PostService
 } from "@devlog/schema-ts";
-import {createGrpcTransport} from "@connectrpc/connect-node";
-import {createPromiseClient} from "@connectrpc/connect";
 import GithubSlugger from "github-slugger";
-import {JWTGenerator} from "./build-time/jwt";
 import { defineDocumentType, makeSource } from "contentlayer/source-files"
+import fs from 'fs'
 
 const url = (post: any) => {
   return `/posts/${post.title.toLowerCase().replaceAll(' ', '-')}`
@@ -80,10 +75,7 @@ export const Post = defineDocumentType(() => ({
         },
         entity: {
           type: "json",
-          resolve: async (content: any) => {
-            try {
-              const privateKey = process.env.DEVLOGS_ACCESS_TOKEN_PRIVATE_KEY || 'this_is_unsafe_keythis_is_unsafe_keythis_is_unsafe_key'
-              const request = new CreatePostRequest()
+          resolve: (content: any) => {
               const author = new Author()
               author.email = content.authorEmail
               author.fullName = content.authorFullName
@@ -96,27 +88,8 @@ export const Post = defineDocumentType(() => ({
               postEntity.description = content.description
               postEntity.author = authorLink
               postEntity.url = url(content)
-              request.post = postEntity
-
-              const jwtGenerate = new JWTGenerator()
-              const accessKey = jwtGenerate.generateJWT([
-                  ['email', 'system@devlog.studio'],
-                  ['name', 'system'],
-              ],
-
-              {minutes: 5}, privateKey)
-
-              const connectionUrl = process.env.DEVLOG_DEVBLOG_API_GRPC_URL || 'http://127.0.0.1:30001'
-              const connectTransport = createGrpcTransport({
-                  baseUrl: connectionUrl,
-                  httpVersion: '2'
-              })
-
-              const client = createPromiseClient(PostService, connectTransport)
-              const response = await client.create(request, {headers: [['authorization', accessKey.content]]}) as CreatePostResponse
-              console.log(`Migrated post ${content.title}`, response)
-            }
-            catch (ignored) {}
+              fs.mkdirSync('./.contentlayer/generated/bumped', {recursive: true})
+              fs.writeFileSync(`./.contentlayer/generated/bumped/${content.title.toLowerCase().replaceAll(' ', '-')}.bin`, postEntity.toBinary(), 'binary')
           }
         }
     },
