@@ -6,7 +6,6 @@ mod repository;
 pub mod services;
 mod utils;
 
-use std::borrow::Borrow;
 use std::sync::Arc;
 
 use core_services::db::{SurrealDbConnection, SurrealDbConnectionInfo};
@@ -19,7 +18,7 @@ use di::ApiDependenciesInjection;
 use services::post::MigratePostParams;
 use tokio::sync::OnceCell;
 use tonic_middleware::{InterceptorFor, MiddlewareLayer};
-use tower_http::cors::*;
+use tower_http::cors::{self, *};
 
 use config::CONFIGS;
 use log::info;
@@ -68,13 +67,24 @@ async fn setup_grpc_server() -> Result<(), Box<dyn std::error::Error>> {
 
     info!(target: ns, "gRPC server starting at {}", &addr);
 
-    let mut cors_layer = CorsLayer::new();
+    let mut cors = [
+        "https://_.com".parse().unwrap(),
+        "https://_.com".parse().unwrap(),
+        "https://_.com".parse().unwrap(),
+        "https://_.com".parse().unwrap(),
+        "https://_.com".parse().unwrap(),
+        "https://_.com".parse().unwrap(),
+    ];
 
-    for cor in CONFIGS.grpc_server.cors.iter() {
-        cors_layer = cors_layer.allow_origin(AllowOrigin::exact(cor.parse().unwrap()));
+    let mut origins = CONFIGS.grpc_server.cors.clone();
+    for i in 0..origins.len()-1 {
+        cors[i] = origins.swap_remove(i).parse().unwrap();
     }
 
-    cors_layer = cors_layer.allow_headers(AllowHeaders::any());
+    info!(target: "api", "Allowing origin {:?}", cors);
+    let cors_layer = CorsLayer::new()
+        .allow_origin(cors)
+        .allow_headers(AllowHeaders::any());
 
     // layer for cors
     Server::builder()

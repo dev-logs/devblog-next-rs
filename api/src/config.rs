@@ -13,7 +13,7 @@ impl Default for GRPCServer {
     fn default() -> Self {
         let cors_string: String = env::var("DEVLOG_DEVBLOG_CORS")
             .map(|env_var| env_var.parse().expect("DEVLOG_DEVBLOG_CORS must be string"))
-            .unwrap_or("http://localhost:3000".to_string());
+            .unwrap_or("http://localhost:3000;".to_string());
 
         let cors: Vec<String> = cors_string.split(";").into_iter().map(|it| it.to_string()).collect();
 
