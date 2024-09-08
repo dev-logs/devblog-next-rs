@@ -3,6 +3,7 @@ const {withContentlayer} = require('next-contentlayer')
 /** @type {import('next').NextConfig} */
 const nextConfig = {
     assetPrefix: (process.env.DEVLOG_DEVBLOG_PATH_PREFIX || '').endsWith('/') ? process.env.DEVLOG_DEVBLOG_PATH_PREFIX.slice(0, -1) : undefined,
+    crossOrigin: 'anonymous',
     reactStrictMode: false,
     trailingSlash: true,
     typescript: {
