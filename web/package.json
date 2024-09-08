@@ -6,7 +6,7 @@
     "schema:compile": "yarn --cwd ./schema/typescript install && yarn --cwd ./schema/typescript schema:compile && yarn --cwd ./schema/typescript build && yarn remove @devlog/schema-ts; yarn add ./schema/typescript",
     "lint": "next lint",
     "dev": "yarn next dev",
-    "content:build": "(yarn contentlayer build || true) && cp -r ./.contentlayer/generated/bumped ../api/",
+    "content:build": "(yarn contentlayer build || true) && cp -r ./.contentlayer/generated/bumped/ ../api/bumped/",
     "build": "yarn next build"
   },
   "types": "dist/index.d.ts",

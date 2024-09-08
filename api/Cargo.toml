@@ -59,4 +59,3 @@ surreal_namespace = "surrealql"
 surreal_info_log_macro = "log::info"
 # The macro name that use for warning log
 surreal_warn_log_macro = "log::info"
-
