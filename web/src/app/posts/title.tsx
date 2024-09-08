@@ -13,6 +13,7 @@ export default function PostTitle(props: any) {
           <img
             className="object-cover w-screen h-full opacity-30"
             src={post.publicImage}
+            crossOrigin="anonymous"
           />
         </div>
         <div className="relative h-full overflow-hidden w-full flex flex-col items-center z-10 pt-20 xl:px-20 md:px-10 px-5 justify-end bg-black bg-opacity-10 backdrop-blur-sm">
@@ -26,6 +27,7 @@ export default function PostTitle(props: any) {
             <img
               className="object-cover max-h-[50vh] h-auto w-[90vw]"
               src={post.publicImage}
+              crossOrigin="anonymous"
            />
           </div>
         </div>

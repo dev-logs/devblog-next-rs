@@ -14,6 +14,7 @@ export const ClassicPostItemContainer = (props: PostItemProps) => {
             <div className="flex md:flex-col flex-row">
                 <img
                     className="aspect-auto md:w-full bg-opacity-10 object-cover overflow-clip rounded-xl h-[200px] md:h-[300px] w-[30vw]"
+                    crossOrigin="anonymous"
                     src={post.publicImage}/>
                 <div className="flex flex-col mt-2 md:mt-5 ga-2 md:gap-5 mx-5 flex-1">
                     <span
@@ -46,7 +47,7 @@ export const CompactPostItemContainer = (props: PostItemProps) => {
             <span>{date.getMonth() + 1}/{date.getFullYear()}</span>
           </div>
           <div className="flex flex-col h-full justify-start ml-5 gap-5">
-            <img src={post.publicImage} className="w-[100vw] h-[100px] md:h-[250px] md:mb-2 object-cover rouned-xl overflow-clip"/>
+            <img src={post.publicImage} className="w-[100vw] h-[100px] md:h-[250px] md:mb-2 object-cover rouned-xl overflow-clip" crossOrigin="anonymous"/>
             <div className="flex flex-col md:gap-2 flex-1">
               <span className="font-roboto md:font-bold uppercase text-white font-bold text-sm md:text-2xl">{post.title}</span>
               <span className="font-roboto text-white text-sm md:text-xl">{post.description}</span>

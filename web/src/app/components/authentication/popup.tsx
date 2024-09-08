@@ -67,7 +67,7 @@ const AuthenticationPopup: React.FC<PopupProps> = ({ onClose, onResult }) => {
           <button onClick={onClose} className="absolute right-0 pt-1 pr-5">
             <span className='text-gray-400 text-xl'>&#x2716;</span>
           </button>
-          <img className="w-10 mx-auto mb-5" src={`${process.env.NEXT_PUBLIC_PATH_PREFIX}images/devlogs-ic.png`} alt="Logo" />
+          <img className="w-10 mx-auto mb-5" src={`${process.env.NEXT_PUBLIC_PATH_PREFIX}images/devlogs-ic.png`} alt="Logo" crossOrigin='anonymous'/>
         </header>
         <form autoComplete='off' onSubmit={handleSubmit} className="pt-5 px-10">
           {isSignup && (

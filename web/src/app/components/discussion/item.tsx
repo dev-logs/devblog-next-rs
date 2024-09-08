@@ -17,7 +17,7 @@ export const DiscussionItem = ({ discussion }: DiscussionItemProps) => {
     return (
         <div className="py-7 font-roboto">
             <div className="flex flex-row items-center h-12 gap-2">
-              <img src={user.avatarObject?.content.value as any} className='w-10 h-10 rounded-full'/>
+              <img src={user.avatarObject?.content.value as any} className='w-10 h-10 rounded-full' crossOrigin='anonymous'/>
               <h5 className="ml-2 font-roboto font-semibold xl:text-xl text-lg">{user.name || 'No name'}</h5>
             </div>
             <div className="text-gray-50 md:text-lg text-sm">
