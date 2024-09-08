@@ -2,7 +2,9 @@ const {withContentlayer} = require('next-contentlayer')
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-    assetPrefix: process.env.DEVLOG_DEVBLOG_PATH_PREFIX,
+    assetPrefix: process.env.DEVLOG_DEVBLOG_PATH_PREFIX
+      ? `${process.env.DEVLOG_DEVBLOG_PATH_PREFIX}/next`
+      : undefined,
     reactStrictMode: false,
     trailingSlash: true,
     typescript: {
