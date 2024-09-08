@@ -76,9 +76,9 @@ async fn setup_grpc_server() -> Result<(), Box<dyn std::error::Error>> {
         "https://_.com".parse().unwrap(),
     ];
 
-    let mut origins = CONFIGS.grpc_server.cors.clone();
-    for i in 0..origins.len()-1 {
-        cors[i] = origins.swap_remove(i).parse().unwrap();
+    let origins = CONFIGS.grpc_server.cors.clone();
+    for i in 0..origins.len() - 1 {
+        cors[i] = origins.get(i).clone().unwrap().parse().unwrap();
     }
 
     info!(target: "api", "Allowing origin {:?}", cors);
