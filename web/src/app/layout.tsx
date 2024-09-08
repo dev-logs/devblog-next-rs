@@ -55,6 +55,15 @@ export default function RootLayout({
           href="https://fonts.googleapis.com/css2?family=Alfa+Slab+One&display=swap"
           rel="stylesheet"
         />
+        <style> {`
+          @font-face {
+            font-family: 'Damn';
+            src: url('${process.env.NEXT_PUBLIC_PATH_PREFIX}fonts/damn.ttf') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+          }
+        `}
+        </style>
       </head>
       <body className={`${inter.className} h-screen w-screen dark`}>
         <div className="">
