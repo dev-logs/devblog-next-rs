@@ -125,7 +125,7 @@ export function VoteForNextTopicCards(props: {}) {
 }
 
 function Background(props: {}) {
-  const perlinSampler = useTexture("/images/perlin.png")
+  const perlinSampler = useTexture(`${process.env.NEXT_PUBLIC_PATH_PREFIX}images/perlin.png`)
   const [material] = useMemo(() => {
     const material = new CustomShaderMaterial({
       baseMaterial: THREE.MeshBasicMaterial,
@@ -165,7 +165,7 @@ function AnimatedCircle({ duration, startPoint }: any) {
   const progressRef = useRef(0)
   const arrowRef: any = useRef(0)
 
-  const arrowTexture = useTexture("/images/ic_arrow.png")
+  const arrowTexture = useTexture(`${process.env.NEXT_PUBLIC_PATH_PREFIX}images/ic_arrow.png`)
   arrowTexture.colorSpace = THREE.SRGBColorSpace
 
   const [arrowMaterial, arrowGeometry] = useMemo(() => {

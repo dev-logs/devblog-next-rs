@@ -32,7 +32,7 @@ export const BasicInteraction = (props: any) => {
 };
 
 const Background = (props: any) => {
-    const image = useTexture("/images/timeframe1.jpg");
+    const image = useTexture(`${process.env.NEXT_PUBLIC_PATH_PREFIX}images/timeframe1.jpg`);
     image.colorSpace = THREE.SRGBColorSpace;
 
     const [material, geometry] = useMemo(() => {

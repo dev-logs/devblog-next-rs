@@ -72,7 +72,7 @@ export const Tivi = (props: any) => {
     }, []);
 
     return <>
-        <Environment files={"/images/warehouse.hdr"} environmentIntensity={0.7}/>
+        <Environment files={`${process.env.NEXT_PUBLIC_PATH_PREFIX}images/warehouse.hdr`} environmentIntensity={0.7}/>
         <MacOne ref={meshRef} bodyMaterial={bodyMaterial} screenMaterial={screenMaterial} cloneScreen {...props}/>
     </>
 }

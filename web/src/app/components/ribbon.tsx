@@ -6,7 +6,7 @@ import CustomShaderMaterial from "three-custom-shader-material/vanilla";
 import {useFrame} from "@react-three/fiber";
 
 export const Ribbon = (props: any) => {
-    const ribbonTextMap = useTexture("/images/ribbon.png");
+    const ribbonTextMap = useTexture(`${process.env.NEXT_PUBLIC_PATH_PREFIX}images/ribbon.png`);
     const [textMaterial, sphereGeometry] = useMemo(() => {
         const geometry = new THREE.IcosahedronGeometry(1, 8);
         ribbonTextMap.colorSpace = THREE.SRGBColorSpace;

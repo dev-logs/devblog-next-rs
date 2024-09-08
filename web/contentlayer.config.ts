@@ -43,7 +43,9 @@ export const Post = defineDocumentType(() => ({
         },
         publicImage: {
             type: "string",
-            resolve: (post: any) => post.image.filePath.replace("../public", ""),
+            resolve: (post: any) => {
+              return post.image.filePath.replace("../public/", process.env.DEVLOG_DEVBLOG_PATH_PREFIX || "/")
+            }
         },
         readingTime: {
             type: "json",
