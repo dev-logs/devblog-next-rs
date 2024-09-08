@@ -5,18 +5,26 @@ use std::env;
 #[derive(Debug)]
 pub struct GRPCServer {
     pub port: u16,
-    pub web_port: u16
+    pub web_port: u16,
+    pub cors: Vec<String>
 }
 
 impl Default for GRPCServer {
     fn default() -> Self {
+        let cors_string: String = env::var("DEVLOG_DEVBLOG_CORS")
+            .map(|env_var| env_var.parse().expect("DEVLOG_DEVBLOG_CORS must be string"))
+            .unwrap_or("http://localhost:3000".to_string());
+
+        let cors: Vec<String> = cors_string.split(";").into_iter().map(|it| it.to_string()).collect();
+
         Self {
             port: env::var("DEVLOG_DEVBLOG_API_GRPC_PORT")
                 .map(|env_var| env_var.parse().expect("The DEVLOG_DEVBLOG_API_GRPC_PORT must be number"))
                 .unwrap_or(30001),
             web_port: env::var("DEVLOG_DEVBLOG_GRPC_WEB_PORT")
                 .map(|env_var| env_var.parse().expect("The DEVLOG_DEVBLOG_API_GRPC_WEB_PORT must be number"))
-                .unwrap_or(30002)
+                .unwrap_or(30002),
+            cors
         }
     }
 }

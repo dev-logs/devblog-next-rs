@@ -1,11 +1,12 @@
 pub mod config;
 mod di;
+pub mod fs;
 pub mod grpc;
 mod repository;
 pub mod services;
 mod utils;
-pub mod fs;
 
+use std::borrow::Borrow;
 use std::sync::Arc;
 
 use core_services::db::{SurrealDbConnection, SurrealDbConnectionInfo};
@@ -13,7 +14,7 @@ use core_services::grpc::middle::response_handler::ResponseHeaderHandler;
 use core_services::logger;
 use core_services::services::base::Service;
 use core_services::utils::pool::allocator::PoolAllocator;
-use devlog_sdk::sdk::DependenciesInjection;
+use devlog_sdk::sdk::{self, DependenciesInjection};
 use di::ApiDependenciesInjection;
 use services::post::MigratePostParams;
 use tokio::sync::OnceCell;
@@ -38,6 +39,7 @@ pub static DI: OnceCell<ApiDependenciesInjection> = OnceCell::const_new();
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     logger::setup();
+    info!(target: "api", "Starting with environments: {:?} {:?} {:?}", *CONFIGS, *core_services::config::CONFIGS, *devlog_sdk::config::CONFIGS);
     DI.get_or_init(|| async move {
         info!(target: "api", "Initialize dependencies injection");
         ApiDependenciesInjection::new().await.expect("Failed to initialize dependencies")
@@ -66,14 +68,18 @@ async fn setup_grpc_server() -> Result<(), Box<dyn std::error::Error>> {
 
     info!(target: ns, "gRPC server starting at {}", &addr);
 
-    let cors = CorsLayer::new()
-        .allow_origin(AllowOrigin::exact("http://localhost:3000".parse().unwrap()))
-        .allow_headers(AllowHeaders::any());
+    let mut cors_layer = CorsLayer::new();
+
+    for cor in CONFIGS.grpc_server.cors.iter() {
+        cors_layer = cors_layer.allow_origin(AllowOrigin::exact(cor.parse().unwrap()));
+    }
+
+    cors_layer = cors_layer.allow_headers(AllowHeaders::any());
 
     // layer for cors
     Server::builder()
         .accept_http1(true)
-        .layer(cors)
+        .layer(cors_layer)
         .layer(MiddlewareLayer::new(response_handler))
         .layer(GrpcWebLayer::new())
         .add_service(AuthenticationServiceServer::new(authentication_service))

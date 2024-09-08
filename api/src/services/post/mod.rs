@@ -79,4 +79,3 @@ pub struct MigratePostParams {}
 pub trait MigratePostService: Service<MigratePostParams, VoidResponse> {}
 
 impl MigratePostService for PostService {}
-

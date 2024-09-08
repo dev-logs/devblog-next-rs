@@ -16,7 +16,13 @@ use crate::repository::surrealdb::discussion::DiscussionSurrealDbRepository;
 use crate::repository::surrealdb::interaction::InteractionSurrealDb;
 use crate::repository::surrealdb::post::PostSurrealDbRepository;
 use crate::services::discussion::{DiscussionService, GetDiscussionsService, NewDiscussionService};
-use crate::services::post::{CreatePostService, GetPostService, MigratePostService, PostInteractionService, PostService};
+use crate::services::post::{
+    CreatePostService,
+    GetPostService,
+    MigratePostService,
+    PostInteractionService,
+    PostService
+};
 use crate::{grpc, S3ConnectionPool, SmtpTransportPool};
 use devlog_sdk::sdk::{DevlogSdk, SharingResource};
 use log::info;
