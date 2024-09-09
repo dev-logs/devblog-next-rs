@@ -13,12 +13,12 @@ use core_services::grpc::middle::response_handler::ResponseHeaderHandler;
 use core_services::logger;
 use core_services::services::base::Service;
 use core_services::utils::pool::allocator::PoolAllocator;
-use devlog_sdk::sdk::{self, DependenciesInjection};
+use devlog_sdk::sdk::DependenciesInjection;
 use di::ApiDependenciesInjection;
 use services::post::MigratePostParams;
 use tokio::sync::OnceCell;
 use tonic_middleware::{InterceptorFor, MiddlewareLayer};
-use tower_http::cors::{self, *};
+use tower_http::cors::*;
 
 use config::CONFIGS;
 use log::info;

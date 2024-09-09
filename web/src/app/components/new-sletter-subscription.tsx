@@ -46,7 +46,7 @@ export const NewSletterSubscription = (props: any) => {
                 <div className="flex flex-row w-full">
                   <input
                     disabled={!!getCurrentUser.data}
-                    value={appriciateMessage}
+                    value={appriciateMessage || ''}
                     onChange={(e) => signupByEmail.setEmail(e.target.value)}
                     className="w-full disabled:bg-gray-900 disabled:bg-opacity-20 disabled:border-none disabled:text-gray-300 font-head text-2xl md:py-3 text-center h-full bg-white tracking-wider text-black rounded-xl">
                   </input>

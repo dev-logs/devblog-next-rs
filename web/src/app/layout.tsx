@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { NavigationBar } from "./components/navigation-bar";
+import AppStyled from "./components/styled";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -55,7 +56,7 @@ export default function RootLayout({
           href="https://fonts.googleapis.com/css2?family=Alfa+Slab+One&display=swap"
           rel="stylesheet"
         />
-        <style> {`
+        <AppStyled> {`
           @font-face {
             font-family: 'Damn';
             src: url('${process.env.NEXT_PUBLIC_PATH_PREFIX}fonts/damn.ttf') format('truetype');
@@ -63,7 +64,7 @@ export default function RootLayout({
             font-style: normal;
           }
         `}
-        </style>
+       </AppStyled>
       </head>
       <body className={`${inter.className} h-screen w-screen dark`}>
         <div className="">
