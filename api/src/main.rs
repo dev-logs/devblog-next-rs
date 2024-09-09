@@ -59,7 +59,7 @@ async fn migrate_post() -> Result<(), Box<dyn std::error::Error>> {
 
 async fn setup_grpc_server() -> Result<(), Box<dyn std::error::Error>> {
     let ns = "devblog-api-grpc-server";
-    let addr = format!("127.0.0.1:{}", CONFIGS.grpc_server.port).parse()?;
+    let addr = format!("0.0.0.0:{}", CONFIGS.grpc_server.port).parse()?;
     let discussion_service = DI.get().unwrap().grpc_discussion_service();
     let authentication_service = DI.get().unwrap().grpc_authentication_service();
     let post_server = DI.get().unwrap().grpc_post_service();
