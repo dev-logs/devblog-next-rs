@@ -1,43 +1,63 @@
-import {useScroll} from "@react-three/drei"
-import {useMemo} from "react"
-import CustomShaderMaterial from "three-custom-shader-material/vanilla"
-import * as THREE from 'three'
-import SHADERS from '../glsl'
-import {useFrame} from "@react-three/fiber"
-import {TOTAL_PAGES} from "@/app/home/index";
+import { useEffect, useState } from "react";
 
 export const HomeBackground = (props: any = {}) => {
-    const scroll = props.scrollData || useScroll()
-    if (!scroll) return
+  const [bgColor, setBgColor] = useState('#F6F5F2');
 
-    const [material] = useMemo(() => {
-        const material = new CustomShaderMaterial({
-            baseMaterial: THREE.MeshBasicMaterial,
-            vertexShader: SHADERS.ColorBackgroundVertexShader,
-            fragmentShader: SHADERS.ColorBackgroundFragmentShader,
-            uniforms: {
-                uTime: {value: 0},
-                uProgress: {value: 0},
-                uColor1: {value: new THREE.Color('#F1EFEF')},
-                uColor2: {value: new THREE.Color('#191919')}
-            }
-        })
+  const handleScroll = () => {
+    const scrollY = window.scrollY;
+    const windowHeight = window.innerHeight;
+    
+    const scrollProgress = Math.min(scrollY / windowHeight, 1); // Cap it at 1
+    
+    const newBgColor = interpolateColor('#F6F5F2', '#000000', scrollProgress);
+    setBgColor(newBgColor);
+  };
 
-        return [material]
-    }, [])
+  useEffect(() => {
+    window.addEventListener('scroll', handleScroll);
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
 
-    useFrame((tick) => {
-        const clock = tick.clock
-        const elapsedTime = clock.getElapsedTime()
-        const scrollRange = scroll.range(0, 1 / TOTAL_PAGES)
+  const interpolateColor = (color1: any, color2: any, factor: any) => {
+    const c1 = hexToRgb(color1)!;
+    const c2 = hexToRgb(color2)!;
 
-        material.uniforms.uTime.value = elapsedTime
-        material.uniforms.uProgress.value = scrollRange
-    })
+    const result = {
+      r: Math.round(c1.r + factor * (c2.r - c1.r)),
+      g: Math.round(c1.g + factor * (c2.g - c1.g)),
+      b: Math.round(c1.b + factor * (c2.b - c1.b)),
+    };
 
-    return <>
-        <mesh position={[0, 0, -5]} material={material}>
-            <planeGeometry args={[100, 100]}/>
-        </mesh>
-    </>
-}
+    return `rgb(${result.r}, ${result.g}, ${result.b})`;
+  };
+
+  const hexToRgb = (hex: any) => {
+    let shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
+    hex = hex.replace(shorthandRegex, function (m, r, g, b) {
+      return r + r + g + g + b + b;
+    });
+
+    let result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    return result
+      ? {
+          r: parseInt(result[1], 16),
+          g: parseInt(result[2], 16),
+          b: parseInt(result[3], 16),
+        }
+      : null;
+  };
+
+  return (
+    <div
+      {...props}
+      style={{
+        height: '100%',
+        width: '100%',
+        backgroundColor: bgColor,
+        transition: 'background-color 0.2s ease',
+      }}
+    ></div>
+  );
+};

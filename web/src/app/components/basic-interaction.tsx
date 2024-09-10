@@ -8,12 +8,12 @@ import {useFrame} from "@react-three/fiber"
 import {useTexture} from "@react-three/drei"
 import { VoteForNextTopic } from "./vote-next-topic/card-layout"
 
-export const BasicInteraction = (props: any) => {
+export function BasicInteraction() {
     return (
         <div className="md:h-[120vh] h-[800px] md:min-h-[1400px] max-h-[1900px] bg-opacity-0 flex flex-col">
             <div className="h-full w-full relative">
               <div className="z-0 absolute top-0 left-0 h-full w-full">
-                  <ThreeDCanvas performance={{min: 1, max: 1}}>
+                  <ThreeDCanvas>
                     <Background/>
                   </ThreeDCanvas>
               </div>
@@ -31,7 +31,7 @@ export const BasicInteraction = (props: any) => {
     );
 };
 
-const Background = (props: any) => {
+const Background = () => {
     const image = useTexture(`${process.env.NEXT_PUBLIC_PATH_PREFIX}images/timeframe1.jpg`);
     image.colorSpace = THREE.SRGBColorSpace;
 
@@ -62,7 +62,7 @@ const Background = (props: any) => {
 
     return (
         <>
-            <mesh material={material} geometry={geometry}/>
+          <mesh material={material} geometry={geometry}/>
         </>
-    );
+    )
 };

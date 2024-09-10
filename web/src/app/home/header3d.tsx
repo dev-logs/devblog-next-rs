@@ -1,10 +1,11 @@
 import {Fragment, useMemo, useRef} from "react";
 import Stats from "stats.js";
 import {useFrame} from "@react-three/fiber";
-import {Scroll, useScroll} from "@react-three/drei";
+import {Environment, Scroll, useScroll} from "@react-three/drei";
 import {Reponsive, reponsiveMatch, WidthReponsive} from "@/app/components/reponsive";
-import {LowVertexModel} from "@/app/models/low-vertex";
+import {LowVertexModel, LowVertexModelProvider} from "@/app/models/low-vertex";
 import * as THREE from "three";
+import {Html} from '@react-three/drei'
 import {Tivi} from "@/app/components/tivi";
 import {Ribbon} from "@/app/components/ribbon";
 
@@ -22,9 +23,7 @@ export default function Header3d(props: any) {
     })
 
     const airplaneRef: any = useRef(null);
-    const scroll = useScroll()
     useFrame((tick: any) => {
-        const scrollRange = scroll.range(0, 1)
         const clock = tick.clock;
         const elapsedTime = clock.getElapsedTime();
         if (airplaneRef.current) {
@@ -35,40 +34,38 @@ export default function Header3d(props: any) {
             airplaneRef.current.rotation.y = elapsedTime;
             airplaneRef.current.rotation.x = Math.sin(elapsedTime * 2) * 0.8;
             airplaneRef.current.rotation.z = Math.cos(elapsedTime * 2) * 0.1;
-
-            airplaneRef.current.position.y += scrollRange * 30
         }
     });
 
     return (
-        <>
+        <LowVertexModelProvider>
+            <Environment preset="city"/>
             <Reponsive>
                 {(matches: any) => {
                     const match = reponsiveMatch(matches)
                     return <Fragment>
-                        {match.is(WidthReponsive.SMALL) && <>
-                            <LowVertexModel
-                                ref={airplaneRef}
-                                material={
-                                    new THREE.MeshBasicMaterial({
-                                        color: "#F05454",
-                                        side: THREE.DoubleSide
-                                    })
-                                }
-                                name="paper-airplane"
-                                scale={2}
-                                position={[2, -4, 1]}
-                            />
-                            <Scroll>
+                        {(match.is(WidthReponsive.SMALL)) && <>
                                 <Tivi
                                     scale={5}
                                     position={[0, -1.4, 1]}/>
                                 <Ribbon
                                     position={[0, -1.25, 1]}
                                     scale={1.5}/>
-                            </Scroll>
+                                <HtmlHeader position={[-1, 1.8, 1]}/>
                         </>}
-                        {match.from(WidthReponsive.MEDIUM) && <>
+
+                        {match.is(WidthReponsive.MEDIUM) && <>
+                                <Tivi
+                                    scale={5}
+                                    position={[0, -1.4, 1]}/>
+                                <Ribbon
+                                    position={[0, -1.25, 1]}
+                                    scale={1.5}/>
+                                <HtmlHeader position={[-0.8, 1.8, 1]}/>
+                        </>
+                        }
+
+                        {match.is(WidthReponsive.LARGE) && <>
                             <LowVertexModel
                                 ref={airplaneRef}
                                 material={
@@ -81,20 +78,67 @@ export default function Header3d(props: any) {
                                 scale={2.2}
                                 position={[2, -2, 2.3]}
                             />
-                            <Scroll>
                                 <Tivi
-                                    scale={7}
-                                    position={[0, -2, 1]}/>
+                                    scale={6}
+                                    position={[0, -1.1, 1.5]}/>
                                 <Ribbon
                                     rotation-x={Math.PI * -0.02}
-                                    position={[0, -2.2, -0.1]}
-                                    scale={2}/>
-                            </Scroll>
+                                    position={[0, -1.1, 0.3]}
+                                    scale={2.2}/>
+                                <HtmlHeader position={[-0.5, 1.8, 1]}/>
+                        </>
+                        }
+                        {match.from(WidthReponsive.VERY_LARGE) && <>
+                            <LowVertexModel
+                                ref={airplaneRef}
+                                material={
+                                    new THREE.MeshBasicMaterial({
+                                        color: "#F05454",
+                                        side: THREE.DoubleSide
+                                    })
+                                }
+                                name="paper-airplane"
+                                scale={2.2}
+                                position={[2, -2, 2.3]}
+                            />
+                                <Tivi
+                                    scale={6}
+                                    position={[0, -1.1, 1.5]}/>
+                                <Ribbon
+                                    rotation-x={Math.PI * -0.02}
+                                    position={[0, -1.1, 0.3]}
+                                    scale={2.2}/>
+                                <HtmlHeader position={[-2.5, 0.5, 1]}/>
                         </>
                         }
                     </Fragment>
                 }}
             </Reponsive>
-        </>
+        </LowVertexModelProvider>
     );
 };
+
+function HtmlHeader(props: any) {
+  return (
+    <Html position={[-4, 1.5, 0]} center {...props}>
+        <div className=" md:ml-10 ml-4 gap-3 w-[40vw] h-screen flex justify-center items-start flex-col">
+          <div className="flex flex-row gap-2 md:w-fit lg:gap-2 w-screen h-fit justify-start items-start">
+            <span
+              className="xl:text-2xl col-span-1 px-4 w-fit text-1xl font-graduate bg-pink-700 bg-opacity-25 p-2 rounded-full text-center h-fit text-black">THE</span>
+            <span
+              className="xl:text-2xl col-span-5 w-fit text-1xl font-graduate bg-black bg-opacity-25 p-2 text-center h-fit text-white">DEVLOG STUDIO</span>
+            </div>
+            <div className="flex flex-row gap-2 xl:w-fit lg:gap-2 w-[100vw] h-fit justify-start items-start">
+              <span
+                className="xl:text-2xl md:text-2xl col-span-2 w-fit sm:text-xl text-sm font-graduate bg-blue-400 bg-opacity-15 p-1 px-1 text-center h-fit text-black">
+                THE CREATIVE
+              </span>
+              <span
+                className="xl:text-2xl sm:text-xl text-sm col-span-3 w-fit font-graduate bg-black bg-opacity-15 p-2 px-1 h-fit text-center text-black">
+                SOFTWARE DEVELOPMENT</span>
+            </div>
+          </div>
+    </Html>
+  )
+}
+

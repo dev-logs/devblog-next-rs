@@ -6,13 +6,14 @@ import {LoadingOverlay} from "@/app/components/loading-overlay"
 export const TOTAL_PAGES = 5
 
 const getTasks = () => [
-    import('../posts/blog-list-background'),
-    import('./header3d')
+    import('./header3d'),
+    new Promise((resolve, reject) => {
+      setTimeout(resolve, 2000)
+    })
 ]
 
 export const TASKS = {
-  BLOG_LIST_BACKGROUND_TASK: 0,
-  HEADER_3D: 1
+  HEADER_3D: 0
 }
 
 export default function Home(props: any) {
