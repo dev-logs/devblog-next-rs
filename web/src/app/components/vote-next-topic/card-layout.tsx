@@ -1,3 +1,4 @@
+'use client'
 import { allPosts } from "contentlayer/generated"
 import { Post } from "contentlayer/generated"
 import { ThreeDCanvas } from "../canvas"

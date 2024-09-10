@@ -10,7 +10,7 @@ import { tasks } from "./config";
 export function PostDetailLoading() {
   return <>
       <div className={"fixed top-0 left-0 z-10 h-full"}>
-        <LoadingOverlay tasks={tasks}/>
+        <LoadingOverlay tasks={tasks} noModel={true}/>
       </div>
   </>
 }

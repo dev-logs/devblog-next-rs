@@ -1,22 +1,19 @@
-import {Fragment, Suspense, useEffect, useMemo, useRef, useState} from "react"
+'use client'
 import {ThreeDCanvas} from "../components/canvas"
 import {BlogList} from "../posts/list"
 import {BasicInteraction} from "../components/basic-interaction"
 import {RunningText} from "../components/running-text"
 import {FooterHtml} from "../components/footer"
-import {TASKS} from "@/app/home/index"
-import dynamic from "next/dynamic"
 import { Toaster } from "react-hot-toast"
 import { HomeBackground } from "./background"
+import Header3d from "./header3d"
 
 export default function HomeContent(props: any) {
-  const [totalPages, setTotalPages] = useState(1)
-  return <_Home {...props} totalPages={totalPages}/>
+  return <_Home {...props}/>
 }
 
 const _Home = (props: any) => {
     const {tasks} = props || {}
-    const Header3dLazy = dynamic(() => tasks[TASKS.HEADER_3D])
     return (
         <>
            <HomeBackground className="flex flex-col h-full w-full">
@@ -25,9 +22,7 @@ const _Home = (props: any) => {
                 <div className="flex flex-col w-screen left-0 top-0 z-20">
                   <div className="h-screen w-screen">
                     <ThreeDCanvas gl={{alpha: true}}>
-                      <Suspense>
-                        <Header3dLazy/>
-                      </Suspense>
+                      <Header3d/>
                     </ThreeDCanvas>
                   </div>
                   <HtmlDoms/>
@@ -43,9 +38,7 @@ const HtmlDoms = () => {
       <BlogList/>
       <RunningText/>
       <BasicInteraction/>
-      <div>
-        <FooterHtml/>
-      </div>
+      <FooterHtml/>
     </div>
 }
 

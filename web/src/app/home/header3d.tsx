@@ -1,10 +1,9 @@
+'use client'
 import {Fragment, useMemo, useRef} from "react";
 import Stats from "stats.js";
 import {useFrame} from "@react-three/fiber";
-import {Environment, Scroll, useScroll} from "@react-three/drei";
+import {Environment} from "@react-three/drei";
 import {Reponsive, reponsiveMatch, WidthReponsive} from "@/app/components/reponsive";
-import {LowVertexModel, LowVertexModelProvider} from "@/app/models/low-vertex";
-import * as THREE from "three";
 import {Html} from '@react-three/drei'
 import {Tivi} from "@/app/components/tivi";
 import {Ribbon} from "@/app/components/ribbon";
@@ -37,9 +36,8 @@ export default function Header3d(props: any) {
         }
     });
 
-    return (
-        <LowVertexModelProvider>
-            <Environment preset="city"/>
+    return <>
+            <Environment files={`${process.env.NEXT_PUBLIC_PATH_PREFIX}images/warehouse.hdr`}/>
             <Reponsive>
                 {(matches: any) => {
                     const match = reponsiveMatch(matches)
@@ -66,18 +64,6 @@ export default function Header3d(props: any) {
                         }
 
                         {match.is(WidthReponsive.LARGE) && <>
-                            <LowVertexModel
-                                ref={airplaneRef}
-                                material={
-                                    new THREE.MeshBasicMaterial({
-                                        color: "#F05454",
-                                        side: THREE.DoubleSide
-                                    })
-                                }
-                                name="paper-airplane"
-                                scale={2.2}
-                                position={[2, -2, 2.3]}
-                            />
                                 <Tivi
                                     scale={6}
                                     position={[0, -1.1, 1.5]}/>
@@ -89,18 +75,6 @@ export default function Header3d(props: any) {
                         </>
                         }
                         {match.from(WidthReponsive.VERY_LARGE) && <>
-                            <LowVertexModel
-                                ref={airplaneRef}
-                                material={
-                                    new THREE.MeshBasicMaterial({
-                                        color: "#F05454",
-                                        side: THREE.DoubleSide
-                                    })
-                                }
-                                name="paper-airplane"
-                                scale={2.2}
-                                position={[2, -2, 2.3]}
-                            />
                                 <Tivi
                                     scale={6}
                                     position={[0, -1.1, 1.5]}/>
@@ -114,8 +88,7 @@ export default function Header3d(props: any) {
                     </Fragment>
                 }}
             </Reponsive>
-        </LowVertexModelProvider>
-    );
+    </>
 };
 
 function HtmlHeader(props: any) {

@@ -42,7 +42,7 @@ export const CompactPostItemContainer = (props: PostItemProps) => {
     return <div className="col-span-1">
         <div
           className="hover:cursor-pointer flex px-5 flex-row rounded-xl py-5 min-w-[300px] w-full items-center max-w-[900px] gap-5 hover:bg-black" onClick={onClick}>
-          <div className="flex flex-col items-center justify-center gap-2">
+          <div className="flex flex-col items-center justify-center gap-2 text-white">
             <span className="font-bold text-4xl">{date.getDate()}</span>
             <span>{date.getMonth() + 1}/{date.getFullYear()}</span>
           </div>

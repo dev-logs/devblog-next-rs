@@ -68,7 +68,7 @@ export const BlogList = (props: any) => {
 export const BlogListTitle = (props: any) => {
   return (
     <>
-      <div id={"blogs"} className="flex w-full flex-col xl:mx-10 mx-4">
+      <div id={"blogs"} className="flex w-full flex-col xl:mx-10 mx-4 text-white">
         <span className="font-head md:text-6xl text-3xl tracking-wider text-white">
           We're writing blogs every week
         </span>

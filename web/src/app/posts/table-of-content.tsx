@@ -4,7 +4,7 @@ export const TableOfContent = (props: any) => {
     <div className="gap-y-8 lg:gap-8 sxl:gap-16 mt-8 mx-5 xl:max-w-full max-w-prose text-sm bg-black backdrop-blur-3xl bg-opacity-40 rounded-xl">
       <div className="col-span-full">
         <details className="rounded-xl p-4 sticky top-6 max-h-[80vh] overflow-hidden overflow-y-auto">
-          <summary className="text-sm font-semibold capitalize cursor-pointer">
+          <summary className="text-sm font-semibold capitalize cursor-pointer text-white">
             Table Of Content
           </summary>
           <ul className="mt-4 font-in text-sm">

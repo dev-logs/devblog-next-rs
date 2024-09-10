@@ -8,7 +8,8 @@ import noop from 'lodash/noop'
 export const LoadingOverlay = (props: any) => {
     const {
         tasks = [],
-        onComplete = noop
+        onComplete = noop,
+        noModel,
     }: any = props || {}
 
     const [progress, updateProgress] = useState(0)
@@ -18,6 +19,10 @@ export const LoadingOverlay = (props: any) => {
     const [isComplete, updateComplete] = useState(false)
 
     useEffect(() => {
+        if (!tasks.length) {
+          updateHtmlProgress(1)
+          return
+        }
         const unit = 1 / tasks.length
         const progress = {value: 0}
         for (let i = 0; i < tasks.length; i++) {
@@ -29,7 +34,7 @@ export const LoadingOverlay = (props: any) => {
     }, [tasks, tasks.length])
 
     useEffect(() => {
-        let mProgress = (loaded / total) + (modelProgress * 0.01 / total)
+        let mProgress = noModel ? 1 : (loaded / total) + (modelProgress * 0.01 / total)
         if (isNaN(mProgress)) mProgress = 0
 
         const finalProgress = (mProgress + htmlProgress) / 2
@@ -70,7 +75,7 @@ export const LoadingOverlay = (props: any) => {
     return <>
         <div
             ref={backgroundRef}
-            className={"absolute z-50 top-0 left-0 h-screen w-screen bg-black justify-center items-center flex flex-col"}>
+            className={"absolute z-50 top-0 left-0 h-screen w-screen bg-black justify-center items-center flex flex-col text-white"}>
             <span className={"font-graduate text-1xl"}>Loading, please wait...</span>
             <div
                 ref={progressBarRef}

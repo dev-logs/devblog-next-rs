@@ -1,3 +1,4 @@
+'use client'
 import { useCallback, useEffect, useMemo } from "react"
 import { useService } from "../hooks/service"
 

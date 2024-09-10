@@ -97,7 +97,7 @@ export const ElectricalEffect = (props: ElectricalEffectProps) => {
       }
     })
     return <>
-      <Environment preset={"city"}/>
+      <Environment files={`${process.env.NEXT_PUBLIC_PATH_PREFIX}images/warehouse.hdr`}/>
       <EffectComposer enableNormalPass={false} resolutionScale={1}>
         <Bloom intensity={0.1} luminanceThreshold={0.2} mipmapBlur/>
       </EffectComposer>

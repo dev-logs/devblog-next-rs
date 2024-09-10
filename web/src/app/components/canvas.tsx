@@ -16,7 +16,8 @@ export const ThreeDCanvas = forwardRef((
     return <Canvas
         gl={{
           alpha: false,
-          preserveDrawingBuffer: true,
+          preserveDrawingBuffer: false,
+          antialias: false,
           ...(props.gl || {})
         }}
         ref={ref} {...omit(props, ['children', 'gl'])}>
