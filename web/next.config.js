@@ -27,7 +27,8 @@ const nextConfig = {
     env: {
         NEXT_PUBLIC_API_URL: process.env.DEVLOG_DEVBLOG_API_URL || 'http://localhost:3000',
         NEXT_PUBLIC_API_GRPC_URL: process.env.DEVLOG_DEVBLOG_API_GRPC_URL || 'http://localhost:30001',
-        NEXT_PUBLIC_PATH_PREFIX: process.env.DEVLOG_DEVBLOG_PATH_PREFIX || '/'
+        NEXT_PUBLIC_PATH_PREFIX: process.env.DEVLOG_DEVBLOG_PATH_PREFIX || '/',
+        NEXT_PUBLIC_DEVLOG_ENVIRONMENT: process.env.DEVLOG_ENVIRONMENT || 'dev'
     }
 }
 

@@ -10,6 +10,10 @@ import {Ribbon} from "@/app/components/ribbon";
 
 export default function Header3d(props: any) {
     const stats = useMemo(() => {
+        if (process.env.NEXT_PUBLIC_PATH_PREFIX !== 'dev') {
+          return null
+        }
+
         const stats = new Stats()
         stats.showPanel(0)
         document.body.appendChild(stats.dom)
@@ -17,8 +21,8 @@ export default function Header3d(props: any) {
     }, [])
 
     useFrame(() => {
-        stats.begin()
-        stats.end()
+        stats?.begin()
+        stats?.end()
     })
 
     const airplaneRef: any = useRef(null);
