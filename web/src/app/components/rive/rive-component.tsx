@@ -3,6 +3,16 @@ import RiveCanvas from '@rive-app/canvas-advanced'
 import { debounce, noop, throttle } from 'lodash'
 
 const RIVE_VERSION = '2.7.3'
+let riveCanvas: any
+
+export async function loadRive() {
+  if (!riveCanvas) {
+      riveCanvas = await RiveCanvas({
+        locateFile: () =>
+          `https://unpkg.com/@rive-app/canvas-advanced@${RIVE_VERSION}/rive.wasm`,
+      })
+    }
+}
 
 export class RiveApp {
   private _rive: any
@@ -16,12 +26,14 @@ export class RiveApp {
   }
 
   static async init() {
-    const rive = await RiveCanvas({
-      locateFile: () =>
-        `https://unpkg.com/@rive-app/canvas-advanced@${RIVE_VERSION}/rive.wasm`,
-    })
+    if (!riveCanvas) {
+      riveCanvas = await RiveCanvas({
+        locateFile: () =>
+          `https://unpkg.com/@rive-app/canvas-advanced@${RIVE_VERSION}/rive.wasm`,
+      })
+    }
 
-    const instance = new RiveApp(rive)
+    const instance = new RiveApp(riveCanvas)
     return instance
   }
 

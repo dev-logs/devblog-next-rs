@@ -54,7 +54,7 @@ export const BlogList = (props: any) => {
         </div>
         <BlogListTitle />
         <div className="flex flex-row w-full justify-center h-fit">
-        <div className="mt-2 md:mt-20 mx-2 md:mx-10 bg-zinc-900 md:gap-5 p-2 md:p-10 flex flex-col w-full justify-center items-center rounded-2xl bg-opacity-90 h-min z-10 gap-7">
+        <div className="mt-2 md:mt-20 bg-zinc-900 md:gap-5 p-2 md:p-10 flex flex-col w-full justify-center items-center rounded-2xl bg-opacity-90 h-min z-10 gap-7">
           {posts.map((post, index) => (
             <CompactPostItemContainer key={index} post={post as any} />
           ))}
@@ -68,7 +68,7 @@ export const BlogList = (props: any) => {
 export const BlogListTitle = (props: any) => {
   return (
     <>
-      <div id={"blogs"} className="flex w-full flex-col xl:mx-10 mx-4 text-white">
+      <div id={"blogs"} className="flex w-full flex-col text-white">
         <span className="font-head md:text-6xl text-3xl tracking-wider text-white">
           We're writing blogs every week
         </span>

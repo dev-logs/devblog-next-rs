@@ -1,9 +1,9 @@
 'use client'
-import React, { useCallback, useEffect, useMemo } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Discussions } from "@/app/components/discussion";
 import { useService } from "@/app/hooks/service";
 import { Post } from "@devlog/schema-ts";
-import { RiveEmojiFaceLove, RiveText, ThumbUpRiveComponent } from "@/app/components/rive/rive-component";
+import { loadRive, RiveEmojiFaceLove, RiveText, ThumbUpRiveComponent } from "@/app/components/rive/rive-component";
 import { LoadingOverlay } from "@/app/components/loading-overlay";
 import { tasks } from "./config";
 
@@ -18,6 +18,15 @@ export function PostDetailLoading() {
 export function PostInteraction({post}: any) {
   const getPostDb = useService().post().get();
   const viewPost = useService().post().view();
+
+  const [isRiveReady, updateRiveReady] = useState(false)
+
+  useEffect(() => {
+    loadRive().then(() => {
+      updateRiveReady(true)
+    })
+  }, [])
+
   useEffect(() => {
     if (post) {
       getPostDb.setTitle(post.title)
@@ -27,10 +36,10 @@ export function PostInteraction({post}: any) {
     }
   }, [post])
 
-  return <>
+  return isRiveReady ? <>
      <LikeSection post={post} totalLikes={getPostDb.data?.totalLikes ?? 0} totalViews={viewPost.data ?? getPostDb.data?.totalViews ?? 0}/>
      <Discussions post={post}/>
-  </>
+  </> : <></>
 }
 
 function LikeSection(props: {post: Post, totalViews: number, totalLikes: number}) {

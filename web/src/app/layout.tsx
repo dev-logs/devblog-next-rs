@@ -66,7 +66,7 @@ export default function RootLayout({
         `}
        </AppStyled>
       </head>
-      <body className={`${inter.className} h-screen w-screen dark`}>
+      <body className={`${inter.className} h-screen w-screen dark overflow-x-hidden`}>
         <div className="">
           <NavigationBar />
         </div>
