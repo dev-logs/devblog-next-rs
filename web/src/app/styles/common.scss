@@ -1,0 +1,6 @@
+.container {
+  padding: 12px;
+  @include styleFor(tablet-and-up) {
+    padding: 18px;
+  }
+}

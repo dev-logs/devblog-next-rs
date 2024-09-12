@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
+import "./styles/app.scss"
 import { NavigationBar } from "./components/navigation-bar";
 import AppStyled from "./components/styled";
 
@@ -67,9 +68,6 @@ export default function RootLayout({
        </AppStyled>
       </head>
       <body className={`${inter.className} h-screen w-screen dark overflow-x-hidden`}>
-        <div className="">
-          <NavigationBar />
-        </div>
         {children}
       </body>
     </html>

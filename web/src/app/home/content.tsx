@@ -21,7 +21,7 @@ const _Home = (props: any) => {
               <Toaster position="bottom-right"/>
               <div className="w-screen h-auto">
                 <div className="flex flex-col w-screen left-0 top-0 z-20">
-                  <div className="h-screen w-screen">
+                  <div className="container h-screen">
                     <Header3d/>
                   </div>
                   <HtmlDoms/>
@@ -33,12 +33,10 @@ const _Home = (props: any) => {
 };
 
 const HtmlDoms = () => {
-    return <div className="mr-5 w-screen flex flex-col gap-14">
-      <MainContainer>
-        <BlogList/>
-        <RunningText/>
-        <BasicInteraction/>
-      </MainContainer>
+    return <div className="w-screen flex flex-col gap-14">
+      <BlogList/>
+      <RunningText/>
+      <BasicInteraction/>
       <FooterHtml/>
     </div>
 }

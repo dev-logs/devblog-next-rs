@@ -15,6 +15,8 @@ const DevlogStudio = (props: any) => {
         className={`-mr-4 bg-opacity-0 flex flex-row items-center text-white font-roboto md:text-4xl text-xl font-extrabold uppercase whitespace-nowrap ${props.className}`}>
         <RedDot/> DevLogs Studio <BlueDot/> <span className="text-only-stroke">DevLogs Studio</span> <RedDot/> DevLogs
         Studio <GreenDot/> <span className="text-only-stroke">DevLogs Studio</span>
+        <RedDot/> DevLogs Studio <BlueDot/> <span className="text-only-stroke">DevLogs Studio</span> <RedDot/> DevLogs
+        Studio <GreenDot/> <span className="text-only-stroke">DevLogs Studio</span>
     </div>
 }
 

@@ -2,6 +2,7 @@ import React from "react";
 import PostPageContent from "@/app/posts/[slug]/content";
 import { allPosts } from "contentlayer/generated";
 import { PostDetailLoading } from "./client";
+import {NavigationBar} from "@/app/components/navigation-bar";
 
 export async function generateStaticParams() {
   return allPosts.map((post) => {
@@ -13,6 +14,7 @@ export async function generateStaticParams() {
 
 export default function PostPage(props: any) {
     return <div className={'h-screen'}>
+        <NavigationBar />
         <PostDetailLoading/>
         <div className={`absolute top-0 left-0 z-0`}>
             <PostPageContent {...props}/>

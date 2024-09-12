@@ -1,0 +1,27 @@
+@mixin styleFor($size: all) {
+  @if $size == phone-only {
+    @media (max-width: $breakpoint-phone-max) { @content; }
+  } @else if $size == tablet-only {
+    @media (min-width: $breakpoint-tablet) and (max-width: $breakpoint-tablet-max) { @content; }
+  } @else if $size == desktop-only {
+    @media (min-width: $breakpoint-desktop) and (max-width: $breakpoint-desktop-max) { @content; }
+  } @else if $size == desktop-medium-only {
+    @media (min-width: $breakpoint-desktop-medium) and (max-width: $breakpoint-desktop-medium-max) { @content; }
+  } @else if $size == large-desktop-only {
+    @media (min-width: $breakpoint-desktop-large) { @content; }
+  } @else if $size == medium-desktop-and-down {
+    @media (max-width: $breakpoint-desktop-medium-max) { @content; }
+  } @else if $size == desktop-and-down {
+    @media (max-width: $breakpoint-desktop-max) { @content; }
+  } @else if $size == tablet-and-down {
+    @media (max-width: $breakpoint-tablet-max) { @content; }
+  } @else if $size == tablet-and-up {
+    @media (min-width: $breakpoint-tablet) { @content; }
+  } @else if $size == desktop-and-up {
+    @media (min-width: $breakpoint-desktop) { @content; }
+  } @else if $size == desktop-medium-and-up {
+    @media (min-width: $breakpoint-desktop-medium) { @content; }
+  } @else {
+    @content;
+  }
+}

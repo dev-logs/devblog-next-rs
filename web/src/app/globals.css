@@ -76,6 +76,15 @@ body {
     }
 }
 
+@keyframes scroll3 {
+    0% {
+        transform: translateX(0%);
+    }
+    100% {
+        transform: translateX(-300%);
+    }
+}
+
 .animate-scroll1 {
     animation: scroll1 40s linear infinite;
     animation-delay: -40s;
@@ -84,6 +93,11 @@ body {
 .animate-scroll2 {
     animation: scroll2 40s linear infinite;
     animation-delay: -20s;
+}
+
+.animate-scroll3 {
+    animation: scroll3 40s linear infinite;
+    animation-delay: 20s;
 }
 
 h1 > a > .icon.icon-link:before,
