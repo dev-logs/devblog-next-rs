@@ -1,10 +1,12 @@
+import { MainContainer } from "./container";
+
 const navigationItemClass = () =>
     'relative cursor-pointer font-head md:text-xl tracking-widest text-white group';
 
 export const NavigationBar = (props: any) => {
     return (
-        <>
-            <div className="fixed md:space-x-5 flex flex-row px-2 md:rounded-full md:gap-16 gap-2 top-5 md:left-10 left-2 md:right-10 right-2 bg-gray-500 bg-opacity-5 backdrop-blur-lg items-center md:px-10 py-4 z-50">
+        <MainContainer>
+            <div className="container fixed md:space-x-5 flex flex-row px-2 rounded-full md:gap-16 gap-2 top-5 bg-gray-800 bg-opacity-5 backdrop-blur-lg items-center py-4 z-50">
                 <LayeredTitleEffect />
                 <div className="w-1 h-full bg-white md:ml-2 md:mr-5"></div>
                 <a href={'#footer'} className={navigationItemClass()}>
@@ -16,7 +18,7 @@ export const NavigationBar = (props: any) => {
                     <span className="absolute bottom-0 left-0 w-full h-0.5 bg-white transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></span>
                 </a>
             </div>
-        </>
+        </MainContainer>
     );
 };
 
@@ -29,7 +31,7 @@ const LayeredTitleEffect = (props: any) => {
                     DEVLOGS
                 </span>
                 <div className="rotate-90 scale-75 -translate-x-3 -translate-y-1">
-                    <span className="text-white font-head text-sm tracking-widest md:rounded-full px-2 py-1">
+                    <span className="text-white font-head text-sm tracking-widestrounded-full px-2 py-1">
                         studio
                     </span>
                 </div>

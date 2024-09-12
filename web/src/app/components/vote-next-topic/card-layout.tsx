@@ -23,14 +23,14 @@ enum ItemAnimState {
 
 export function VoteForNextTopic(props: {}) {
   return <>
-    <div className="flex flex-col h-full lg:py-10 lg:px-10 py-2 px-2 rounded-xl overflow-clip">
+    <div className="flex flex-col h-full py-5 rounded-xl overflow-clip">
       <div className="w-full h-full relative">
         <div className="absolute top-0 left-0 h-full w-full z-10 rounded-xl overflow-clip">
           <ThreeDCanvas>
             <Background />
           </ThreeDCanvas>
         </div>
-        <div className="absolute flex flex-col top-0 left-0 w-full h-full z-20 p-7">
+        <div className="container absolute flex flex-col top-0 w-full h-full z-20 left-1/2 -translate-x-1/2 pb-2">
           <span className="font-Alfa xl:text-3xl lg:text-2xl text-md text-white">
             Vote for our next topic
           </span>
@@ -117,7 +117,7 @@ export function VoteForNextTopicCards(props: {}) {
   }, [selectedIndex, unPublishPosts, unPublishPosts.length, onNext, onPrev])
 
   return (
-    <div className="relative w-full h-full flex flex-row justify-center items-center">
+    <div className="relative w-full h-full flex flex-row justify-center items-center pb-8">
       <button className="absolute right-0 w-[30%] md:w-[40%] xl:w-[42%] h-full z-40" onClick={onPrev}/>
       {postDoms}
       <button className="absolute left-0 w-[30%] md:w-[40%] h-full xl:w-[42%] z-40" onClick={onNext}/>

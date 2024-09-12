@@ -56,7 +56,7 @@ export const NewSletterSubscription = (props: any) => {
                 </div>
                 {!getCurrentUser.data && <button
                     onClick={onSubscribedClicked}
-                    className="md:px-4 md:py-4 font-graduate md:uppercase rounded-xl md:text-lg text-sm px-2 py-2 bg-black h-full">Subscribe
+                    className="md:px-4 md:py-4 font-graduate md:uppercase rounded-xl md:text-lg text-sm px-2 py-2 bg-black h-full text-white">Subscribe
                 </button>}
             </div>
         </div>

@@ -145,3 +145,7 @@ textarea {
     overflow: hidden;
     resize: none; /* Optional: disable resizing by the user */
 }
+
+.container {
+    margin: auto;
+}

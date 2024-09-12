@@ -7,6 +7,7 @@ import {FooterHtml} from "../components/footer"
 import { Toaster } from "react-hot-toast"
 import { HomeBackground } from "./background"
 import Header3d from "./header3d"
+import { MainContainer } from "../components/container"
 
 export default function HomeContent(props: any) {
   return <_Home {...props}/>
@@ -21,9 +22,7 @@ const _Home = (props: any) => {
               <div className="w-screen h-auto">
                 <div className="flex flex-col w-screen left-0 top-0 z-20">
                   <div className="h-screen w-screen">
-                    <ThreeDCanvas gl={{alpha: true}}>
-                      <Header3d/>
-                    </ThreeDCanvas>
+                    <Header3d/>
                   </div>
                   <HtmlDoms/>
                 </div>
@@ -35,9 +34,11 @@ const _Home = (props: any) => {
 
 const HtmlDoms = () => {
     return <div className="mr-5 w-screen flex flex-col gap-14">
-      <BlogList/>
-      <RunningText/>
-      <BasicInteraction/>
+      <MainContainer>
+        <BlogList/>
+        <RunningText/>
+        <BasicInteraction/>
+      </MainContainer>
       <FooterHtml/>
     </div>
 }

@@ -4,11 +4,27 @@ import Stats from "stats.js"
 import {useFrame} from "@react-three/fiber"
 import {Environment} from "@react-three/drei"
 import {Reponsive, reponsiveMatch, WidthReponsive} from "@/app/components/reponsive"
-import {Html} from '@react-three/drei'
 import {Tivi} from "@/app/components/tivi"
 import {Ribbon} from "@/app/components/ribbon"
+import { ThreeDCanvas } from "../components/canvas"
+import { MainContainer } from "../components/container"
 
 export default function Header3d(props: any) {
+  return <>
+    <div className="container relative w-full h-full">
+      <div className="absolute left-0 top-0 w-full h-full">
+        <ThreeDCanvas gl={{alpha: true}}>
+          <ThreeD/>
+        </ThreeDCanvas>
+      </div>
+      <div className="container absolute lg:top-1/3 top-1/4">
+        <HtmlHeader/>
+      </div>
+    </div>
+  </>
+}
+
+export function ThreeD(props: any) {
     const stats = useMemo(() => {
         if (process.env.NEXT_PUBLIC_PATH_PREFIX !== 'dev') {
           return null
@@ -93,25 +109,25 @@ export default function Header3d(props: any) {
 
 function HtmlHeader(props: any) {
   return (
-    <Html position={[-4, 1.5, 0]} center {...props}>
-        <div className=" md:ml-10 ml-4 gap-3 w-[40vw] h-screen flex justify-center items-start flex-col">
-          <div className="flex flex-row gap-2 md:w-fit lg:gap-2 w-screen h-fit justify-start items-start">
+    <MainContainer>
+        <div className="gap-3 w-full h-fit flex justify-center items-start flex-col">
+          <div className="flex flex-row gap-2 md:min-w-fit lg:gap-2 w-full h-fit justify-start items-start">
             <span
-              className="xl:text-2xl col-span-1 px-4 w-fit text-1xl font-graduate bg-pink-700 bg-opacity-25 p-2 rounded-full text-center h-fit text-black">THE</span>
-            <span
-              className="xl:text-2xl col-span-5 w-fit text-1xl font-graduate bg-black bg-opacity-25 p-2 text-center h-fit text-white">DEVLOG STUDIO</span>
+              className="xl:text-2xl col-span-1 px-4 min-w-fit text-1xl font-graduate bg-pink-700 bg-opacity-25 p-2 rounded-full text-center h-fit text-black">THE</span>
+            <p
+              className="xl:text-2xl col-span-5 text-1xl font-graduate bg-black bg-opacity-25 min-w-[150px] p-2 text-center h-fit text-white">DEVLOG STUDIO</p>
             </div>
-            <div className="flex flex-row gap-2 xl:w-fit lg:gap-2 w-[100vw] h-fit justify-start items-start">
-              <span
-                className="xl:text-2xl md:text-2xl col-span-2 w-fit sm:text-xl text-sm font-graduate bg-blue-400 bg-opacity-15 p-1 px-1 text-center h-fit text-black">
+            <div className="flex flex-row gap-2 xl:w-fit lg:gap-2 w-full h-fit justify-start items-start">
+              <p
+                className="xl:text-2xl md:text-2xl col-span-2 min-w-fit sm:text-xl text-sm font-graduate bg-blue-400 bg-opacity-15 p-1 px-1 text-center h-fit text-black">
                 THE CREATIVE
-              </span>
+              </p>
               <span
-                className="xl:text-2xl sm:text-xl text-sm col-span-3 w-fit font-graduate bg-black bg-opacity-15 p-2 px-1 h-fit text-center text-black">
+                className="xl:text-2xl sm:text-xl text-sm col-span-3 min-w-fit font-graduate bg-black bg-opacity-15 p-2 px-1 h-fit text-center text-black">
                 SOFTWARE DEVELOPMENT</span>
             </div>
           </div>
-    </Html>
+    </MainContainer>
   )
 }
 
