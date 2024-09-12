@@ -1,12 +1,12 @@
 'use client'
-import {Fragment, useMemo, useRef} from "react";
-import Stats from "stats.js";
-import {useFrame} from "@react-three/fiber";
-import {Environment} from "@react-three/drei";
-import {Reponsive, reponsiveMatch, WidthReponsive} from "@/app/components/reponsive";
+import {Fragment, useMemo, useRef} from "react"
+import Stats from "stats.js"
+import {useFrame} from "@react-three/fiber"
+import {Environment} from "@react-three/drei"
+import {Reponsive, reponsiveMatch, WidthReponsive} from "@/app/components/reponsive"
 import {Html} from '@react-three/drei'
-import {Tivi} from "@/app/components/tivi";
-import {Ribbon} from "@/app/components/ribbon";
+import {Tivi} from "@/app/components/tivi"
+import {Ribbon} from "@/app/components/ribbon"
 
 export default function Header3d(props: any) {
     const stats = useMemo(() => {
@@ -53,7 +53,6 @@ export default function Header3d(props: any) {
                                 <Ribbon
                                     position={[0, -1.25, 1]}
                                     scale={1.5}/>
-                                <HtmlHeader position={[-1, 1.8, 1]}/>
                         </>}
 
                         {match.is(WidthReponsive.MEDIUM) && <>
@@ -63,7 +62,6 @@ export default function Header3d(props: any) {
                                 <Ribbon
                                     position={[0, -1.25, 1]}
                                     scale={1.5}/>
-                                <HtmlHeader position={[-0.8, 1.8, 1]}/>
                         </>
                         }
 
@@ -75,7 +73,6 @@ export default function Header3d(props: any) {
                                     rotation-x={Math.PI * -0.02}
                                     position={[0, -1.1, 0.3]}
                                     scale={2.2}/>
-                                <HtmlHeader position={[-0.5, 1.8, 1]}/>
                         </>
                         }
                         {match.from(WidthReponsive.VERY_LARGE) && <>
@@ -86,7 +83,6 @@ export default function Header3d(props: any) {
                                     rotation-x={Math.PI * -0.02}
                                     position={[0, -1.1, 0.3]}
                                     scale={2.2}/>
-                                <HtmlHeader position={[-2.5, 0.5, 1]}/>
                         </>
                         }
                     </Fragment>
