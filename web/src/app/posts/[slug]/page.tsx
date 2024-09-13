@@ -31,11 +31,14 @@ export async function generateMetadata({ params }: any) {
     return { url: img.includes("http") ? img : siteMetadata.siteUrl + img };
   });
 
-  const authors = [post.authorFullName]
+  const authors = [{name: post.authorFullName}]
 
   return {
+    ...siteMetadata,
+    authors,
     title: post.title,
     description: post.description,
+    keywords: post.keywords,
     openGraph: {
       title: post.title,
       description: post.description,
@@ -46,7 +49,6 @@ export async function generateMetadata({ params }: any) {
       publishedTime: publishedAt,
       modifiedTime: modifiedAt,
       images: ogImages,
-      authors: authors.length > 0 ? authors : [siteMetadata.author],
     },
     twitter: {
       card: "summary_large_image",

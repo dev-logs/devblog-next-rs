@@ -1,6 +1,6 @@
 export const siteMetadata = {
-    title: 'Devlog Studio Blog, We share advance software development knowledge',
-    author: 'Devlog',
+    title: 'Devlog Studio',
+    author: 'Devlog Studio',
     headerTitle: 'Devlog Studio',
     description: 'Sharing advance software development knowledge, CI/CD, Flutter, Mobile development, Rust, Backend, Android, iOS, Web, ThreeJS, Startup',
     language: 'en-us',
@@ -10,4 +10,5 @@ export const siteMetadata = {
     email: 'team@devlog.studio', 
     github: 'https://github.com/dev-logs',
     locale: 'en-US',
+    publisher: 'Devlog Studio'
  }
