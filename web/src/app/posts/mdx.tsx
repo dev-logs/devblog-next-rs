@@ -2,16 +2,19 @@
 
 import React from 'react'
 import {useMDXComponent} from 'next-contentlayer/hooks'
-import Image from 'next/image'
 
 function CustomImage(props: any) {
+  const src = props.src.includes('http')
+    ? props.src
+    : `${process.env.NEXT_PUBLIC_PATH_PREFIX}${props.src}`
+
   return <>
-    <Image {...props} src={`${process.env.NEXT_PUBLIC_PATH_PREFIX}${props.src}`}/>
+    <img {...props} src={src}/>
   </> 
 }
 
 const mdxComponents = {
-  Image: CustomImage
+  img: (props: any) => <CustomImage {...props}></CustomImage>,
 }
 
 export const MdxContent = (props: any) => {
