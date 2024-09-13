@@ -55,7 +55,7 @@ export const NavigationBar = (props: any) => {
             : null;
     };
 
-    return <div className="w-full container fixed top-5 z-50 left-1/2 -translate-x-1/2" style={{color: dynamicColor && bgColor}}>
+    return <div className="w-full container fixed top-5 z-50 left-1/2 -translate-x-1/2" style={{color: dynamicColor ? bgColor : '#FFF'}}>
         <div
             className={"container bg-gray-800 items-center bg-opacity-5 py-4 backdrop-blur-lg flex flex-row w-full md:space-x-5 rounded-xl md:gap-16 gap-2 shadow-sm"}>
             <LayeredTitleEffect/>

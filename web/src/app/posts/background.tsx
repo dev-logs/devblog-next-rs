@@ -19,7 +19,7 @@ export const PostBackground = (props: any) => {
             }
         })
 
-       const geometry = new THREE.PlaneGeometry(20, 30, 20, 20)
+       const geometry = new THREE.PlaneGeometry(20, 30, 20, 2)
 
        return [material, geometry]
     }, [])
@@ -31,8 +31,8 @@ export const PostBackground = (props: any) => {
 
     return <>
         <EffectComposer>
-            <Grid scale={2.75} lineWidth={3.75}/>
+            <Grid scale={2} lineWidth={2}/>
         </EffectComposer>
-        <mesh material={material} geometry={geometry} position-z={-1}/>
+        <mesh material={material} geometry={geometry} position-z={-1} scale={[2, 2, 2]}/>
     </>
 }
