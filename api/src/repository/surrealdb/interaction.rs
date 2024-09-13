@@ -87,7 +87,7 @@ impl InteractionRepository for InteractionSurrealDb {
         let result: TrustedOne = db
             .query(surreal_quote!(
                 r##"
-                SELECT out, math::sum(count) as total_count
+                SELECT out, count() as total_count
                 FROM #id(post)<-vote
                 WHERE deleted_at = nil
                 GROUP BY out

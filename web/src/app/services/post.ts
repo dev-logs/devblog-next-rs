@@ -78,6 +78,7 @@ export default class PostService extends gRPCClientBase<typeof PostServiceClient
 
     const response = await this.client.interact(request, { headers: this.getHeader() })
     await this.postStorage.addVotedPost(postTitle)
+    console.log('vote', response.interactionResult)
     return response.interactionResult.value || 0
   }
 }

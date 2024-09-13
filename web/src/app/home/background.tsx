@@ -1,7 +1,7 @@
 'use client'
 import { useEffect, useState } from "react";
 
-export const HomeBackground = (_: any) => {
+export const HomeBackground = (props: any) => {
   const [bgColor, setBgColor] = useState('#F6F5F2');
 
   const handleScroll = () => {

@@ -35,7 +35,7 @@ export function usePromise<T extends string[], P extends any[], R>(
   useEffect(() => {
     setIsLoading(false)
     if (err) {
-      toast(err.toString())
+      toast(err.message || err.toString())
       updateErr(null)
     }
   }, [err, updateErr]);
@@ -74,7 +74,7 @@ export function usePromise<T extends string[], P extends any[], R>(
           const result = await fn(...paramRefs.current)
           updateData(result)
         } catch (error: any) {
-          const errorMessage = (error || '').toString()
+          const errorMessage = (error.rawMessage || error || '').toString()
           updateErr(errorMessage)
           throw error
         }

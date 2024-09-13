@@ -9,6 +9,7 @@ export const NewSletterSubscription = (props: any) => {
 
     useEffect(() => {
       getCurrentUser.trigger()
+      signout.data = false
     }, [signout.data])
 
     const appriciateMessage = useMemo(() => {
@@ -27,6 +28,7 @@ export const NewSletterSubscription = (props: any) => {
       }
     }, [signupByEmail.data, getCurrentUser.trigger])
 
+    console.log(getCurrentUser.data)
     return <>
         <div
             className="flex flex-col w-full md:gap-6 gap-2 rounded-xl justify-center items-center sm:py-2 md:py-10 md:px-8 py-1 px-2">
@@ -45,13 +47,12 @@ export const NewSletterSubscription = (props: any) => {
             {getCurrentUser.data && <span className='font-graduate md:text-md text-xs text-gray-300 text-center'>We really appriciate your subscription, you will receive new updates from us.</span> }
             <div className="relative flex md:flex-row flex-col w-full gap-4 h-16 justify-center items-center">
                 <div className="flex flex-row w-full">
-                  <input
+                {!getCurrentUser.data ? <input
                     disabled={!!getCurrentUser.data}
                     onChange={(e) => signupByEmail.setEmail(e.target.value)}
                     className="w-full disabled:bg-gray-900 disabled:bg-opacity-20 disabled:border-none disabled:text-gray-300 font-head text-2xl md:py-3 text-center h-full bg-white tracking-wider text-black rounded-xl">
-                  </input>
-                  {getCurrentUser.data &&
-                    <button onClick={signout.trigger} className="min-w-fit text-xs font-Alfa ml-2 text-blue-500 underline">Sign out</button>}
+                  </input> : <span className="w-full text-md font-roboto text-center bg-gray-100 bg-opacity-20 text-gray-200 container rounded-sm">{getCurrentUser.data.name || getCurrentUser.data.email}</span>
+                }
                 </div>
                 {!getCurrentUser.data && <button
                     onClick={onSubscribedClicked}

@@ -40,7 +40,7 @@ export const DiscussionInput = ({ post, onSent }: { post: Post, onSent: () => vo
         {popupComponent}
         { getUser.data &&
           <div className='flex flex-row sm:text-lg text-xs font-roboto bg-blue-700 rounded-t-md w-fit px-1 gap-1'>
-            <span className='text-white font-bold'>{getUser.data.name ?? getUser.data.email}</span>
+            <span className='text-white font-bold'>{getUser.data.name || getUser.data.email}</span>
             <button className='font-mono text-blue-200' onClick={signout.trigger}>&#10006;</button>
           </div>
         }
