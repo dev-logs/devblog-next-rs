@@ -10,5 +10,6 @@ export const siteMetadata = {
     email: 'team@devlog.studio', 
     github: 'https://github.com/dev-logs',
     locale: 'en-US',
-    publisher: 'Devlog Studio'
+    publisher: 'Devlog Studio',
+    keywords: ['Software development', 'Software design', 'Web development']
  }
