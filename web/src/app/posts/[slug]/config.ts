@@ -6,5 +6,5 @@ export const TASKS = {
 export const tasks = [
     import('../title'),
     import('../footer'),
-    new Promise((r, rj) => setTimeout(r, 2000)) // wait for canvas to load
+    new Promise((r) => setTimeout(r, 2000)) // wait for canvas to load
 ]

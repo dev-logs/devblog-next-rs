@@ -12,8 +12,8 @@ import {
     SignupRequest,
     SignupResponse,
     User
-} from "@devlog/schema-ts";
-import {AuthenticationService as AuthenticationClient} from "@devlog/schema-ts";
+} from '@devlog/schema-ts'
+import {AuthenticationService as AuthenticationClient} from '@devlog/schema-ts'
 
 export default class AuthenticationService extends gRPCClientBase<typeof AuthenticationClient> {
     private userStorage: UserLocalStorage
@@ -40,8 +40,8 @@ export default class AuthenticationService extends gRPCClientBase<typeof Authent
 
         request.signin = signInMethod
         const response = await this.client.signin(request, {headers: this.getHeader()}) as SigninResponse
-        this.userStorage.saveAccessToken(response?.accessToken!)
-        this.userStorage.saveUserInfo(response?.user!)
+        this.userStorage.saveAccessToken(response!.accessToken!)
+        this.userStorage.saveUserInfo(response!.user!)
 
         return response!.user!
     }
@@ -66,8 +66,8 @@ export default class AuthenticationService extends gRPCClientBase<typeof Authent
         request.signup = signupMethod
 
         const response = await this.client.signup(request) as SignupResponse
-        this.userStorage.saveAccessToken(response?.accessToken!)
-        this.userStorage.saveUserInfo(response?.user!)
+        this.userStorage.saveAccessToken(response!.accessToken!)
+        this.userStorage.saveUserInfo(response!.user!)
 
         return response.user!
     }
@@ -86,8 +86,8 @@ export default class AuthenticationService extends gRPCClientBase<typeof Authent
         request.signup = signupMethod
 
         const response = await this.client.signup(request) as SignupResponse
-        this.userStorage.saveAccessToken(response?.accessToken!)
-        this.userStorage.saveUserInfo(response?.user!)
+        this.userStorage.saveAccessToken(response!.accessToken!)
+        this.userStorage.saveUserInfo(response!.user!)
 
         return response!.user!
     }

@@ -1,11 +1,11 @@
-import { allPosts } from "contentlayer/generated";
-import { MdxContent } from "../mdx";
-import { TableOfContent } from "../table-of-content";
-import dynamic from "next/dynamic";
-import { Suspense } from "react";
-import { tasks, TASKS } from "@/app/posts/[slug]/config";
-import { Toaster } from "react-hot-toast";
-import { PostInteraction } from "./client";
+import { allPosts } from "contentlayer/generated"
+import { MdxContent } from "../mdx"
+import { TableOfContent } from "../table-of-content"
+import dynamic from "next/dynamic"
+import { Suspense } from "react"
+import { tasks, TASKS } from "@/app/posts/[slug]/config"
+import { Toaster } from "react-hot-toast"
+import { PostInteraction } from "./client"
 
 export default function PostPageContent(props: any) {
   return (

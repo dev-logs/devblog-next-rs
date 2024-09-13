@@ -41,8 +41,8 @@ export const Tivi = (props: any) => {
         if (!meshRef.current) return
         const mesh = meshRef.current
 
-        let yDir = mouseRef.current.x / window.innerWidth - 0.5
-        let xDir = mouseRef.current.y / window.innerHeight - 0.5
+        const yDir = mouseRef.current.x / window.innerWidth - 0.5
+        const xDir = mouseRef.current.y / window.innerHeight - 0.5
 
         mesh.rotation.y += 0.005 * (yDir - mesh.rotation.y) * Math.PI
         mesh.rotation.x += 0.005 * (xDir - mesh.rotation.x) * Math.PI

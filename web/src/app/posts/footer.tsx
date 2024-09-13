@@ -1,9 +1,10 @@
 'use client'
+
 import { ThreeDCanvas } from "@/app/components/canvas";
 import { PostBackground } from "@/app/posts/background";
 import { FooterHtml } from "@/app/components/footer";
 
-export default function PostFooter(props: any) {
+export default function PostFooter(_: any) {
   return (
     <div className="app-footer relative w-full h-full pt-20">
       <div className="absolute left-0 top-0 bg-gradient-to-b z-10 from-black w-screen h-[20vh]" />

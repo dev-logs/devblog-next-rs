@@ -33,7 +33,7 @@ export default class PostService extends gRPCClientBase<typeof PostServiceClient
   }
 
   async view(postTitle: string): Promise<number> {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       setTimeout(async () => {
         const postTitleWords = postTitle.toLowerCase().split(' ')
         const url = window.location.href.toLowerCase()

@@ -5,7 +5,6 @@ const useGlitch = (timeout: number, callback: (value: number) => void, deps: Dep
     const prevValueRef = useRef(0)
 
     useEffect(() => {
-        console.log('resetting')
         prevValueRef.current = 0
         currentGlitchRef.current = 0
     }, deps)

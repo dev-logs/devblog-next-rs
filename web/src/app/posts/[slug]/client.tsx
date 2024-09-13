@@ -1,5 +1,5 @@
 'use client'
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Discussions } from "@/app/components/discussion";
 import { useService } from "@/app/hooks/service";
 import { Post } from "@devlog/schema-ts";

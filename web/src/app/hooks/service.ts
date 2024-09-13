@@ -74,7 +74,7 @@ export function usePromise<T extends string[], P extends any[], R>(
           const result = await fn(...paramRefs.current)
           updateData(result)
         } catch (error: any) {
-          let errorMessage = (error || '').toString()
+          const errorMessage = (error || '').toString()
           updateErr(errorMessage)
           throw error
         }

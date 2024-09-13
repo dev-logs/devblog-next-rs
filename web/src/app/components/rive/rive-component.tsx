@@ -106,7 +106,7 @@ export const RiveComponent: React.FC<RiveComponentProps> = ({
         artboard.bounds
       )
 
-      let invertedMatrix = new rive.Mat2D()
+      const invertedMatrix = new rive.Mat2D()
       forwardMatrix.invert(invertedMatrix)
       const canvasCoordinatesVector = new rive.Vec2D(canvasX, canvasY)
       const transformedVector = rive.mapXY(invertedMatrix, canvasCoordinatesVector)

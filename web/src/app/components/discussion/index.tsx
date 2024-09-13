@@ -27,7 +27,7 @@ export const Discussions = ({ post }: DiscussionsProps) => {
   }, [post])
 
   useEffect(() => {
-    let newPageList: number[] = []
+    const newPageList: number[] = []
     for (let i = 0; i < paging.page.totalPages; i++) {
       newPageList.push(i + 1)
     }
@@ -36,7 +36,6 @@ export const Discussions = ({ post }: DiscussionsProps) => {
   }, [paging, paging.page.totalPages])
 
   useEffect(() => {
-    console.log(getDiscussions.data)
     const newDiscussions = getDiscussions.data?.discussions || []
     setDiscussions(newDiscussions)
     const newPaging = getDiscussions.data?.paging || initialPaging;

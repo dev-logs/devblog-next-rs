@@ -4,9 +4,9 @@ import {
   Discussion,
   GetDiscussionsRequest,
   Paging, GetDiscussionsResponse, DevblogDiscussionService,
-} from "@devlog/schema-ts"
+} from '@devlog/schema-ts'
 
-import gRPCClientBase from "./base"
+import gRPCClientBase from './base'
 
 export default class DiscussionService extends gRPCClientBase<typeof DevblogDiscussionService> {
   constructor() {

@@ -1,6 +1,4 @@
 import {Token, User} from "@devlog/schema-ts"
-import {Tokenizer} from "parse5";
-
 export default class UserLocalStorage {
   constructor() {}
 

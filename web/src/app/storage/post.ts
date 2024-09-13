@@ -1,5 +1,3 @@
-import { Post } from "contentlayer/generated"
-
 export default class PostLocalStorage {
   constructor() {}
 
@@ -12,7 +10,7 @@ export default class PostLocalStorage {
   }
 
   async getVotedPosts() {
-    let array: string[] = JSON.parse(localStorage.getItem('votedPosts') || '[]')
+    const array: string[] = JSON.parse(localStorage.getItem('votedPosts') || '[]')
     return array
   }
 

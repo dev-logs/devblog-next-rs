@@ -1,7 +1,7 @@
 'use client'
 import { useEffect, useState } from "react";
 
-export const HomeBackground = (props: any = {}) => {
+export const HomeBackground = (_: any) => {
   const [bgColor, setBgColor] = useState('#F6F5F2');
 
   const handleScroll = () => {
@@ -35,12 +35,12 @@ export const HomeBackground = (props: any = {}) => {
   };
 
   const hexToRgb = (hex: any) => {
-    let shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
-    hex = hex.replace(shorthandRegex, function (m, r, g, b) {
+    const shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
+    hex = hex.replace(shorthandRegex, function (m: number, r: number, g: number, b: number) {
       return r + r + g + g + b + b;
     });
 
-    let result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
     return result
       ? {
           r: parseInt(result[1], 16),

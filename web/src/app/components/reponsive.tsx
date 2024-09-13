@@ -30,7 +30,7 @@ export const Reponsive = (props: any) => {
 }
 
 export const reponsiveMatch = (matches: any) => {
-  let result = {
+  const result = {
     width: WidthReponsive.SMALL,
     height: HeightReponsive.SHORT,
     from: ((compare: WidthReponsive) => result.width >= compare),
