@@ -76,8 +76,8 @@ export const BlogListTitle = (props: any) => {
         <span className="font-head md:text-6xl text-3xl tracking-wider text-white">
           We're writing blogs every week
         </span>
-          <div className="flex bg-yellow-400 flex-col container">
-            <span className="container max-h-[35px] flex items-center font-roboto text-sm md:text-lg text-black px-2">
+          <div className="flex bg-yellow-400 flex-col">
+            <span className="h-fit flex items-center font-roboto text-sm md:text-lg text-black container py-1">
               We're creating software product, we would love to share with you all
               knowledge during our journey
             </span>
