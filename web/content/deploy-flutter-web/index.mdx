@@ -82,7 +82,7 @@ You will see a `build/web/index.html` file in the output directory. This directo
 
 ### Step 1: Setting Up Nginx
 
-Copy and paste the following configuration into your directory:
+Create file ``nginx.conf``, copy and paste the following configuration:
 
 ```nginx
 api {
@@ -248,6 +248,11 @@ jobs:
       - name: Cleanup
         run: rm -rf ~/.ssh
 ```
+
+Now, let's push the code to Github. Then we should able to see the our workflow available in tab **Actions**
+![GitHub Workflow](/images/github-action-workflow.jpg)
+
+Start your workflow, and I wish you best luck !
 
 ## Final Thoughts
 

@@ -31,21 +31,21 @@ export const BlogList = (props: any) => {
                                         {
                                             match.is(WidthReponsive.LARGE) &&
                                             <ElectricalEffect
-                                                position={[1.2, 2, 0]}
+                                                position={[1.4, 1.6, 0]}
                                                 rotation-x={0.3}
                                                 scale={12}/>
                                         }
                                         {
                                             match.is(WidthReponsive.VERY_LARGE) &&
                                             <ElectricalEffect
-                                                position={[1.8, 2, 0]}
+                                                position={[2, 1.6, 0]}
                                                 rotation-x={0.3}
-                                                scale={13}/>
+                                                scale={14}/>
                                         }
                                         {
                                             match.is(WidthReponsive.XX_LARGE) &&
                                             <ElectricalEffect
-                                                position={[3, 1.5, 0]}
+                                                position={[2.5, 1.5, 0]}
                                                 rotation-x={0.3}
                                                 scale={16}/>
                                         }
@@ -72,17 +72,17 @@ export const BlogList = (props: any) => {
 export const BlogListTitle = (props: any) => {
     return (
         <>
-            <div id={"blogs"} className="flex w-full flex-col text-white">
-        <span className="container font-head md:text-6xl text-3xl tracking-wider text-white">
+        <div id={"blogs"} className="flex container w-full flex-col text-white">
+        <span className="font-head md:text-6xl text-3xl tracking-wider text-white">
           We're writing blogs every week
         </span>
-                <Container className="flex bg-yellow-400 py-5 flex-col">
-          <span className="container font-roboto text-sm md:text-lg text-black px-2">
-            We're creating software product, we would love to share with you all
-            knowledge during our journey
-          </span>
-                </Container>
-                <div className="container flex flex-row md:mt-52 mt-20 items-start w-[95%] h-full">
+          <div className="flex bg-yellow-400 flex-col container">
+            <span className="container max-h-[35px] flex items-center font-roboto text-sm md:text-lg text-black px-2">
+              We're creating software product, we would love to share with you all
+              knowledge during our journey
+            </span>
+          </div>
+                <div className="flex flex-row md:mt-52 mt-20 items-start w-[95%] h-full">
                     <div
                         className="-rotate-90 md:-translate-x-32 -translate-x-10 mt-16 lg:-mr-52 md:-mr-48 -mr-16 border-b-4 pb-1 border-yellow-500 md:w-[330px] w-[120px]">
                         <h2 className="font-head text-2xl md:text-7xl px-2">

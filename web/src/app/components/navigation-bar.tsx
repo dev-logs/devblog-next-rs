@@ -60,7 +60,7 @@ export const NavigationBar = (props: any) => {
             className={"container bg-gray-800 items-center bg-opacity-5 py-4 backdrop-blur-lg flex flex-row w-full md:space-x-5 rounded-xl md:gap-16 gap-2 shadow-sm"}>
             <LayeredTitleEffect/>
             <div className="w-1 h-full bg-white md:ml-2 md:mr-5"></div>
-            <a href={'#footer'} className={navigationItemClass()}>
+            <a href={'#contacts'} className={navigationItemClass()}>
                 CONTACTS
                 <span
                     className="absolute bottom-0 left-0 w-full h-0.5 bg-white transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></span>
