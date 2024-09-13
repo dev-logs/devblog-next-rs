@@ -4,12 +4,43 @@ import "./globals.css";
 import "./styles/app.scss"
 import { NavigationBar } from "./components/navigation-bar";
 import AppStyled from "./components/styled";
+import { siteMetadata } from "./utils/site-meta-data";
 
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Devblog",
-  description: "Creative studio",
+  ...siteMetadata,
+  metadataBase: new URL(siteMetadata.siteUrl),
+  title: {
+    template: `%s | ${siteMetadata.title}`,
+    default: siteMetadata.title
+  },
+  openGraph: {
+    title: siteMetadata.title,
+    description: siteMetadata.description,
+    url: siteMetadata.siteUrl,
+    siteName: siteMetadata.title,
+    images: [siteMetadata.siteLogo],
+    locale: "en_US",
+    type: "website",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      noimageindex: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: siteMetadata.title,
+    images: ['https://devlog.studio/images/favicon-32x32.png'],
+  }
 };
 
 export default function RootLayout({

@@ -41,7 +41,7 @@ export const NavigationBar = (props: any) => {
 
     const hexToRgb = (hex: any) => {
         const shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
-        hex = hex.replace(shorthandRegex, function (m, r, g, b) {
+        hex = hex.replace(shorthandRegex, function (m: number, r: number, g: number, b: number) {
             return r + r + g + g + b + b;
         });
 
