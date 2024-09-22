@@ -20,7 +20,7 @@ impl Service<CreatePostParams, CreatePostResult> for PostService {
                 };
                 let mut found_author: Option<Author> = self.author_repository.get(&author_id).await?;
                 if found_author.is_none() {
-                    found_author = Some(self.author_repository.create(&author).await?);
+                    found_author = Some(self.author_repository.create(author.clone()).await?);
                 }
 
                 found_author.unwrap()
@@ -47,7 +47,7 @@ impl Service<CreatePostParams, CreatePostResult> for PostService {
         new_post.author = Some(AuthorLink {
             link: Some(author_link::Link::Id(author_id))
         });
-        let create_post = self.post_repository.create(&new_post).await?;
+        let create_post = self.post_repository.create(new_post).await?;
         Ok(CreatePostResult { post: create_post })
     }
 }

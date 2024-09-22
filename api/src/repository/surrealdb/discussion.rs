@@ -23,7 +23,7 @@ impl SurrealDbRepository<Discussion, DiscussionId> for DiscussionSurrealDbReposi
         self.db.retreive().await.unwrap()
     }
 
-    async fn create(&self, discussion: &Discussion) -> Resolve<Discussion> {
+    async fn create(&self, discussion: Discussion) -> Resolve<Discussion> {
         let user_id = match discussion.user.as_ref().map(|it| it.link.as_ref().unwrap()) {
             Some(user_link::Link::Id(id)) => id.clone(),
             Some(user_link::Link::Object(obj)) => UserId {

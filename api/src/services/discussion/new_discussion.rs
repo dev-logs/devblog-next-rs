@@ -30,7 +30,7 @@ impl<'a> Service<NewDiscussionParams<'a>, Discussion> for DiscussionService {
 
         new_discussion.created_at = Some(created_at);
 
-        let created_discussion = self.discussion_repository.create(&new_discussion).await?;
+        let created_discussion = self.discussion_repository.create(new_discussion).await?;
 
         return Ok(created_discussion);
     }

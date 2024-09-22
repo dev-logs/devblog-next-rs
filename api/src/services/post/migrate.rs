@@ -48,7 +48,7 @@ impl Service<MigratePostParams, VoidResponse> for PostService {
             })?;
             info!(target: "migrate-post", "Migrating post {}", post.title.as_str());
 
-            if let Err(e) = self.post_repository.create(&post).await {
+            if let Err(e) = self.post_repository.create(post.clone()).await {
                 info!(target: "migrate-post", "Failed to migrate post {} error: {:?}, skipping...", post.title.as_str(), e)
             }
         }

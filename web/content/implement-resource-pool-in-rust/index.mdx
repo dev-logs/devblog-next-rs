@@ -1,0 +1,80 @@
+---
+title: Implement resource pool in Rust
+publishedDate: 2024-09-15
+image: "../../public/images/image4.jpg"
+isPublished: true
+description: "Not init on the fly, cached but not too much instance, and not blocking the entire request when reached pool max. It is how we use and maintain our Http Connection, Web Socket, Database, gRPC connection"
+authorDisplayName: "Tien Dang"
+authorEmail: "tiendvlp@gmail.com"
+authorFullName: "Dang Minh Tien"
+keywords:
+  - Rust
+  - Design pattern
+  - Resource pooling
+  - Object pooling
+---
+
+#Introduction
+Resource Pool (Object Pool) pattern help us boost the performance by init some of amount of resources in the initial phase. After that if we request the resource, we just ssimply request an existing instance from the pool instead of init a new one.
+
+# Discussion
+
+The pool by default will initiate a number amount (`min_pool_size`) of resources and when a new request come
+we will assign an existing resource inside the pool. Let take a look at this code to have a quick look how we use:
+
+```rs
+1  let db = self.db_pool.retrive().await.expect('Db connection not available');
+2  let db_result = db.query('SELECT * FROM User').await;
+3 // The connection will returned to the pool at the end of life of the `db variable`
+4  drop(db); 
+```
+
+I kinda satisfied of the result. It's look natural and easy understand. But you might notice that at line 1, It will break the process if the db_pool not have enough resource to provide.
+Don't worry, the pool that we will implement later on will automatically init new resource if there are not enough resource in the pool, the number of new resources need
+to be less than max_pool_size, and if the pool has reached max_pool_size then the retreive function will wait until
+some other process return the db connection to the pool within the `retreiving_timeout`.
+
+# Implementation
+## 1. Intro to new members
+First let me introduce six new members that will joining your team if you implement this solution:
+### PoolAllocator
+<L2>
+  Holding the array of of current resources, provide resource as well as taking back the resource when PoolResponse is dropped.
+  <img className='bg-white object-fill rounded-lg p-2 max-h-[230px]' src="/images/animal/1/pig-removebg.png"/>
+</L2>
+### PoolItem
+<L2>
+  Place holder of a resource, the PoolAllocator will keep a list of PoolItem, each PoolItem will keep track the lifetime, and further information about the resource.
+  <img className='bg-white object-fill rounded-lg p-2 max-h-[230px]' src="/images/animal/1/chicken-removebg.png"/>
+</L2>
+### PoolResponse
+<L2>
+  PoolResponse will taken the resource from PoolItem, leaving the PoolItem as empty, PoolResponse can be Deref to a Resource it self, when the PoolResponse is dropped
+  it will put back the resource to the Pool
+  <img className='bg-white object-fill rounded-lg p-2 max-h-[230px]' src="/images/animal/1/dog-removebg.png"/>
+</L2>
+### PoolRequest
+<L2>
+  Intead of share PoolAllocator, we create as many as PoolRequest instance as we want, and it will handle to access to the same PoolAllocator.
+  <img className='bg-white object-fill rounded-lg p-2 max-h-[230px]' src="/images/animal/1/cat-removebg.png"/>
+</L2>
+### PoolCleanup
+<L2>
+Cleanup the Pool, if a resource is idling more than `max_idle_timeout` we will drop the resource.
+<img className='bg-white object-fill rounded-lg p-2 max-h-[230px]' src="/images/animal/1/owl-removebg.png"/>
+</L2>
+### PoolBuilder
+<L2>
+Builder design patern for PoolAllocator.
+<img className='bg-white object-fill rounded-lg p-2 max-h-[230px]' src="/images/animal/1/fox-removebg.png"/>
+</L2>
+<a hidden href="https://www.freepik.com/free-vector/flat-cute-colorful-square-animal-faces-funny-pig-cow-dog-cat-fox-monkey-bear-chicken-zoo-game-elements-kids-app-avatar-icon-set-kid-collection-head-shape-pet-wild-farm-animals_24421502.htm#query=animal%20avatar&position=4&from_view=keyword&track=ais_hybrid&uuid=353852dd-f763-4db7-824f-0901659929e1">Image by redgreystock on Freepik</a>
+Take a look on this diagram to understand more:
+
+## 2. Create the PoolAllocator:
+## 3. Pool request:
+## 4. Cleanup:
+## 5. Pool builder:
+
+# Final thoughts:
+
