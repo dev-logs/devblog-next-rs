@@ -1,5 +1,5 @@
 ---
-title: Implement resource pool in Rust
+title: Resource Pooling in Rust
 publishedDate: 2024-09-15
 image: "../../public/images/image4.jpg"
 isPublished: true
@@ -14,67 +14,68 @@ keywords:
   - Object pooling
 ---
 
-#Introduction
-Resource Pool (Object Pool) pattern help us boost the performance by init some of amount of resources in the initial phase. After that if we request the resource, we just ssimply request an existing instance from the pool instead of init a new one.
+# Introduction
 
-# Discussion
+### Why I'm writing this article ?
 
-The pool by default will initiate a number amount (`min_pool_size`) of resources and when a new request come
-we will assign an existing resource inside the pool. Let take a look at this code to have a quick look how we use:
+I think any application that interact with resource like database, files, or http/websocket connection to other service will alway 
+need to make sure two things:
 
-```rs
-1  let db = self.db_pool.retrive().await.expect('Db connection not available');
-2  let db_result = db.query('SELECT * FROM User').await;
-3 // The connection will returned to the pool at the end of life of the `db variable`
-4  drop(db); 
-```
+1. Avoiding overhead in initiating resource.
 
-I kinda satisfied of the result. It's look natural and easy understand. But you might notice that at line 1, It will break the process if the db_pool not have enough resource to provide.
-Don't worry, the pool that we will implement later on will automatically init new resource if there are not enough resource in the pool, the number of new resources need
-to be less than max_pool_size, and if the pool has reached max_pool_size then the retreive function will wait until
-some other process return the db connection to the pool within the `retreiving_timeout`.
+
+2. Limit the concurrent number of resources we are using. There are no inifinite number of resources, for example the default maximum number of concurrent open files in Ubuntu are 1024 files, you can modify the number but still have to have a limit.
+So that if we intend to develop an application works well overtime we need to be respect the limit
+of resources we are interacting with.
+
+
+### Who will be receive the most benefit by reading this article ?
+
+- Someone looking for an implementation of Resource Pooling in Rust.
+- Someone looking for a Resource Pooling solution which works with asynchronous syntax.
+- High expectation developers, who not only want a solution but also want a best experience while using it. I also put code with unit testing included in the end of this article.
+
+
+Without more talk, let's jump into the implementation.
+
 
 # Implementation
-## 1. Intro to new members
-First let me introduce six new members that will joining your team if you implement this solution:
-### PoolAllocator
-<L2>
-  Holding the array of of current resources, provide resource as well as taking back the resource when PoolResponse is dropped.
-  <img className='bg-white object-fill rounded-lg p-2 max-h-[230px]' src="/images/animal/1/pig-removebg.png"/>
-</L2>
-### PoolItem
-<L2>
-  Place holder of a resource, the PoolAllocator will keep a list of PoolItem, each PoolItem will keep track the lifetime, and further information about the resource.
-  <img className='bg-white object-fill rounded-lg p-2 max-h-[230px]' src="/images/animal/1/chicken-removebg.png"/>
-</L2>
-### PoolResponse
-<L2>
-  PoolResponse will taken the resource from PoolItem, leaving the PoolItem as empty, PoolResponse can be Deref to a Resource it self, when the PoolResponse is dropped
-  it will put back the resource to the Pool
-  <img className='bg-white object-fill rounded-lg p-2 max-h-[230px]' src="/images/animal/1/dog-removebg.png"/>
-</L2>
-### PoolRequest
-<L2>
-  Intead of share PoolAllocator, we create as many as PoolRequest instance as we want, and it will handle to access to the same PoolAllocator.
-  <img className='bg-white object-fill rounded-lg p-2 max-h-[230px]' src="/images/animal/1/cat-removebg.png"/>
-</L2>
-### PoolCleanup
-<L2>
-Cleanup the Pool, if a resource is idling more than `max_idle_timeout` we will drop the resource.
-<img className='bg-white object-fill rounded-lg p-2 max-h-[230px]' src="/images/animal/1/owl-removebg.png"/>
-</L2>
-### PoolBuilder
-<L2>
-Builder design patern for PoolAllocator.
-<img className='bg-white object-fill rounded-lg p-2 max-h-[230px]' src="/images/animal/1/fox-removebg.png"/>
-</L2>
-<a hidden href="https://www.freepik.com/free-vector/flat-cute-colorful-square-animal-faces-funny-pig-cow-dog-cat-fox-monkey-bear-chicken-zoo-game-elements-kids-app-avatar-icon-set-kid-collection-head-shape-pet-wild-farm-animals_24421502.htm#query=animal%20avatar&position=4&from_view=keyword&track=ais_hybrid&uuid=353852dd-f763-4db7-824f-0901659929e1">Image by redgreystock on Freepik</a>
-Take a look on this diagram to understand more:
+First let's look on how simple it is to use it in the end:
 
-## 2. Create the PoolAllocator:
-## 3. Pool request:
-## 4. Cleanup:
-## 5. Pool builder:
+The `PoolRequest<T>` is a light weight object that acts as a bridge to the `Pool`, it could be easily to clone and share as we wish.
+the `retreive` function will request the pool to give us a resource.
+A resource will be wrapped in a `PoolResponse<T>` which can be deref into `T` which also the Resource type. Why we need it ?
+It will make sure and simplify the process of alway return the resource to the pool, it allow the resource to be reused by other requests.
 
-# Final thoughts:
+Take a look on this simple flow on how a simple API application will use Pool to solve resource inititaing overhead by applying Resource Pool pattern (more complicated at the end).
+
+When our service receive a request, the Request Handler will inititate a `PoolRequest<T>` which holds a connection to `PoolResource<T>`.
+The Request Handler can now able to retreive resource as it wish to process the user Request. When the request is complete, we returning the resource to the pool which will be use later on by other requests.
+
+There are three problems:
+
+1. If the concurrent requests is more than the resource in the Pool, we will not have enough resources to serve those requests.
+
+    Solution: We will have two limit, the first limit is `min_pool_size` which will define the minimum number of resources that will always ready to be used. The second is `max_pool_size` which could be alot bigger than the `min_pool_size`, it allow some extra resources to be 
+init, and the total of resources must be smaller than the `max_pool_size`.
+
+2. If we apply `max_pool_size`, then after a short time of running the number of resources in the pool could be too much, we expect it will scale down to equal `min_pool_size`.
+
+    Solution: We will apply timeout for resources from `<min_pool_size>th`, if it is no longer been used for `resource_idle_timeout` we will dropping it
+    out of our memory.
+
+3. What if the request exceed the `max_pool_size` ? Are we gonna panic the request ?
+    
+    Solution: We have another chance, we could apply `retreiving_timeout` which will be apply for the `PoolRequest<T>`, it will wait (within timeout) for other requests to complete and released the resource to the pool.
+
+#### Here is the final chart which demonstrates the flow of retreiving, releasing resources, and removing the idle resources
+
+
+### Init Resource as a Pool Item
+### Resource Pool
+### Resource Request
+### Resource Response
+### Pool Cleaner
+
+# Final thoughts
 
