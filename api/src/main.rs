@@ -28,10 +28,10 @@ use schema::devlog::rpc::authentication_service_server::AuthenticationServiceSer
 use tonic::transport::Server;
 use tonic_web::*;
 
-type DevblogPool = Arc<PoolAllocator<SurrealDbConnection, SurrealDbConnectionInfo>>;
-type DevlogPool = Arc<PoolAllocator<SurrealDbConnection, SurrealDbConnectionInfo>>;
-type S3ConnectionPool = Arc<PoolAllocator<core_services::S3Connection, ()>>;
-type SmtpTransportPool = Arc<PoolAllocator<core_services::SmtpTransport, ()>>;
+type DevblogPool = Arc<PoolAllocator<SurrealDbConnection>>;
+type DevlogPool = Arc<PoolAllocator<SurrealDbConnection>>;
+type S3ConnectionPool = Arc<PoolAllocator<core_services::S3Connection>>;
+type SmtpTransportPool = Arc<PoolAllocator<core_services::SmtpTransport>>;
 
 pub static DI: OnceCell<ApiDependenciesInjection> = OnceCell::const_new();
 

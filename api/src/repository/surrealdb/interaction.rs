@@ -11,7 +11,7 @@ use surrealdb_id::relation::r#trait::IntoRelation;
 use crate::repository::interactive::InteractionRepository;
 
 pub struct InteractionSurrealDb {
-    pub db: PoolRequest<SurrealDbConnection, SurrealDbConnectionInfo>
+    pub db: PoolRequest<SurrealDbConnection>
 }
 
 #[async_trait::async_trait]

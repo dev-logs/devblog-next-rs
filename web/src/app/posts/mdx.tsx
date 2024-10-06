@@ -96,7 +96,7 @@ const mdxComponents = {
   Lottie: (props:any) => <Lottie {...props}/>,
   h1: (props: any) => <H1 {...props}/>,
   code: (props: any) => <Code {...props}/>,
-  'ArrowRight': () => <RightArrow className="inline w-3 h-3"/>
+  'ArrowRight': () => <RightArrow className="inline w-3 h-3 fill-blue-600"/>
 }
 
 export const Code = (props: any) => {

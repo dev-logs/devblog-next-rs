@@ -14,12 +14,12 @@ use surrealdb_id::relation::r#trait::IntoRelation;
 use crate::repository::discussion::DiscussionRepository;
 
 pub struct DiscussionSurrealDbRepository {
-    pub(crate) db: PoolRequest<SurrealDbConnection, SurrealDbConnectionInfo>
+    pub(crate) db: PoolRequest<SurrealDbConnection>
 }
 
 #[async_trait::async_trait]
 impl SurrealDbRepository<Discussion, DiscussionId> for DiscussionSurrealDbRepository {
-    async fn get_db(&self) -> PoolResponse<SurrealDbConnection, SurrealDbConnectionInfo> {
+    async fn get_db(&self) -> PoolResponse<SurrealDbConnection> {
         self.db.retreive().await.unwrap()
     }
 

@@ -1,7 +1,8 @@
 use std::time::Duration;
 
-use core_services::db::{SurrealDbConnection, SurrealDbConnectionInfo};
-use core_services::s3::S3Client;
+use core_services::db::{SurrealDbConnection, SurrealDbConnectionInfo, SurrealDbPoolResourceProvider};
+use core_services::s3::{S3Client, S3ClientResourceProvider};
+use core_services::smtp::client::SmtpPoolResourceProvider;
 use core_services::utils::pool::allocator::PoolBuilder;
 use core_services::utils::pool::cleanup::CleanupStrategy;
 use core_services::utils::pool::request::{PoolRequest, PoolRequestBuilder};
@@ -70,7 +71,7 @@ impl ApiDependenciesInjection {
         Ok(())
     }
 
-    fn s3_pool_request(&self) -> Result<PoolRequest<S3Connection, ()>, Box<dyn std::error::Error>> {
+    fn s3_pool_request(&self) -> Result<PoolRequest<S3Connection>, Box<dyn std::error::Error>> {
         let request = PoolRequestBuilder::new()
             .pool(self.s3_client.get().unwrap().clone())
             .retreiving_timeout(Duration::new(10, 0))
@@ -79,7 +80,7 @@ impl ApiDependenciesInjection {
         Ok(request)
     }
 
-    fn smtp_pool_request(&self) -> Result<PoolRequest<SmtpTransport, ()>, Box<dyn std::error::Error>> {
+    fn smtp_pool_request(&self) -> Result<PoolRequest<SmtpTransport>, Box<dyn std::error::Error>> {
         let request = PoolRequestBuilder::new()
             .pool(self.smtp_client.get().unwrap().clone())
             .retreiving_timeout(Duration::new(10, 0))
@@ -90,7 +91,7 @@ impl ApiDependenciesInjection {
 
     fn devlog_pool_request(
         &self
-    ) -> Result<PoolRequest<SurrealDbConnection, SurrealDbConnectionInfo>, Box<dyn std::error::Error>> {
+    ) -> Result<PoolRequest<SurrealDbConnection>, Box<dyn std::error::Error>> {
         let request = PoolRequestBuilder::new()
             .pool(self.devblog_db.get().unwrap().clone())
             .retreiving_timeout(Duration::new(10, 0))
@@ -101,7 +102,7 @@ impl ApiDependenciesInjection {
 
     fn devblog_pool_request(
         &self
-    ) -> Result<PoolRequest<SurrealDbConnection, SurrealDbConnectionInfo>, Box<dyn std::error::Error>> {
+    ) -> Result<PoolRequest<SurrealDbConnection>, Box<dyn std::error::Error>> {
         let request = PoolRequestBuilder::new()
             .pool(self.devblog_db.get().unwrap().clone())
             .retreiving_timeout(Duration::new(10, 0))
@@ -115,7 +116,7 @@ impl ApiDependenciesInjection {
         self.devblog_db
             .get_or_init(|| async move {
                 info!(target: ns, "Connecting to devblog database");
-                PoolBuilder::new(crate::config::CONFIGS.surreal_db.clone())
+                PoolBuilder::new(Box::new(SurrealDbPoolResourceProvider {info: crate::config::CONFIGS.surreal_db.clone()}))
                     .min_pool_size(10)
                     .max_pool_size(1000)
                     .build()
@@ -126,7 +127,7 @@ impl ApiDependenciesInjection {
         self.devlog_db
             .get_or_init(|| async move {
                 info!(target: ns, "Connecting to devlog database");
-                PoolBuilder::new(devlog_sdk::config::CONFIGS.surrealdb.clone())
+                PoolBuilder::new(Box::new(SurrealDbPoolResourceProvider {info: devlog_sdk::config::CONFIGS.surrealdb.clone()}))
                     .min_pool_size(10)
                     .max_pool_size(100)
                     .build()
@@ -140,7 +141,7 @@ impl ApiDependenciesInjection {
     async fn setup_s3(&self) -> Result<(), Box<dyn std::error::Error>> {
         self.s3_client
             .get_or_init(|| async move {
-                PoolBuilder::new(())
+                PoolBuilder::new(Box::new(S3ClientResourceProvider))
                     .min_pool_size(1)
                     .max_pool_size(1000)
                     .cleanup(CleanupStrategy::Best {
@@ -158,7 +159,7 @@ impl ApiDependenciesInjection {
     async fn setup_smtp(&self) -> Result<(), Box<dyn std::error::Error>> {
         self.smtp_client
             .get_or_init(|| async move {
-                PoolBuilder::new(())
+                PoolBuilder::new(Box::new(SmtpPoolResourceProvider))
                     .min_pool_size(1)
                     .max_pool_size(1000)
                     .cleanup(CleanupStrategy::Best {

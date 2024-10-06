@@ -7,12 +7,12 @@ use schema::devlog::devblog::entities::{Author, AuthorId};
 use crate::repository::author::AuthorRepository;
 
 pub struct AuthorSurrealDbRepository {
-    pub db: PoolRequest<SurrealDbConnection, SurrealDbConnectionInfo>
+    pub db: PoolRequest<SurrealDbConnection>
 }
 
 #[async_trait::async_trait]
 impl SurrealDbRepository<Author, AuthorId> for AuthorSurrealDbRepository {
-    async fn get_db(&self) -> PoolResponse<SurrealDbConnection, SurrealDbConnectionInfo> {
+    async fn get_db(&self) -> PoolResponse<SurrealDbConnection> {
         self.db.retreive().await.unwrap()
     }
 }
