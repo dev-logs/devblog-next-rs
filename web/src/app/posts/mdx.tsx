@@ -2,8 +2,8 @@
 
 import React, { useEffect, useRef, useCallback } from 'react'
 import {useMDXComponent} from 'next-contentlayer/hooks'
-import { DotLottie } from '@lottiefiles/dotlottie-web'
-import RightArrow from '../../../public/images/arrow-right.svg'
+import { DotLottie, FrameEvent } from '@lottiefiles/dotlottie-web'
+import ArrowRightSvg from '../../../public/images/arrow-right.svg'
 
 function CustomImage(props: any) {
   const src = props.src.includes('http')
@@ -27,38 +27,50 @@ function L2(props: any) {
 }
 
 function Lottie(props: any) {
-  const {
+  let {
     className = '',
-    file
+    file = '',
+    scripts = []
   } = props || {}
 
-  const canvasRef = useRef<HTMLElement | undefined>()
+  file = file.includes('http')
+    ? file
+    : `${process.env.NEXT_PUBLIC_PATH_PREFIX}${file}`
 
-  const lottieFile = useRef<any>()
+  const canvasRef = useRef<HtmlElement | undefined>()
+
+  const lottieFile = useRef<DotLottie>()
 
   if (!file) throw new Error('Lottie file must be defined')
+
+  const onFrameChanged = useCallback((event: FrameEvent) => {
+  }, []) 
 
   useEffect(() => {
     if (!file || !canvasRef.current) return
 
     lottieFile.current = new DotLottie({
-      autoPlay: true,
+      autoplay: true,
       loop: true,
       canvas: canvasRef.current!,
-      src: file
+      src: file,
     })
+
+    lottieFile.current.addEventListener('frame', onFrameChanged)
+
+    return () => {
+      lottieFile.current?.removeEventListener('frame', onFrameChanged)
+    }
   }, [canvasRef.current, file])
 
-  const onPlayClick = useCallback(() => {
-    lottieFile.current?.play()
-  }, [lottieFile.current])
-
-  return <>
-    <div className={`flex flex-col w-full h-full ${className}`}>
-      <canvas ref={canvasRef} className='w-full h-full'/>
-      <button onClick={onPlayClick}>Play</button>
+  return <div className={`grid overflow-clip`} style={{gridArea: '1/1'}}>
+    <div style={{'gridArea': '1/1', 'pointerEvents': 'none'}}>
+      <div className="h-full w-full opacity-20 bg-[linear-gradient(to_right,#0A9396_1px,transparent_2px),linear-gradient(to_bottom,#0A9396_1px,transparent_2px)] bg-[size:6rem_4rem]"></div>
     </div>
-  </>
+    <div className={`h-full w-full ${className} flex flex-col justify-center items-center bg-transparent`} style={{'gridArea': '1/1'}}>
+      <canvas ref={canvasRef} className='w-full h-full'/>
+    </div>
+  </div>
 }
 
 function _MdxContent (props: any) {
@@ -96,12 +108,12 @@ const mdxComponents = {
   Lottie: (props:any) => <Lottie {...props}/>,
   h1: (props: any) => <H1 {...props}/>,
   code: (props: any) => <Code {...props}/>,
-  'ArrowRight': () => <RightArrow className="inline w-3 h-3 fill-blue-600"/>
+  'ArrowRight': () => <ArrowRightSvg className="inline h-auto w-6 text-blue-500"/>
 }
 
 export const Code = (props: any) => {
   return <>
-    <div className='inline bg-gray-700 bg-opacity-50 p-1 rounded-md'>{props.children}</div>
+    <div className='inline bg-opacity-50 p-1 rounded-sm text-sm font-semibold bg-gray-900'>{props.children}</div>
   </>
 }
 

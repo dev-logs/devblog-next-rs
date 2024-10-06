@@ -15,6 +15,7 @@ const nextConfig = {
           test: /\.svg$/,
           use: ["@svgr/webpack"],
         })
+
         config.module.rules.push({
             test: /\.glsl$/,
             exclude: /node_modules/,

@@ -42,49 +42,54 @@ A resource will be wrapped in a `PoolResponse<T>` which can be deref into `T` wh
 It will make sure and simplify the process of alway return the resource to the pool, it allow the resource to be reused by other requests.
 
 Take a look on this simple flow on how a simple API application will use Pool to solve resource inititaing overhead by applying Resource Pool pattern (more complicated at the end).
+<div className='md:w-[110%]'>
+  <Lottie className='aspect-[1.3/1] rounded-lg' file='dotlottie/resource-pool_-_simple-flow.lottie'/>
+</div>
 
-When our service receive a request, the Request Handler will inititate a `PoolRequest<T>` which holds a connection to `PoolResource<T>`.
-The Request Handler can now able to retreive resource as it wish to process the user Request. When the request is complete, we returning the resource to the pool which will be use later on by other requests.
+When our service receive a request, the Request Handler will inititate a `PoolRequest<T>` which holds a connection to `PoolAllocator<T>`.
+Finally the request handler can now able to retreive resource via `PoolRequest` which is return `PoolResponse<T>` from the `PoolResponse` we are able to deref to Resource and process the user request. When the request is complete, the `PoolResponse` will take the resource back to the Pool.
 
 # The problems and solutions
 With the simple approach above, there are four problems that could arise:
 
-1. If the concurrent requests is more than the resource in the Pool, we will not have enough resources to serve those requests.
-   <ArrowRight/>  We will have two limit, the first limit is `min_pool_size` which will define the minimum number of resources that will always ready to be used.
+#### 1. If the concurrent requests is more than the resource in the Pool, we will not have enough resources to serve those requests.
+
+   <ArrowRight/> We will have two limit, the first limit is `min_pool_size` which will define the minimum number of resources that will always ready to be used.
    The second is `max_pool_size` which could be alot bigger than the `min_pool_size`, it allow some extra resources to be 
  init, and the total of resources must be smaller than the `max_pool_size`.
 
-2. If we apply `max_pool_size`, then after a short time of running the number of resources in the pool could be too much, we expect the pool will automatically scale down until reach the `min_pool_size`.
+#### 2. If we apply `max_pool_size`, then after running for a while the number of resources in the pool could be too much.
 
-    Solution: We will apply timeout for resources from `<min_pool_size>th`, if it is no longer been used for `resource_idle_timeout` we will dropping it
+     <ArrowRight/> We will apply timeout for resources from `<min_pool_size>th`, if it is no longer been used for `resource_idle_timeout` we will dropping it
     out of our memory.
 
-3. What if the request exceed the `max_pool_size` ? Are we going to panic that request ?
+#### 3. What if the request exceed the `max_pool_size` ? Are we going to panic that request ?
     
-    Solution: We have another chance, we could apply `retreiving_timeout` which will be apply for the `PoolRequest<T>`, it will wait (within timeout) for other requests to complete and released the resource to the pool.
+    <ArrowRight/> We have another chance, we could apply `retreiving_timeout` which will be apply for the `PoolRequest<T>`, it will wait (within timeout) for other requests to complete and released the resource to the pool.
 
-4. If we apply `min_pool_size` it could take very long for our service to start because it have to init large number of resources first.
+#### 4. If we apply `min_pool_size` it could take very long for our service to start because it have to init large number of resources first.
 
-    Solution: Instead of init resource one by one, we could init all of them concurrently, it could reduce init time.
+    <ArrowRight/> Instead of init resource one by one, we could init all of them concurrently, it could reduce init time.
 
-#### Here is the final chart which demonstrates the flow of retreiving, releasing resources, and removing the idle resources
+#### Here is the final diagram which demonstrates the flow of retreiving, releasing resources, and removing the idle resources
 
+<div className='md:w-[110%]'>
+  <Lottie className='aspect-[1.3/1] rounded-lg' file='dotlottie/resource-pool_-_full-flow.lottie'/>
+</div>
 
 # Implementation
 
 ### Resource abstraction
 
-Before we actually implement the Pool, let provide a way to abstract the resource because the pool only care about how to initialize the resource,
-and the state of the resource like the resource has exceed the idle time or not.
+Before we actually implement the Pool, let provide a way to abstract the resource because the pool don't care what is the resource or how to init it. It only care about the state of the resource, for example the resource has been timeout or not. 
 
 #### a. ResourceProvider
 
-Abstract the initialize process for the resource, the `Pool` will only need to call `::new().await` without worrying about how to init each resource.
+Abstract the initialize process for the resource, the `Pool` will only need to call `::new().await` without worrying about how to each type of resource.
 
 #### b. PoolItem\<T>
 
-Wrap the resource and manage resource state like checking the resource has exceed the timeout or not.
-
+Wrap the resource and manage resource state, giving ability to verify the resource has exceed the timeout or not.
 
 ### The Pool
 
@@ -92,7 +97,7 @@ Wrap the resource and manage resource state like checking the resource has excee
 
 After finished the implementation of the `PoolItem<T>` we finally able to implement our lead actor, the `PoolAllocator<T>`
 
-As the code above, the `PoolAllocator<T>` holds an a `Vector` of `PoolItem<T>`, then we wrap it with an `Arc` which allow us to share the reference of the vector across different threads.
+As the code above, the `PoolAllocator<T>` holds an a `Vector` of `PoolItem<T>`, it is wrapped with an `Arc` which allow us to share the reference of the vector across different threads.
 Then, we continue to wrap it using the `RwLock` which allow the `Vector` to have multiple reader but only allow one writer at the same time. Together, they allowing us to share the `PoolAllocator` across different threads
 without breaking the rule of Rust in memory safety.
 
@@ -105,13 +110,12 @@ more over we can make sure the PoolCleanup will also dropped when PoolAllocator 
 ### The Request
 #### a. PoolRequest\<T>
 
-As you can see, the `PoolRequest<T>` is able to take out the resource from the Pool, or if no resource available, it will wait within timeout until a resource is returned to the pool.
-And by clonning the `PoolRequest<T>` when ever new request come we just simply create a `PoolRequest<T>` and by taking the ownership, it provides an easy way to working with asynchronous in Rust.
+As you can see, the `PoolRequest<T>` is able to take out the resource from the Pool, or if no resource available, it will wait within timeout until some one return the resource back to the pool.
+And by clonning the `PoolRequest<T>` when ever we need, instead of init new resource or manage the reference across async task (which is very hard) we can take the entire ownership of Pool Request which is much easy to handle.
 
 #### b. PoolResponse\<T>
 
-The `PoolResponse<T>` is being returned by the `PoolRequest<T>` and can be deref into the resource it self, with this we make sure when the `PoolResponse` is no longer in used it will return the resource back
-to the Pool. We are no longer worry about the forgotten of returning back the resource.
+The `PoolResponse<T>` is being returned by the `PoolRequest<T>` and can be deref into the resource it self, by doing this way, we make sure whenever the `PoolResponse` is no longer in used or being dropped manually by calling `drop()` it will always return the resource back to the Pool. We are no longer worry about the forgotten of returning back the resource.
 
 # Usage
 
