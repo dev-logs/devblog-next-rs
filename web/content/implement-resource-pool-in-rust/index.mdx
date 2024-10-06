@@ -14,32 +14,26 @@ keywords:
   - Object pooling
 ---
 
-# Introduction
-
-### Why I'm writing this article ?
+# Why I'm writing this article ?
 
 I think any application that interact with resource like database, files, or http/websocket connection to other service will alway 
 need to make sure two things:
 
 1. Avoiding overhead in initiating resource.
 
-
 2. Limit the concurrent number of resources we are using. There are no inifinite number of resources, for example the default maximum number of concurrent open files in Ubuntu are 1024 files, you can modify the number but still have to have a limit.
 So that if we intend to develop an application works well overtime we need to be respect the limit
 of resources we are interacting with.
 
 
-### Who will be receive the most benefit by reading this article ?
-
+# Who will receive the most benefit by reading this?
 - Someone looking for an implementation of Resource Pooling in Rust.
 - Someone looking for a Resource Pooling solution which works with asynchronous syntax.
 - High expectation developers, who not only want a solution but also want a best experience while using it. I also put code with unit testing included in the end of this article.
 
-
 Without more talk, let's jump into the implementation.
 
-
-# Implementation
+# The ideas
 First let's look on how simple it is to use it in the end:
 
 The `PoolRequest<T>` is a light weight object that acts as a bridge to the `Pool`, it could be easily to clone and share as we wish.
@@ -52,30 +46,74 @@ Take a look on this simple flow on how a simple API application will use Pool to
 When our service receive a request, the Request Handler will inititate a `PoolRequest<T>` which holds a connection to `PoolResource<T>`.
 The Request Handler can now able to retreive resource as it wish to process the user Request. When the request is complete, we returning the resource to the pool which will be use later on by other requests.
 
-There are three problems:
+# The problems and solutions
+With the simple approach above, there are four problems that could arise:
 
 1. If the concurrent requests is more than the resource in the Pool, we will not have enough resources to serve those requests.
+   <ArrowRight/>  We will have two limit, the first limit is `min_pool_size` which will define the minimum number of resources that will always ready to be used.
+   The second is `max_pool_size` which could be alot bigger than the `min_pool_size`, it allow some extra resources to be 
+ init, and the total of resources must be smaller than the `max_pool_size`.
 
-    Solution: We will have two limit, the first limit is `min_pool_size` which will define the minimum number of resources that will always ready to be used. The second is `max_pool_size` which could be alot bigger than the `min_pool_size`, it allow some extra resources to be 
-init, and the total of resources must be smaller than the `max_pool_size`.
-
-2. If we apply `max_pool_size`, then after a short time of running the number of resources in the pool could be too much, we expect it will scale down to equal `min_pool_size`.
+2. If we apply `max_pool_size`, then after a short time of running the number of resources in the pool could be too much, we expect the pool will automatically scale down until reach the `min_pool_size`.
 
     Solution: We will apply timeout for resources from `<min_pool_size>th`, if it is no longer been used for `resource_idle_timeout` we will dropping it
     out of our memory.
 
-3. What if the request exceed the `max_pool_size` ? Are we gonna panic the request ?
+3. What if the request exceed the `max_pool_size` ? Are we going to panic that request ?
     
     Solution: We have another chance, we could apply `retreiving_timeout` which will be apply for the `PoolRequest<T>`, it will wait (within timeout) for other requests to complete and released the resource to the pool.
+
+4. If we apply `min_pool_size` it could take very long for our service to start because it have to init large number of resources first.
+
+    Solution: Instead of init resource one by one, we could init all of them concurrently, it could reduce init time.
 
 #### Here is the final chart which demonstrates the flow of retreiving, releasing resources, and removing the idle resources
 
 
-### Init Resource as a Pool Item
-### Resource Pool
-### Resource Request
-### Resource Response
-### Pool Cleaner
+# Implementation
+
+### Resource abstraction
+
+Before we actually implement the Pool, let provide a way to abstract the resource because the pool only care about how to initialize the resource,
+and the state of the resource like the resource has exceed the idle time or not.
+
+#### a. ResourceProvider
+
+Abstract the initialize process for the resource, the `Pool` will only need to call `::new().await` without worrying about how to init each resource.
+
+#### b. PoolItem\<T>
+
+Wrap the resource and manage resource state like checking the resource has exceed the timeout or not.
+
+
+### The Pool
+
+#### a. PoolAllocator\<T>
+
+After finished the implementation of the `PoolItem<T>` we finally able to implement our lead actor, the `PoolAllocator<T>`
+
+As the code above, the `PoolAllocator<T>` holds an a `Vector` of `PoolItem<T>`, then we wrap it with an `Arc` which allow us to share the reference of the vector across different threads.
+Then, we continue to wrap it using the `RwLock` which allow the `Vector` to have multiple reader but only allow one writer at the same time. Together, they allowing us to share the `PoolAllocator` across different threads
+without breaking the rule of Rust in memory safety.
+
+Keeping the reference to the `PoolCleanup` will give more control to the `PoolAllocator` on when to cleanup it self by calling `cleanup.request_cleanup_loop()`
+more over we can make sure the PoolCleanup will also dropped when PoolAllocator dropped.
+
+#### b. PoolCleaner\<T>
+
+
+### The Request
+#### a. PoolRequest\<T>
+
+As you can see, the `PoolRequest<T>` is able to take out the resource from the Pool, or if no resource available, it will wait within timeout until a resource is returned to the pool.
+And by clonning the `PoolRequest<T>` when ever new request come we just simply create a `PoolRequest<T>` and by taking the ownership, it provides an easy way to working with asynchronous in Rust.
+
+#### b. PoolResponse\<T>
+
+The `PoolResponse<T>` is being returned by the `PoolRequest<T>` and can be deref into the resource it self, with this we make sure when the `PoolResponse` is no longer in used it will return the resource back
+to the Pool. We are no longer worry about the forgotten of returning back the resource.
+
+# Usage
 
 # Final thoughts
 

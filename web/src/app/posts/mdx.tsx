@@ -3,6 +3,7 @@
 import React, { useEffect, useRef, useCallback } from 'react'
 import {useMDXComponent} from 'next-contentlayer/hooks'
 import { DotLottie } from '@lottiefiles/dotlottie-web'
+import RightArrow from '../../../public/images/arrow-right.svg'
 
 function CustomImage(props: any) {
   const src = props.src.includes('http')
@@ -31,7 +32,7 @@ function Lottie(props: any) {
     file
   } = props || {}
 
-  const canvasRef = useRef<HtmlElement | undefined>()
+  const canvasRef = useRef<HTMLElement | undefined>()
 
   const lottieFile = useRef<any>()
 
@@ -92,7 +93,22 @@ const mdxComponents = {
   img: (props: any) => <CustomImage {...props}></CustomImage>,
   L2: (props: any) => <L2 {...props}/>,
   Mdx: (props: any) => <_MdxContent code={props.children}/>,
-  Lottie: (props:any) => <Lottie {...props}/>
+  Lottie: (props:any) => <Lottie {...props}/>,
+  h1: (props: any) => <H1 {...props}/>,
+  code: (props: any) => <Code {...props}/>,
+  'ArrowRight': () => <RightArrow className="inline w-3 h-3"/>
+}
+
+export const Code = (props: any) => {
+  return <>
+    <div className='inline bg-gray-700 bg-opacity-50 p-1 rounded-md'>{props.children}</div>
+  </>
+}
+
+export const H1 = (props: any) => {
+  return <>
+    <h2 {...props} className='text-blue-500'></h2>
+  </>
 }
 
 
