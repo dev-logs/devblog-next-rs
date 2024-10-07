@@ -61,7 +61,7 @@ export const Discussions = ({ post }: DiscussionsProps) => {
   }, [paging, getDiscussions])
 
   return (
-    <div className="prose max-w-prose pl-2 2xl:prose-xl md:prose-md prose-sm lg:prose-lg h-fit overflow-x-hidden z-20 text-white shadow rounded-xl">
+    <div className="prose max-w-prose 2xl:prose-xl md:prose-md prose-sm lg:prose-lg h-fit overflow-x-hidden z-20 text-white shadow rounded-xl">
       <div className="flex justify-between items-center mb-4">
         <div className="flex flex-row justify-center items-center">
           <h2 className="font-semibold text-white">Discussions</h2>

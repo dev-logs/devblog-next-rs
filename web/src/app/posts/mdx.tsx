@@ -114,12 +114,9 @@ const mdxComponents = {
 
 export const Info = (props: any) => {
   return <>
-    <div className='overflow-hidden relative text-blue-400 rounded-md h-20 w-full'>
-      <div className='absolute pl-8 z-0 text-blue-400 rounded-md border border-blue-400 w-full h-full'>
+    <div className='text-blue-400 rounded-md w-[105%] -translate-x-[2.5%]'>
+      <div className='px-[2.5%] py-2 gap-2 flex flex-col z-0 text-blue-400 rounded-md border-blue-400 w-full h-full bg-blue-800 bg-opacity-30 text-md'>
         <span {...props}></span>
-      </div>
-      <div className='absolute -top-5 z-10 -left-5 w-10 h-10 bg-black border-b text-white border-r border-blue-400 rounded-full justify-end'>
-        i 
       </div>
     </div>
   </>

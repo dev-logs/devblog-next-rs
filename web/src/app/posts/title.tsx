@@ -21,7 +21,7 @@ export default function PostTitle(props: any) {
             <span className="xl:text-6xl md:text-5xl text-xl xl:max-w-[40vw] max-w-[70vw] text-center font-Alfa text-white">
               {post.title}
             </span>
-            <span className="text-sm lg:text-xl font-mono capitalize text-pink-700 underline underline-offset-1 font-bold">
+            <span className="text-sm lg:text-xl font-mono capitalize text-pink-700 underline underline-offset-1 font-bold text-center mx-4 sm:mx-2">
               #{post.keywords}
             </span>
             <img
