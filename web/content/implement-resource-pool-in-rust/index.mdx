@@ -42,34 +42,42 @@ A resource will be wrapped in a `PoolResponse<T>` which can be deref into `T` wh
 It will make sure and simplify the process of alway return the resource to the pool, it allow the resource to be reused by other requests.
 
 Take a look on this simple flow on how a simple API application will use Pool to solve resource inititaing overhead by applying Resource Pool pattern (more complicated at the end).
-<div className='md:w-[110%]'>
-  <Lottie className='aspect-[1.3/1] rounded-lg' file='dotlottie/resource-pool_-_simple-flow.lottie'/>
+<div className='md:w-[100%]'>
+  <Lottie className='aspect-[2/1.8] rounded-lg' file='dotlottie/resource-pool_-_simple-flow.lottie'/>
 </div>
 
-When our service receive a request, the Request Handler will inititate a `PoolRequest<T>` which holds a connection to `PoolAllocator<T>`.
-Finally the request handler can now able to retreive resource via `PoolRequest` which is return `PoolResponse<T>` from the `PoolResponse` we are able to deref to Resource and process the user request. When the request is complete, the `PoolResponse` will take the resource back to the Pool.
+When a new request come, the Request Handler will inititate a `PoolRequest<T>` which holds a connection to the `PoolAllocator<T>`.
+The handler will able to request a resource via PoolRequest instance, the result will be a `PoolResponse<T>` which could be deref to the resource, after `PoolResponse` is dropped it will take the resource back to the Pool, make sure every resource is reusable.
 
 # The problems and solutions
 With the simple approach above, there are four problems that could arise:
 
-#### 1. If the concurrent requests is more than the resource in the Pool, we will not have enough resources to serve those requests.
+#### 1. Not able to provide resource if the number of concurrent requests is greater than the number of resources in the Pool.
 
    <ArrowRight/> We will have two limit, the first limit is `min_pool_size` which will define the minimum number of resources that will always ready to be used.
    The second is `max_pool_size` which could be alot bigger than the `min_pool_size`, it allow some extra resources to be 
- init, and the total of resources must be smaller than the `max_pool_size`.
+ init to serve extra requests, but after all the total number of resources must be smaller than the `max_pool_size`.
 
-#### 2. If we apply `max_pool_size`, then after running for a while the number of resources in the pool could be too much.
+#### 2. If we apply `max_pool_size`, the number of resources could be very large after a short time.
 
-     <ArrowRight/> We will apply timeout for resources from `<min_pool_size>th`, if it is no longer been used for `resource_idle_timeout` we will dropping it
-    out of our memory.
+     <ArrowRight/> We will define `resource_idle_timeout` which will define the maximum time that an unused resource could remain on memory.
+     While still keep the minimum number of resources within the pool.
+
+    For example: Your Restful Api mostly only receives 10 concurrent requests at a time so that you set the `min_pool_size = 10`, but at a random time, it suddently receive 1000 requests at once.
+    The things is after that hard time, your application is back to 10 concurrent requests at a time,
+    we could left 990 resources as unused.
+
+    If we set `resource_idle_timeout = 5 minutes`, the Pool could releasing 990 unused resources if it not in used for 5 minutes. 
+
+    <Info>Note that the minimum number of resources in Pool will always be `>= min_pool_size`</Info>
 
 #### 3. What if the request exceed the `max_pool_size` ? Are we going to panic that request ?
     
-    <ArrowRight/> We have another chance, we could apply `retreiving_timeout` which will be apply for the `PoolRequest<T>`, it will wait (within timeout) for other requests to complete and released the resource to the pool.
+    <ArrowRight/> We have another chance, we could apply `retreiving_timeout` which will be apply for the `PoolRequest<T>`, it will wait (within timeout) for another request to released the resource to the pool and that resource will be used for the current request.
 
-#### 4. If we apply `min_pool_size` it could take very long for our service to start because it have to init large number of resources first.
+#### 4. If we apply `min_pool_size` it could take very long for our service to start because it have to init large number of resources.
 
-    <ArrowRight/> Instead of init resource one by one, we could init all of them concurrently, it could reduce init time.
+    <ArrowRight/> Instead of init single resource at once, we could init all of them concurrently, by that, it could reduce the initial time.
 
 #### Here is the final diagram which demonstrates the flow of retreiving, releasing resources, and removing the idle resources
 

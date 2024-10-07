@@ -108,7 +108,21 @@ const mdxComponents = {
   Lottie: (props:any) => <Lottie {...props}/>,
   h1: (props: any) => <H1 {...props}/>,
   code: (props: any) => <Code {...props}/>,
-  'ArrowRight': () => <ArrowRightSvg className="inline h-auto w-6 text-blue-500"/>
+  'ArrowRight': () => <ArrowRightSvg className="inline h-auto w-6 text-blue-500"/>,
+  Info: (props: any) => <Info {...props}/>
+}
+
+export const Info = (props: any) => {
+  return <>
+    <div className='overflow-hidden relative text-blue-400 rounded-md h-20 w-full'>
+      <div className='absolute pl-8 z-0 text-blue-400 rounded-md border border-blue-400 w-full h-full'>
+        <span {...props}></span>
+      </div>
+      <div className='absolute -top-5 z-10 -left-5 w-10 h-10 bg-black border-b text-white border-r border-blue-400 rounded-full justify-end'>
+        i 
+      </div>
+    </div>
+  </>
 }
 
 export const Code = (props: any) => {
