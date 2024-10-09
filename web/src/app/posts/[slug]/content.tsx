@@ -29,7 +29,7 @@ function HtmlDom(props: any = {}) {
   return (
     <div className={"h-full w-full"}>
       <Toaster position="bottom-right"/>
-      <div className=" flex flex-col bg-black">
+      <div className=" flex flex-col bg-gray-950">
         <Suspense>
           <TitleLazy post={post} />
         </Suspense>

@@ -4,3 +4,12 @@
     padding: 18px;
   }
 }
+
+pre {
+  padding: 0px !important;
+  background-color: transparent !important;
+
+  @include styleFor(tablet-and-up) {
+    width: 130% !important;
+  }
+}

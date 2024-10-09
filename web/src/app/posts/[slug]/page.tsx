@@ -63,7 +63,7 @@ export default function PostPage(props: any) {
     return <div className={'h-screen'}>
         <NavigationBar />
         <PostDetailLoading/>
-        <div className={`absolute top-0 left-0 z-0`}>
+        <div className={`absolute top-0 left-0 z-0 bg-white`}>
             <PostPageContent {...props}/>
         </div>
     </div>

@@ -1,6 +1,6 @@
 use std::time::Duration;
 
-use core_services::db::{SurrealDbConnection, SurrealDbConnectionInfo, SurrealDbPoolResourceProvider};
+use core_services::db::{SurrealDbConnection, SurrealDbPoolResourceProvider};
 use core_services::s3::{S3Client, S3ClientResourceProvider};
 use core_services::smtp::client::SmtpPoolResourceProvider;
 use core_services::utils::pool::allocator::PoolBuilder;
@@ -144,7 +144,7 @@ impl ApiDependenciesInjection {
                 PoolBuilder::new(Box::new(S3ClientResourceProvider))
                     .min_pool_size(1)
                     .max_pool_size(1000)
-                    .cleanup(CleanupStrategy::Best {
+                    .cleanup(CleanupStrategy::Relax {
                         interval: Duration::new(100, 0),
                         min_pool_size: 5
                     })
@@ -162,7 +162,7 @@ impl ApiDependenciesInjection {
                 PoolBuilder::new(Box::new(SmtpPoolResourceProvider))
                     .min_pool_size(1)
                     .max_pool_size(1000)
-                    .cleanup(CleanupStrategy::Best {
+                    .cleanup(CleanupStrategy::Relax {
                         interval: Duration::new(100, 0),
                         min_pool_size: 5
                     })

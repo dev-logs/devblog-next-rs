@@ -63,7 +63,7 @@ function Lottie(props: any) {
     }
   }, [canvasRef.current, file])
 
-  return <div className={`grid overflow-clip`} style={{gridArea: '1/1'}}>
+  return <div className={`grid overflow-clip w-[110%] -translate-x-[5%]`} style={{gridArea: '1/1'}}>
     <div style={{'gridArea': '1/1', 'pointerEvents': 'none'}}>
       <div className="h-full w-full opacity-20 bg-[linear-gradient(to_right,#0A9396_1px,transparent_2px),linear-gradient(to_bottom,#0A9396_1px,transparent_2px)] bg-[size:6rem_4rem]"></div>
     </div>
@@ -115,7 +115,7 @@ const mdxComponents = {
 export const Info = (props: any) => {
   return <>
     <div className='text-blue-400 rounded-md w-[105%] -translate-x-[2.5%]'>
-      <div className='px-[2.5%] py-2 gap-2 flex flex-col z-0 text-blue-400 rounded-md border-blue-400 w-full h-full bg-blue-800 bg-opacity-30 text-md'>
+      <div className='px-[2.5%] py-2 gap-2 flex flex-col z-0 text-blue-200 rounded-md border-blue-200 w-full h-full bg-blue-800 bg-opacity-40 text-md'>
         <span {...props}></span>
       </div>
     </div>
@@ -123,8 +123,16 @@ export const Info = (props: any) => {
 }
 
 export const Code = (props: any) => {
+  if (props['data-language']) {
+    // Big block
+    return <>
+      {props.children}
+    </>
+  }
+
+  // inline code block
   return <>
-    <div className='inline bg-opacity-50 p-1 rounded-sm text-sm font-semibold bg-gray-900'>{props.children}</div>
+    <div className='inline bg-opacity-20 p-1 rounded-sm text-sm font-semibold bg-gray-700'>{props.children}</div>
   </>
 }
 

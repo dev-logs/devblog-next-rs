@@ -100,6 +100,7 @@ export const Post = defineDocumentType(() => ({
 const codeOptions = {
     theme: "github-dark",
     grid: false,
+    keepBackground: false,
 };
 
 export default makeSource({
