@@ -16,7 +16,7 @@ keywords:
 
 # Why I'm writing this article ?
 
-For any application to be able to run seamlessly over time, there are a lot of aspects that we have to cover, from memory safety to infrastructure. In this article, I would love to share a solution for an application that interacts with a limited source of resources. For example, 10,000 connections is the maximum number of concurrent connections to PostgreSQL, or 1024 is the default limit in Ubuntu. In that case, we cannot just ask for more and more resources as needed; we have to have a better strategy.
+For any application to be able to run seamlessly over time, there are a lot of aspects that we have to cover, from memory safety to infrastructure. In this article, I would love to share a solution for an application that interacts with a limited source of resources. For example, 10,000 connections is the maximum number of concurrent connections to PostgreSQL, or 1024 is the default limit for concurrent opened files in Ubuntu. In that case, we cannot just ask for more and more resources as needed; we have to have a better strategy.
 
 Moreover, interacting with these resources—whether through networking or mainly CPU-bound operations—produces some overhead if done excessively. Imagine if we make a new connection to the database on every RESTful request. It would be a disaster for our system; we would waste most of our CPU time initiating required resources instead of focusing on the main logic.
 
@@ -68,10 +68,10 @@ Take a look at this simple flow on how a basic API application will use the pool
 </div>
 
 When a new request arrives, the request handler initializes a `PoolRequest<T>` that holds a connection to the pool. There’s no need to create a new resource; a `PoolRequest` is a simple struct that can be easily cloned across different asynchronous tasks.
-The PoolRequest then acquires a resource from the pool for us to use freely, and once we’re finished, the resource automatically returns to the pool to await other requests.
+The PoolRequest then acquires a resource from the pool for us to use freely, and once we’re finished, the resource automatically returns to the pool to wait for other requests.
 
 # The problems and solutions
-Using the simple approach described above, four potential issues may arise:
+But by using the simple approach described above, four potential issues may arise:
 
 #### 1. Inability to provide resources when the number of concurrent requests exceeds the number of resources in the pool.
 
@@ -81,7 +81,7 @@ Using the simple approach described above, four potential issues may arise:
 
    <ArrowRight/> We'll introduce `resource_idle_timeout`, specifying the maximum time an unused resource can remain in memory while still maintaining the minimum number of resources in the pool.
 
-   For example, if your RESTful API typically handles 10 concurrent requests and you set `min_pool_size = 10`, but suddenly receive 1,000 requests at once, your application will return to 10 concurrent requests after the surge, leaving 990 resources unused.
+   For example, if your RESTful API typically handles 10 concurrent requests and you set `min_pool_size = 10`, but suddenly receive 1,000 requests at once, your application will return to 10 concurrent requests after the surge, leaving 990 resources unused in the pool.
 
    By setting `resource_idle_timeout = 5 minutes`, the pool can release those 990 unused resources if they remain idle for five minutes.
 
@@ -100,13 +100,13 @@ Using the simple approach described above, four potential issues may arise:
 
 # Implementation
 
-### Resource abstraction
+### Resource Abstraction
 
-Before we actually implement the Pool, let provide a way to abstract the resource because the pool don't care what is the resource or how to init it. It only care about the state of the resource, for example the resource has been timeout or not. 
+Before implementing the pool, we need a way to abstract the resources because the pool doesn't concern itself with what the resource is or how to initialize it. It only cares about the state of the resource—for example, whether it has timed out.
 
 #### a. ResourceProvider
 
-To abstract the the process of creating new resource, let's create a trait to abstract the initialize logic for every different resources.
+To abstract the process of creating new resources, we'll create a trait that encapsulates the initialization logic for different types of resources.
 
 ```rust
 pub trait PoolResourceProvider<T>: Send + Sync
@@ -116,9 +116,9 @@ pub trait PoolResourceProvider<T>: Send + Sync
 }
 ```
 
-You might notice that, the `new` function not able to accept any parameters, and it is very neccessary.
-But don't worry, we can create another struct to implement this trait, that struct will then holds the parameters
-for us.
+You may notice that the new function cannot accept custom parameters, but it’s essential to initialize a resource with custom parameters.
+
+No need to worry; we can create a struct to hold the parameters, and that struct will implement the `PoolResourceProvider<T>` trait.
 
 ```rust
 pub struct DbPoolProvider {
@@ -133,12 +133,14 @@ impl PoolResourceProvider<PosgresConnection> for DbPoolProvider {
 }
 ```
 
-It seems we has created a perfect abstraction for creating new resource, now let's move on.
+Now that we’ve established an effective abstraction for creating new resources, let’s proceed to the next step.
 
 #### b. PoolItem\<T>
 
-The whole idea of a PoolItem is that, it will represent a 'slot' for a resource, a resource can leave the 'slot' to become a `PoolResponse` and then after the resource finished it's duty
-it can return to the 'slot' and wait for the next request.
+The fundamental idea behind a PoolItem is that it represents a ‘slot’ for a resource. When there is a request, a resource can leave this slot
+to become a `PoolResponse`, and after finishing its duty, it can return to the slot to wait for the next request to serve.
+
+Let's take a look on struct `PoolItem<T>`
 
 ```rust
 pub struct PoolItem<T>
@@ -150,17 +152,18 @@ where
     max_idling_timeout: Option<Duration>
 }
 ```
-There are several things that I need to explain here:
 
-1. Why the `resource` variable is an `Option<T>` ? Can the `PoolItem` be created without a resource ?
-No it is not, it is optional because the resource could be taken out and become the `PoolResponse<T>`
-leaving the value `None`.
-Then after the resource has complete it's mission, it can return back to the pool item again, and the variable will be `Some(resource)`.
+#### Here are several things I'd like to explain:
 
-2. The `start_time` and `max_idling_timeout` will be used to calculate the total idle time of a resource, in case the resource is not belong to `min_pool_size`
-it will be dropped after it's exceed the `max_idling_timeout`.
+#### 1. Why is the `resource` variable an `Option<T>`? Can the `PoolItem` be created without a resource?
 
-Next, we will take a look on the implementation of the `PoolItem`:
+No, it cannot. The `Option` type is used because the resource can be taken out to become a `PoolResponse<T>`, leaving the value as `None`. After the resource has completed its mission, it can return to the pool item, and the variable will be `Some(resource)` again.
+
+#### 2. The `start_time` and `max_idling_timeout`
+
+These are used to calculate the total idle time of a resource. If the resource doesn't belong to the `min_pool_size`, it will be dropped after it exceeds the `max_idling_timeout`.
+
+Next, we will take a look at the implementation of the `PoolItem`:
 
 ```rust
 impl<T> PoolItem<T> where T: Send + Sync + 'static
@@ -200,23 +203,30 @@ impl<T> PoolItem<T> where T: Send + Sync + 'static
 }
 ```
 
-As I mentioned above, the PoolItem will not able to be create without a resource, so that the `::new` function must required the resource to be `Some`
-the `max_idling_timeout` is an option in case we don't want the Pool to be scale down (I wonder about which case we actually need that ?).
+As mentioned earlier, the `PoolItem` cannot be created without a resource; therefore, the `::new` function must require the resource to be `Some`.
+The `max_idling_timeout` is optional because we don't want to apply a timeout to resources within the `min_pool_size`, the pool must always contain minimum number
+of pool item equal the `min_pool_size`.
 
-The `::take` will be triggered by the Pool whenever there is a request.
+The `::take` function is triggered by the pool to extract the resource, leaving the `resource` variable as `None`.
 
-The `::put` will also be triggered by the Pool, it will finding an empty PoolItem (slot) to put back the resource.
+Conversely, the `::put` function returns the resource to the `PoolItem` after it has finished its duty.
 
-The `::invalidate` will drop it self out of the memory if it is not used for `max_idle_timeout`. But the logic of cleanup the Pool is more complicated than this, you will see
-later in this article.
+The `::invalidate` function will drop the resource if it hasn't been used within the `max_idling_timeout`.
+I'll explain more about the logic that calls this `drop` function, which is managed by the `PoolCleaner`.
 
 ### The Pool
 
-Finally, we can talk about our lead actor, the Pool, which require two part, the allocate which is init, provide resources and the cleanup part, which is clean up the unused resources out of the Pool.
+Finally, let's discuss our main component: the pool itself.
+
+The pool consists of two primary parts:
+
+**Allocator**: This component initializes resources and provides them as needed. It handles the creation of new resources and supplies them to requesters.
+
+**Cleaner**: This part is responsible for maintaining the pool's efficiency by cleaning up unused resources, preventing unnecessary memory usage.
 
 #### a. PoolAllocator\<T>
 
-First is the allocate logic, without further talk, let's take a look it's implementation, it is not that complicated at all.
+First let's take a look on the allocator.
 
 ```rust
 pub struct PoolAllocator<T>
@@ -232,21 +242,19 @@ where
 }
 ```
 
-We create `PoolAllocator` struct which require a generic type `<T>` which is the type of the resource that it will provide.
+We create a `PoolAllocator` struct that requires a generic type `<T>`, representing the type of resource it will provide.
 
-Then the `PoolAllocator<T>` holds an a `Vector` of `PoolItem<T>`, it is wrapped with an `Arc` which allow us to share the reference of the vector across different threads.
-Then, we continue to wrap it using the `RwLock` which allow the `Vector` to have multiple reader but only allow one writer at the same time. Together, they allowing us to share the `PoolAllocator` across different threads without breaking the rule of Rust in memory safety.
+The `PoolAllocator<T>` holds a `Vector` of `PoolItem<T>`, which is wrapped inside an `Arc` to allow sharing the reference across different threads. We then wrap this with an `RwLock`, enabling multiple readers but only one writer at a time. Together, these wrappers allow us to share the `PoolAllocator` across threads without violating Rust's memory safety rules.
 
-And to explain why the allocator neeed to keep the reference to the `PoolCleaner`, iti is because it need to decide when to trigger cleanup.
-And beside that, we can make sure the `PoolCleaner<T>` will also be dropped when the the allocator is dropped.
+Regarding why the allocator needs to keep a reference to the `PoolCleaner`, it's because it decides when to start the cleanup.
+Additionally, this ensures that the `PoolCleaner<T>` will be dropped when the allocator is dropped.
 
-Now, let's take a look on the main logic of the Allocator to see how it works
+Now, let's examine the main logic of the allocator to see how it works.
+
 ```rust
 impl<T> PoolAllocator<T> where T: Send + Sync + 'static
 {
     pub async fn init(&mut self)
-    where
-        Self: Send
     {
         tokio_scoped::scope(|scope| {
             for _i in 0..self.min_pool_size {
@@ -316,26 +324,30 @@ impl<T> PoolAllocator<T> where T: Send + Sync + 'static
 }
 ````
 
-The `::init` function have two job, the first is to initialize the resources to fit the pool, and the way it is initialize resource is it will
-init all of them at once instead of one by one. It will make sure our application will not take too much time to start.
-The second is it will start the cleanup, the cleanup will be run in the background and monitor the Pool to take out an unused resource.
+The `::init` function has two main responsibilities. First, it initializes the minimum number of resources to populate the pool. And to prevent long startup time
+we will create all resources concurrently instead of one by one, and notice that these minimum resources will not have `max_idling_timeout`.
+Second, it initiates the cleanup process, which runs in the background to monitor the pool and remove unused resources.
 
-The `::retreive` function will take out the resource and if there is no resource available, it will check the current number of resources in the pool,
-and if it still less than the `max_pool_size`. The allocator will init more resource, finally that resource will be used to serve the request.
+The `::retrieve` function extracts a resource from the pool. If no resource is available, it checks the current number of resources in the pool. If this number is still less than the `max_pool_size`, the allocator will initialize additional resources, and these extra resources will has `max_idling_timeout`.
+Finally, the new resource will be used to serve the request.
 
-The `::put` function will put back the resource to the pool, and careful that, the Pool will always put the resource if and only if there is a slot (`PoolItem`) that available.
-If we not able to find an available slot, we will drop that resource, because there is no way a resource has been taken out of the Pool but not have an available slot when it come back.
+The `::put` function returns the resource to the pool. It's important to note that the pool will only accept the resource if there is an available slot (`PoolItem.resource = None`). And if no available slot is found, the resource will be dropped, and it will never happen, unless there is a resource that not comming from the pool.
 
 #### b. PoolCleaner\<T>
 
-We has done the implementation of allocating the resource very well, now it's time for free up resource after used, the way we cleanup the unused resources is that, if the resource not belong to the
-`min_pool` we will count the idle time of it, and if the idle time exceed the `resource_idle_timeout` then we will remove it. A resource is consider as idle is when it not being requested by any one.
+We have successfully implemented resource allocation; now it's time to free up resources after they've been used.
+To clean up unused resources, we track the idle time of any resource that doesn't belong to the `min_pool`. 
+If a resource's idle time exceeds the `resource_idle_timeout`, we remove it.
 
-Let's take a quick look on how it works:
+<Info>
+  A resource is considered idle when it isn't being requested and only laying within the `PoolItem`.
+</Info>
+
+Let's take a quick look at how this process works:
 
 ```rust
 pub enum CleanupStrategy {
-    Relax { interval: Duration, min_pool_size: u16 }
+    Relax { interval: Duration }
 }
 
 pub struct PoolCleaner<T>
@@ -348,9 +360,13 @@ where
 }
 ```
 
-The existing of enum `CleanupStrategy` is because cleaning up resources on time is hard, and it could required high CPU usage. So that it would be better if we apply different
-approach for different kind of resource. And currently there is only one cleanup approach is `Relax`, within this cleanup mode, we will start a background job that will do
-the cleanup job every `interval`. It is call Relax because it could not cleanup the resource on time, it might have a little of delay. You might want another approach to fit your cases. 
+
+The CleanupStrategy enum exists because cleaning up resources on time can be challenging and may require high CPU usage.
+Therefore, it’s better to apply different approaches for different types of resources. 
+Currently, I only only propose one simple cleanup approach called Relax.
+In this mode, we start a background job that performs the cleanup task at each specified interval. 
+It’s called Relax because it might not clean up resources exactly on time and may have a slight delay.
+You might want to consider another approach to suit your specific cases.
 
 The implementation
 
@@ -370,15 +386,14 @@ where
     pub fn start_background(&mut self) {
         match self.strategy {
             CleanupStrategy::Relax {
-                interval,
-                min_pool_size
+                interval
             } => {
                 let interval = interval.clone();
                 let pool = self.pool.clone();
                 let handler = spawn(async move {
                     loop {
                         sleep(interval).await;
-                        Self::request_cleanup_loop(&pool, min_pool_size as usize).await
+                        Self::request_cleanup_loop(&pool).await
                     }
                 });
 
@@ -396,30 +411,10 @@ where
         }
     }
 
-    pub async fn request_cleanup_loop(pool_sync: &Arc<RwLock<Vec<PoolItem<T>>>>, from_index: usize) {
-        let pool = pool_sync.read().await;
-        let pool_len = pool.len();
-
-        if pool_len < from_index {
-            return
-        }
-
+    pub async fn request_cleanup_loop(pool_sync: &Arc<RwLock<Vec<PoolItem<T>>>>) {
         let mut pool = pool_sync.write().await;
-        for index in 0..pool_len {
-            if index < from_index {
-                continue
-            }
 
-            loop {
-                let pool_item = pool.get_mut(index);
-                if pool_item.is_some() && pool_item.unwrap().invalidate() {
-                    pool.swap_remove(index);
-                }
-                else {
-                    break
-                }
-            }
-        }
+        pool.retain_mut(|it| !it.invalidate());
     }
 }
 
@@ -433,18 +428,21 @@ where
 }
 ```
 
+Let's begin with the key functionality: the `request_cleanup_loop` function. This function calls `invalidate` on each item, allowing them to determine how to clean up their resource.
+The returned value, `true` or `false`, informs the cleaner whether an item has completed its cleanup and can be removed from the pool.
+
+The `start_background` function is triggered by the pool within the `init` function. If you'd prefer to use a cleanup strategy that doesn't require a background handler, you can simply leave the match arm empty within this function.
+
 ### The PoolRequest\<T>
 
-Great, I think it will be the last component that we have to implement.
+The `PoolAllocator` is great, but it doesn’t seem as great when we have to share its reference across various async tasks and modules.
+We all know how tough Rust can be, right?
 
-The `PoolAllocator` is great, but it seem not that great if we have to share it's reference among various of async task and modules.
-We all know how tough Rust is, right ?
+That’s where the `PoolRequest` comes in to help us manage Rust’s memory safety rules.
 
-And yes, that's where we need the `PoolRequest` to help us deal with the memory safety rules in Rust.
+Additionally, the PoolRequest will handle the logic of waiting for available resources when the PoolAllocator has none left.
 
-Moreover, the `PoolRequest` will also need to handle logic to wait for available resource when the `PoolAllocator` has no resource left.
-
-Let's take a look on how it work:
+Let’s take a look at how it works:
 
 ```rust
 pub struct PoolRequest<T>
@@ -456,10 +454,10 @@ where
 }
 ```
 
-First, we have to agree that, to share the same `PoolAllocator` instance along multiple different async tasks, we need to put it into the heap instead of stack.
-Then we wrap it within an `Arc` which allows us to clone, to share the instance while still make sure the thread safety. among different thread with the Arc.
+First, we need to agree that in order to share the same `PoolAllocator` instance across multiple async tasks, we have to place it on the heap instead of the stack.
+Then, we wrap it in an `Arc`, which allows us to clone and share the instance while ensuring thread safety across different threads.
 
-Now, let's skip to it's implementation:
+Now, let's move on to its implementation:
 
 ```rust
 impl<T> PoolRequest<T>
@@ -497,22 +495,20 @@ where
 ```
 
 What the `retreive` function is doing is that it will call the `take` function from the pool, and if there is no available resource, it will create a loop to continuously asking the resource
-from the pool within the `retreiving_timeout`
+from the pool within the `retreiving_timeout`.
 
 There is not much thing to talk about this `retreive` function, let's explain why we need to return the `PoolResponse` instead of a resource.
 
 ### The PoolResponse\<T>
 
-You might asked, why we have to use it ?
-To be honest, I do want the `PoolRequest` to return the resource directly, we all know the how it feel like if we have the ownership
-of a instance, instead of it's reference. Is that right ? 
+You might ask, why do we have to use it? 
+To be honest, I would prefer the `PoolRequest` to return the resource directly.
+We all know how it feels to have ownership of an instance rather than just a reference, right?
 
-But every resource have to go back to where it is belong to ! What if I, or you, or some of our colleges take the resource and just dropped it ? It will never returned to the pool
-and it will never going to be reused as it should be.
+But every resource has to go back to the pool to be reused by the others ! What if I, you, or one of our colleagues takes the resource and just drops it? It would never return to the pool, and it would never be reused as it should be.
+We need a better approach. The `PoolResponse` ensures the resource is always returned to the pool.
 
-We have to find a better approach. The `PoolResponse` will be able to help us to make sure the resource will always be returned to the Pool.
-
-Now let take a look on how it works
+Now, let's take a look at how it works.
 
 ```rust
 pub struct PoolResponse<T> where T: Send + Sync + 'static
@@ -522,12 +518,10 @@ pub struct PoolResponse<T> where T: Send + Sync + 'static
 }
 ```
 
-It is not hard to understand why the `PoolResponse` need to hold a reference to the `PoolAllocator`, because it need to
-return back the resource to the pool after used.
+It's easy to understand why the `PoolResponse` needs to hold a reference to the `PoolAllocator`: Because it must know which pool it need to return back after use.
 
-And the `PoolResponse` is not intended to be inititalized without a resource or a PoolAllocator, both are required. And we will understand right now
-why it need to be an `Option`
-
+Another thing is that both the resource and pool variables are Option; both are required to be `Some(thing)` when initialized.
+We’ll understand how could it become `None` in this implementation.
 
 ```rust
 impl<T> PoolResponse<T> where T: Send + Sync + 'static
@@ -571,16 +565,11 @@ impl<T> Drop for PoolResponse<T> where T: Send + Sync + 'static
 }
 ```
 
-As I already mentioned above the `PoolResponse::new` function will not going to accept `None` from either resource or pool.
+As I already mentioned above, the `PoolResponse::new` function will not accept `None` from either the resource or the pool.
 
-And by implementing both `Deref` and `DerefMut` we able to freely interact with the resource without any limitation. We can also call `expect` without
-any hesitation because it cannot happen, the pool and resource will only be `None` when it is is dropped
+By implementing both `Deref` and `DerefMut`, we are able to freely interact with the resource without any limitations. We can also call `expect` without any hesitation because it cannot fail; the pool and resource will only be `None` when it is dropped.
 
-Next, the most important thing is the `Drop` trait implementation, whenever the `PoolResponse` is going out of scope or by calling
-`drop(response)` manually we will spawn a async task that will return the resource back to the pool, it also explain why the pool and resource
-need to be an `Option`, because we need to take them out and put to the async task which is running independently after the PoolResponse is dropped.
-
-
+And the secret on how the resource could automatically return to the pool after used is within the `Drop` trait implementation. Whenever the `PoolResponse` goes out of scope or we manually call `drop(response)`, we will spawn an async task that returns the resource back to the pool. This also explains why the pool and resource need to be an `Option`, because we need to take them out and pass them to the async task, which runs independently after the `PoolResponse` is dropped.
 
 # Usage
 

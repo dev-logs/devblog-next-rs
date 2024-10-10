@@ -145,8 +145,7 @@ impl ApiDependenciesInjection {
                     .min_pool_size(1)
                     .max_pool_size(1000)
                     .cleanup(CleanupStrategy::Relax {
-                        interval: Duration::new(100, 0),
-                        min_pool_size: 5
+                        interval: Duration::new(100, 0)
                     })
                     .build()
                     .await
@@ -163,8 +162,7 @@ impl ApiDependenciesInjection {
                     .min_pool_size(1)
                     .max_pool_size(1000)
                     .cleanup(CleanupStrategy::Relax {
-                        interval: Duration::new(100, 0),
-                        min_pool_size: 5
+                        interval: Duration::new(100, 0)
                     })
                     .build()
                     .await
