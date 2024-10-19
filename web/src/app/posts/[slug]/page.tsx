@@ -1,9 +1,9 @@
 import React from "react";
 import PostPageContent from "@/app/posts/[slug]/content";
-import { allPosts } from "contentlayer/generated";
-import { PostDetailLoading } from "./client";
+import {allPosts} from "contentlayer/generated";
+import {PostDetailLoading} from "./client";
 import {NavigationBar} from "@/app/components/navigation-bar";
-import { siteMetadata } from "@/app/utils/site-meta-data";
+import {siteMetadata} from "@/app/utils/site-meta-data";
 
 export async function generateStaticParams() {
   return allPosts.map((post) => {

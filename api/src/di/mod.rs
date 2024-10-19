@@ -4,7 +4,6 @@ use core_services::db::{SurrealDbConnection, SurrealDbPoolResourceProvider};
 use core_services::s3::{S3Client, S3ClientResourceProvider};
 use core_services::smtp::client::SmtpPoolResourceProvider;
 use core_services::utils::pool::allocator::PoolBuilder;
-use core_services::utils::pool::cleanup::CleanupStrategy;
 use core_services::utils::pool::request::{PoolRequest, PoolRequestBuilder};
 use core_services::{S3Connection, SmtpTransport};
 
@@ -74,7 +73,7 @@ impl ApiDependenciesInjection {
     fn s3_pool_request(&self) -> Result<PoolRequest<S3Connection>, Box<dyn std::error::Error>> {
         let request = PoolRequestBuilder::new()
             .pool(self.s3_client.get().unwrap().clone())
-            .retreiving_timeout(Duration::new(10, 0))
+            .retrieving_timeout(Duration::new(10, 0))
             .build();
 
         Ok(request)
@@ -83,7 +82,7 @@ impl ApiDependenciesInjection {
     fn smtp_pool_request(&self) -> Result<PoolRequest<SmtpTransport>, Box<dyn std::error::Error>> {
         let request = PoolRequestBuilder::new()
             .pool(self.smtp_client.get().unwrap().clone())
-            .retreiving_timeout(Duration::new(10, 0))
+            .retrieving_timeout(Duration::new(10, 0))
             .build();
 
         Ok(request)
@@ -94,7 +93,7 @@ impl ApiDependenciesInjection {
     ) -> Result<PoolRequest<SurrealDbConnection>, Box<dyn std::error::Error>> {
         let request = PoolRequestBuilder::new()
             .pool(self.devblog_db.get().unwrap().clone())
-            .retreiving_timeout(Duration::new(10, 0))
+            .retrieving_timeout(Duration::new(10, 0))
             .build();
 
         Ok(request)
@@ -105,7 +104,7 @@ impl ApiDependenciesInjection {
     ) -> Result<PoolRequest<SurrealDbConnection>, Box<dyn std::error::Error>> {
         let request = PoolRequestBuilder::new()
             .pool(self.devblog_db.get().unwrap().clone())
-            .retreiving_timeout(Duration::new(10, 0))
+            .retrieving_timeout(Duration::new(10, 0))
             .build();
 
         Ok(request)
@@ -143,10 +142,7 @@ impl ApiDependenciesInjection {
             .get_or_init(|| async move {
                 PoolBuilder::new(Box::new(S3ClientResourceProvider))
                     .min_pool_size(1)
-                    .max_pool_size(1000)
-                    .cleanup(CleanupStrategy::Relax {
-                        interval: Duration::new(100, 0)
-                    })
+                    .max_pool_size(100)
                     .build()
                     .await
             })
@@ -160,10 +156,7 @@ impl ApiDependenciesInjection {
             .get_or_init(|| async move {
                 PoolBuilder::new(Box::new(SmtpPoolResourceProvider))
                     .min_pool_size(1)
-                    .max_pool_size(1000)
-                    .cleanup(CleanupStrategy::Relax {
-                        interval: Duration::new(100, 0)
-                    })
+                    .max_pool_size(100)
                     .build()
                     .await
             })

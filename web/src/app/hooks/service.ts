@@ -27,8 +27,8 @@ export function usePromise<T extends string[], P extends any[], R>(
 ): UsePromiseReturn<T, P, R> {
   const [err, updateErr] = useState<any>(null)
   const [data, updateData] = useState<R | null>(null)
-  const paramRefs = useRef<P>(fn.length > 0 ? (new Array(fn.length).fill(null) as P) : ([] as any))
-  const [paramStates, setParamStates] = useState<P>(fn.length > 0 ? (new Array(fn.length).fill(null) as P) : ([] as any))
+  const paramRefs = useRef<P>(paramNames.length > 0 ? (new Array(paramNames.length).fill(null) as P) : ([] as any))
+  const [paramStates, setParamStates] = useState<P>(paramNames.length > 0 ? (new Array(paramNames.length).fill(null) as P) : ([] as any))
   const [triggered, setTriggered] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
 

@@ -18,7 +18,7 @@ pub struct InteractionSurrealDb {
 impl InteractionRepository for InteractionSurrealDb {
     async fn create_view_post(&self, user: &UserId, post: &PostId, view: View) -> Resolve<View> {
         let view = DbIntent::New(view);
-        let db = self.db.retreive().await.expect("Database must be connected");
+        let db = self.db.retrieve().await.expect("Database must be connected");
         let relation = view.relate(user, post);
         let view: TrustedOne = db.query(surreal_quote!(r#"SELECT * FROM #relate(&relation)"#)).await?.take(0)?;
         let view: Option<View> = view.into();
@@ -29,7 +29,7 @@ impl InteractionRepository for InteractionSurrealDb {
     async fn create_like_post(&self, user: &UserId, post: &PostId, like: Like) -> Resolve<Like> {
         let like = DbIntent::New(like);
         let relation = like.relate(user, post);
-        let db = self.db.retreive().await.expect("Database must be connected");
+        let db = self.db.retrieve().await.expect("Database must be connected");
         let like: TrustedOne = db.query(surreal_quote!(r#"SELECT * FROM #relate(&relation)"#)).await?.take(0)?;
         let like: Option<Like> = like.into();
 
@@ -39,7 +39,7 @@ impl InteractionRepository for InteractionSurrealDb {
     async fn create_vote_post(&self, user: &UserId, post: &PostId, vote: Vote) -> Resolve<Vote> {
         let vote = DbIntent::New(vote);
         let relation = vote.relate(user, post);
-        let db = self.db.retreive().await.expect("Database must be connected");
+        let db = self.db.retrieve().await.expect("Database must be connected");
         let vote: TrustedOne = db.query(surreal_quote!(r#"SELECT * FROM #relate(&relation)"#)).await?.take(0)?;
         let vote: Option<Vote> = vote.into();
 
@@ -47,7 +47,7 @@ impl InteractionRepository for InteractionSurrealDb {
     }
 
     async fn count_like(&self, post: &PostId) -> Resolve<i32> {
-        let db = self.db.retreive().await.expect("Database must be connected successfully");
+        let db = self.db.retrieve().await.expect("Database must be connected successfully");
         let result: TrustedOne = db
             .query(surreal_quote!(
                 r##"
@@ -65,7 +65,7 @@ impl InteractionRepository for InteractionSurrealDb {
     }
 
     async fn count_view(&self, post: &PostId) -> Resolve<i32> {
-        let db = self.db.retreive().await.expect("Database must be connected successfully");
+        let db = self.db.retrieve().await.expect("Database must be connected successfully");
         let result: TrustedOne = db
             .query(surreal_quote!(
                 r##"
@@ -83,7 +83,7 @@ impl InteractionRepository for InteractionSurrealDb {
     }
 
     async fn count_vote(&self, post: &PostId) -> Resolve<i32> {
-        let db = self.db.retreive().await.expect("Database must be connected successfully");
+        let db = self.db.retrieve().await.expect("Database must be connected successfully");
         let result: TrustedOne = db
             .query(surreal_quote!(
                 r##"

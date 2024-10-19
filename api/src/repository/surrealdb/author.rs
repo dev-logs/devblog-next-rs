@@ -13,7 +13,7 @@ pub struct AuthorSurrealDbRepository {
 #[async_trait::async_trait]
 impl SurrealDbRepository<Author, AuthorId> for AuthorSurrealDbRepository {
     async fn get_db(&self) -> PoolResponse<SurrealDbConnection> {
-        self.db.retreive().await.unwrap()
+        self.db.retrieve().await.unwrap()
     }
 }
 

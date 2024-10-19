@@ -20,7 +20,7 @@ pub struct DiscussionSurrealDbRepository {
 #[async_trait::async_trait]
 impl SurrealDbRepository<Discussion, DiscussionId> for DiscussionSurrealDbRepository {
     async fn get_db(&self) -> PoolResponse<SurrealDbConnection> {
-        self.db.retreive().await.unwrap()
+        self.db.retrieve().await.unwrap()
     }
 
     async fn create(&self, discussion: Discussion) -> Resolve<Discussion> {
@@ -40,7 +40,7 @@ impl SurrealDbRepository<Discussion, DiscussionId> for DiscussionSurrealDbReposi
             _ => panic!("Expected user_id to create discussion")
         };
 
-        let db = self.db.retreive().await.expect("Failed to connect to db");
+        let db = self.db.retrieve().await.expect("Failed to connect to db");
         let discussion_relation = DbIntent::New(discussion.relate(user_id, post_id));
         let created_discussion: TrustedOne =
             db.query(surreal_quote!("SELECT * FROM (#relate(&discussion_relation)) FETCH out")).await?.take(0)?;
@@ -59,7 +59,7 @@ impl SurrealDbRepository<Discussion, DiscussionId> for DiscussionSurrealDbReposi
 #[async_trait::async_trait]
 impl DiscussionRepository for DiscussionSurrealDbRepository {
     async fn get_discussions(&self, post_id: &PostId, start: i32, limit: i32) -> Resolve<Vec<Discussion>> {
-        let db = self.db.retreive().await.expect("Failed to connect db");
+        let db = self.db.retrieve().await.expect("Failed to connect db");
         let result: TrustedOne = db
             .query(surreal_quote!(
                 r##"
@@ -77,7 +77,7 @@ impl DiscussionRepository for DiscussionSurrealDbRepository {
     }
 
     async fn count_discussion(&self, post_id: &PostId) -> Resolve<i32> {
-        let db = self.db.retreive().await.expect("Failed to connect to db");
+        let db = self.db.retrieve().await.expect("Failed to connect to db");
         let total_count: Option<i32> = db
             .query(surreal_quote!("SELECT count() from #id(post_id)<-discussion group all"))
             .await?

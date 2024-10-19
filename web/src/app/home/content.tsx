@@ -1,5 +1,4 @@
 'use client'
-import {ThreeDCanvas} from "../components/canvas"
 import {BlogList} from "../posts/list"
 import {BasicInteraction} from "../components/basic-interaction"
 import {RunningText} from "../components/running-text"
@@ -7,7 +6,6 @@ import {FooterHtml} from "../components/footer"
 import { Toaster } from "react-hot-toast"
 import { HomeBackground } from "./background"
 import Header3d from "./header3d"
-import { MainContainer } from "../components/container"
 
 export default function HomeContent(props: any) {
   return <_Home {...props}/>

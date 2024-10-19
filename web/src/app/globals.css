@@ -105,6 +105,7 @@ h2 > a > .icon.icon-link:before,
 h3 > a > .icon.icon-link:before {
     content: "#";
     font-size: 0.8rem;
+    color: #E55604;
 }
 
 h2 > a, h3 > a {

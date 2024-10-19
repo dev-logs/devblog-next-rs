@@ -15,8 +15,13 @@ const config: Config = {
                 'scrollbar-bg': '#000000',
                 'scrollbar-thumb': '#2d3748',
                 'scrollbar-thumb-hover': '#4a5568',
+                'beigie': '#A0937D',
+                'foreground': '#A0937D',
+                'background':'#0C0C0C',
+                'highlight': '#E55604'
             },
             fontFamily: {
+                chakra: 'Chakra Petch',
                 roboto: ['Roboto', 'sans-serif'],
                 graduate: ['Graduate', 'Calistoga', 'Roboto', 'sans-serif'],
                 Alfa: ['Alfa Slab One', 'sans-serif'],
